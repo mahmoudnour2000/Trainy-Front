@@ -1,0 +1,20 @@
+<div class="notifications-container">
+  <h2>الإشعارات</h2>
+
+  <ul *ngIf="notifications.length > 0; else noNotifications">
+    <li *ngFor="let notification of notifications">
+      <div class="notification-card">
+        <p class="message">{{ notification.Message }}</p>
+        <div class="meta">
+          <small class="time">{{ notification.NotificationTime | date:'short' }}</small>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <ng-template #noNotifications>
+    <div class="no-notif">
+      <p>لا توجد إشعارات حاليًا</p>
+    </div>
+  </ng-template>
+</div>

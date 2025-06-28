@@ -1,0 +1,48 @@
+<div class="card">
+    <div class="card-img-container">
+        <img [src]="order.image || 'assets/defaultOrder.jpg'" [alt]="order.title" 
+            onerror="this.src='assets/defaultOrder.jpg'">
+        <div class="price-tag">ج.م {{order.price}}</div>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">{{order.title}}</h5>
+        <p class="card-text">{{order.description}}</p>
+        
+        <div class="card-info">
+            <div class="info-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>من: {{order.fromDisplay}}</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-map-marker"></i>
+                <span>إلى: {{order.toDisplay}}</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-weight-hanging"></i>
+                <span>{{order.weight}} كغم</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-calendar"></i>
+                <span>{{formatDate(order.date)}}</span>
+            </div>
+            <div class="breakable-item" *ngIf="order.isBreakable">
+                <i class="fas fa-wine-glass-alt"></i>
+                <span>قابل للكسر</span>
+            </div>
+        </div>
+        
+        <div class="card-actions">
+            <div class="action-buttons">
+                <button class="btn btn-edit" (click)="onEdit()">
+                    <i class="fas fa-edit"></i> تعديل
+                </button>
+                <button class="btn btn-delete" (click)="onDelete()">
+                    <i class="fas fa-trash"></i> حذف
+                </button>
+            </div>
+            <button class="btn btn-send" (click)="onSendRequest()">
+                <i class="fas fa-paper-plane"></i> إرسال
+            </button>
+        </div>
+    </div>
+</div>

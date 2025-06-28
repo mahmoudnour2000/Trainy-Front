@@ -1,0 +1,77 @@
+
+
+.notifications-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.07);
+}
+
+.notifications-container h2 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 30px;
+  color: #333;
+  position: relative;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  margin-bottom: 20px;
+}
+
+/* الكارد */
+.notification-card {
+  background: linear-gradient(135deg, #e3e8f0, #fdfdff);
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.notification-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+.message {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 12px;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #666;
+  flex-wrap: wrap;
+}
+
+.meta .user {
+  background: #edf2fa;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #333;
+}
+
+.no-notif {
+  text-align: center;
+  padding: 60px 20px;
+  color: #777;
+  font-size: 16px;
+  background: #f9f9f9;
+  border-radius: 14px;
+  margin-top: 40px;
+}

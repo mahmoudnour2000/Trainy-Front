@@ -1,0 +1,17 @@
+.container {
+  max-width: 600px;
+}
+.form-control {
+  border-radius: 0.25rem;
+}
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+}
+.btn-primary:disabled {
+  background-color: #6c757d;
+}
+.img-thumbnail {
+  max-width: 200px;
+  margin-top: 10px;
+}

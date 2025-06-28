@@ -1,0 +1,29 @@
+<!-- src/app/modules/account-profile/user-profile/user-profile.component.html -->
+<div>
+  <app-profile-header [user]="user" (updateImage)="onUpdateImage($event)" (editPersonalInfo)="personalInfoEditMode = true"></app-profile-header>
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-8">
+   
+<!-- user-profile.component.html -->
+<div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+<div *ngIf="user">
+ 
+  <app-personal-info
+    [user]="user"
+    [editMode]="personalInfoEditMode"
+    (updateUser)="onUpdateUser($event)"
+    (cancelEdit)="onCancelEdit()"
+  ></app-personal-info>
+</div>
+    </div>
+      <div class="col-md-4">
+        <app-wallet-card [balance]="user?.Balance"></app-wallet-card>
+      </div>
+      <div class="col-md-12">
+        <app-deposit-button></app-deposit-button>
+        <app-withdraw-button></app-withdraw-button>
+      </div>
+    <app-profile-tabs [offers]="offers" [requests]="requests"></app-profile-tabs>
+  </div>
+</div>

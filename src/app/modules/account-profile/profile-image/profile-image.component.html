@@ -1,0 +1,7 @@
+<div class="profile-image-container">
+<img [src]="profileImageFullUrl" alt="صورة المستخدم" class="profile-image">
+  <div class="edit-image-btn" (click)="fileInput.click()">
+    <i class="fas fa-camera"></i>
+  </div>
+  <input type="file" #fileInput style="display: none;" accept="image/*" (change)="onFileChange($event)">
+</div>

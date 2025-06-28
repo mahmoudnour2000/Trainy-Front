@@ -1,0 +1,236 @@
+/* Profile Header Enhanced Styles */
+.profile-header {
+  background: #ffffff; /* خلفية بيضاء */
+  color: white;
+  padding: 3rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(0, 0, 0, 0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.1;
+}
+
+.profile-header .container {
+  position: relative;
+  z-index: 2;
+}
+
+.profile-header .row {
+  background: linear-gradient(135deg, #1d37df 0%, #131c53 100%); /* كارد بدرجات الأزرق */
+  color: white; /* نصوص بيضاء */
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.profile-header .row:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Profile Image Section */
+.profile-header .col-md-3 {
+  position: relative;
+}
+
+.profile-header .col-md-3::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -15px;
+  width: 2px;
+  height: 80%;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.3), transparent); /* تدرج أبيض */
+  transform: translateY(-50%);
+}
+
+/* Profile Info Section */
+.profile-header h2 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #ffffff; /* نص أبيض */
+}
+
+.profile-header p {
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  color: #ffffff; /* نص أبيض */
+  opacity: 0.95;
+  transition: all 0.3s ease;
+}
+
+.profile-header p:hover {
+  opacity: 1;
+  transform: translateX(5px);
+}
+
+.profile-header p i {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2); /* خلفية أيقونات بيضاء فاتحة */
+  border-radius: 50%;
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  color: #ffffff; /* أيقونات بيضاء */
+  transition: all 0.3s ease;
+}
+
+.profile-header p:hover i {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+/* Edit Button Section */
+.profile-header .btn {
+  background: linear-gradient(135deg, #1d37df 0%, #131c53 100%); /* زر بدرجات الأزرق */
+  color: #ffffff; /* نص زر أبيض */
+  border: none;
+  border-radius: 12px;
+  padding: 0.8rem 1.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+
+.profile-header .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.profile-header .btn:hover::before {
+  left: 100%;
+}
+
+.profile-header .btn:hover {
+  background: linear-gradient(135deg, #2c4cff 0%, #131c53 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 117, 255, 0.3);
+}
+
+.profile-header .btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.profile-header .btn i {
+  margin-left: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.profile-header .btn:hover i {
+  transform: rotate(15deg);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-header {
+    padding: 2rem 0;
+  }
+  
+  .profile-header .row {
+    padding: 1.5rem;
+    border-radius: 15px;
+  }
+  
+  .profile-header .col-md-3::after {
+    display: none;
+  }
+  
+  .profile-header h2 {
+    font-size: 1.8rem;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  
+  .profile-header .col-md-6 {
+    text-align: center;
+    margin: 1.5rem 0;
+  }
+  
+  .profile-header p {
+    justify-content: center;
+  }
+  
+  .profile-header .btn {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-header .row {
+    padding: 1rem;
+    margin: 0 0.5rem;
+  }
+  
+  .profile-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .profile-header p {
+    font-size: 0.9rem;
+  }
+  
+  .profile-header .btn {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation for smooth entrance */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-header .row {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+/* RTL Support for Arabic text */
+[dir="rtl"] .profile-header .col-md-3::after {
+  right: auto;
+  left: -15px;
+}
+
+[dir="rtl"] .profile-header p:hover {
+  transform: translateX(-5px);
+}
+
+[dir="rtl"] .profile-header p i {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}

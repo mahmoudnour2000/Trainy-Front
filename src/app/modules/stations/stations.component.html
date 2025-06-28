@@ -1,0 +1,54 @@
+<div *ngIf="errorMessage" class="alert alert-danger">
+  {{ errorMessage }}
+</div>
+
+<div class="stations-container">
+  <div id="map" class="map-container" style="height: 400px; width: 100%;" *ngIf="stations.length > 0"></div>
+  <!-- حقل البحث -->
+  <div class="search-bar">
+    <input type="text" name="searchInput" [(ngModel)]="searchString" (ngModelChange)="onSearchChange(searchString)" placeholder="ابحث عن محطة..." class="form-control" style="max-width: 300px; margin-bottom: 10px;">
+  </div>
+
+  <div *ngIf="stations.length > 0" class="stations-content">
+    <h2>قائمة المحطات</h2>
+    <div class="station-list">
+      <div *ngFor="let station of stations" class="station-item" (click)="goToServices(station.ID)" style="cursor: pointer;">
+        <div class="station-body">
+          <div class="station-header" (click)="$event.stopPropagation(); openPopup(station)">
+            <i class="fas fa-map-marker-alt" style="margin-right: 5px; color: #007bff;"></i>
+            <span><strong>انظر إلى العنوان في الخريطة:</strong></span>
+          </div>
+          <p><strong>محطة:</strong> {{ station.Name || 'غير محدد' }}</p>
+          <p *ngIf="station.Location">
+            <strong>الموقع:</strong> {{ station.Location }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- الخريطة -->
+
+    <!-- التفريغ (Pagination) - تم نقله إلى الأسفل -->
+    <nav aria-label="Pagination" class="pagination-container">
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="onPageChange(currentPage - 1)" href="javascript:void(0);">السابق</a>
+        </li>
+        <li *ngFor="let page of getPages()" class="page-item" [class.active]="page === currentPage">
+          <a class="page-link" (click)="onPageChange(page)" href="javascript:void(0);">{{ page }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
+          <a class="page-link" (click)="onPageChange(currentPage + 1)" href="javascript:void(0);">التالي</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div *ngIf="stations.length === 0 && !errorMessage" class="loading">
+    <p>جاري تحميل البيانات...</p>
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">جاري التحميل...</span>
+    </div>
+    <p *ngIf="stations.length === 0 && errorMessage === null">أو لا توجد محطات</p>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<div class="train-list">
+  <h2>🚆 قائمة القطارات</h2>
+  <ul>
+    <li *ngFor="let train of trains">
+      <span class="train-info">
+        <strong>{{ train.No }}</strong> - من 
+        <span class="route">{{ train.Route_From }}</span> إلى 
+        <span class="route">{{ train.Route_To }}</span>
+      </span>
+      <button (click)="goToTrainDetails(train.ID)">تفاصيل</button>
+    </li>
+  </ul>
+</div>
+<ng-template #loading>جاري التحميل...</ng-template>

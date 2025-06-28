@@ -1,0 +1,279 @@
+/* Personal Info Component Enhanced Styles */
+.info-card {
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(30, 60, 114, 0.08);
+  background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-top: -40px;
+  position: relative;
+  z-index: 3;
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(30, 60, 114, 0.12);
+}
+
+.info-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #1e3c72, #2a5298, #3f51b5);
+}
+
+/* Card Header */
+.info-card .card-header {
+  background: linear-gradient(135deg, rgba(30, 60, 114, 0.05) 0%, rgba(42, 82, 152, 0.03) 100%) !important;
+  border: none !important;
+  padding: 1.5rem 2rem 1rem;
+  position: relative;
+}
+
+.info-card .card-title {
+  color: #1e3c72 !important;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.info-card .card-title i {
+  background: linear-gradient(45deg, #1e3c72, #2a5298);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 1rem;
+  box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2);
+  transition: all 0.3s ease;
+}
+
+.info-card .card-title:hover i {
+  transform: rotate(5deg) scale(1.05);
+  box-shadow: 0 6px 20px rgba(30, 60, 114, 0.3);
+}
+
+/* Card Body */
+.info-card .card-body {
+  padding: 2rem;
+  background: white;
+}
+
+/* Display Mode Styles */
+.info-card .col-md-6 {
+  position: relative;
+  padding: 1rem;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.info-card .col-md-6:hover {
+  background: linear-gradient(135deg, rgba(30, 60, 114, 0.02) 0%, rgba(42, 82, 152, 0.01) 100%);
+  transform: translateY(-2px);
+}
+
+.info-card label.text-muted {
+  color: #6c757d !important;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  display: block;
+  position: relative;
+}
+
+.info-card label.text-muted::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, #1e3c72, #2a5298);
+  border-radius: 1px;
+}
+
+.info-card p.fw-bold {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  padding: 0.5rem 0;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+/* Edit Form Styles */
+.info-card .form-label {
+  color: #1e3c72;
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.info-card .form-control,
+.info-card .form-select {
+  border: 2px solid #e8f4fd;
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(30, 60, 114, 0.05);
+}
+
+.info-card .form-control:focus,
+.info-card .form-select:focus {
+  border-color: #2a5298;
+  box-shadow: 0 0 0 0.25rem rgba(42, 82, 152, 0.15);
+  background: white;
+  transform: translateY(-1px);
+}
+
+.info-card .form-control:hover,
+.info-card .form-select:hover {
+  border-color: #5a9bd4;
+  transform: translateY(-1px);
+}
+
+/* Buttons */
+.info-card .edit-btn {
+  background: linear-gradient(45deg, #1e3c72, #2a5298);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.8rem 2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-card .edit-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.info-card .edit-btn:hover::before {
+  left: 100%;
+}
+
+.info-card .edit-btn:hover {
+  background: linear-gradient(45deg, #2a5298, #3f51b5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+}
+
+.info-card .btn-secondary {
+  background: linear-gradient(45deg, #6c757d, #858c94);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.8rem 2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
+}
+
+.info-card .btn-secondary:hover {
+  background: linear-gradient(45deg, #858c94, #9ca3ab);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .info-card {
+    margin-top: -20px;
+    border-radius: 15px;
+  }
+  
+  .info-card .card-header {
+    padding: 1.2rem 1.5rem 0.8rem;
+  }
+  
+  .info-card .card-title {
+    font-size: 1.2rem;
+  }
+  
+  .info-card .card-title i {
+    width: 35px;
+    height: 35px;
+    margin-left: 0.8rem;
+  }
+  
+  .info-card .card-body {
+    padding: 1.5rem;
+  }
+  
+  .info-card .col-md-6 {
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  .info-card .edit-btn,
+  .info-card .btn-secondary {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .info-card .card-header {
+    padding: 1rem;
+  }
+  
+  .info-card .card-body {
+    padding: 1rem;
+  }
+  
+  .info-card .card-title {
+    font-size: 1.1rem;
+  }
+}
+
+/* Animation for smooth entrance */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.info-card {
+  animation: slideInUp 0.8s ease-out 0.3s both;
+}
+
+/* RTL Support */
+[dir="rtl"] .info-card .card-title i {
+  margin-left: 0;
+  margin-right: 1rem;
+}
+
+[dir="rtl"] .info-card label.text-muted::after {
+  left: auto;
+  right: 0;
+}

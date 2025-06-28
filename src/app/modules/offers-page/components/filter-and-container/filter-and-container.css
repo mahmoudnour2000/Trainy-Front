@@ -1,0 +1,320 @@
+Modern styles for the filter and container component
+:root {
+  --primary-color: #0d6efd;
+  --primary-hover: #0b5ed7;
+  --secondary-color: #6c757d;
+  --success-color: #198754;
+  --danger-color: #dc3545;
+  --warning-color: #ffc107;
+  --light-bg: #f8f9fa;
+  --border-color: #dee2e6;
+  --card-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+  --transition-speed: 0.2s;
+  --border-radius: 0.5rem;
+}
+
+/* Base styles */
+#FirstCard {
+  padding-top: 1.5rem;
+  padding-bottom: 2rem;
+}
+
+/* Search section */
+.search-section {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Form controls */
+.form-control,
+.form-select {
+  border-radius: var(--border-radius);
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-speed) ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+  outline: none;
+}
+
+/* Input group */
+.input-group {
+  border-radius: var(--border-radius);
+  transition: all var(--transition-speed) ease;
+}
+
+.input-group:focus-within {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.input-group-text {
+  background-color: #f8f9fa;
+  border: 1px solid var(--border-color);
+  color: var(--secondary-color);
+  transition: all var(--transition-speed) ease;
+}
+
+/* Dropdowns */
+.dropdown-menu {
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropdown-item {
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: all var(--transition-speed) ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: #f0f7ff;
+  color: var(--primary-color);
+}
+
+.dropdown-divider {
+  margin: 0.5rem 0;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Buttons */
+.btn {
+  border-radius: var(--border-radius);
+  padding: 0.5rem 1rem;
+  font-weight: 500;
+  transition: all var(--transition-speed) ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-light {
+  background-color: #f8f9fa;
+  border: 1px solid var(--border-color);
+  color: #212529;
+}
+
+.btn-light:hover,
+.btn-light:focus {
+  background-color: #f1f3f5;
+  border-color: #ced4da;
+}
+
+.btn-link {
+  text-decoration: none;
+  color: var(--primary-color);
+  padding: 0.25rem 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+  color: var(--primary-hover);
+  background: none;
+}
+
+.btn-link:disabled {
+  color: #adb5bd;
+  pointer-events: none;
+}
+
+/* Empty state */
+.empty-state {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem 0;
+}
+
+.empty-icon {
+  font-size: 5rem;
+  color: #e9ecef;
+  margin-bottom: 1.5rem;
+}
+
+.empty-text {
+  color: #6c757d;
+  margin-bottom: 1rem;
+}
+
+/* Dropdown search */
+.dropdown-search {
+  padding: 0.5rem;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1000;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dropdown-search-input {
+  width: 100%;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  transition: all var(--transition-speed) ease;
+  font-size: 0.9rem;
+}
+
+.dropdown-search-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+  outline: none;
+}
+
+/* Animation for dropdown items */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-menu.show {
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* Checkmark for selected items */
+.fa-check {
+  font-size: 0.8em;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  color: var(--primary-color);
+}
+
+.dropdown-item.active .fa-check,
+:not(.dropdown-item.active) .fa-check.text-primary {
+  opacity: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+  .btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  
+  .btn-link {
+    justify-content: flex-start;
+  }
+  
+  .search-section {
+    padding: 1rem;
+  }
+  
+  .empty-state {
+    padding: 2rem 1rem;
+  }
+  
+  .empty-icon {
+    font-size: 3.5rem;
+  }
+  
+  .filter-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .dropdown-menu {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Active filter indicator */
+.filter-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  display: none;
+}
+
+.has-active-filters .filter-badge {
+  display: block;
+}
+
+/* Loading state */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius);
+  z-index: 1000;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}

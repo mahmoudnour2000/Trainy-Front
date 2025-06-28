@@ -1,0 +1,55 @@
+<div class="train-details" *ngIf="!isLoading; else loading">
+  <h2>تفاصيل القطار: {{ train.No }}</h2>
+  <p>من: {{ train.Route_From }} إلى: {{ train.Route_To }}</p>
+  <p>🚩 الموقع الحالي: {{ train.Current_Location }}</p>
+  
+  <div class="actions">
+    <button (click)="openChat()">💬 الشات</button>
+    <ng-container *ngIf="train.ID">
+      <button (click)="toggleNotification()" *ngIf="isNotificationEnabledValue !== null">
+        {{ isNotificationEnabledValue ? '🔕 تعطيل الإشعارات' : '🔔 تفعيل الإشعارات' }}
+      </button>
+    </ng-container>
+    <button class="btn btn-primary" (click)="goToLostAndFound()">المفقودات</button>
+    <button class="btn btn-success" (click)="openGuideModal()">كن قائد الرحلة 🚂</button>
+  </div>
+
+  <div class="stations-section">
+    <h3>المحطات</h3>
+    <div class="search-bar">
+      <input type="text" [(ngModel)]="searchQuery" placeholder="ابحث عن محطة...">
+      <button (click)="searchStations()">بحث</button>
+    </div>
+    <div class="stations-list">
+      <div *ngFor="let station of stations" class="station-item">
+        <p>{{ station.StationName }} - الوصول: {{ station.ArrivalTime }}</p>
+        <button (click)="goToStationServices(station.StationId)">خدمات المحطة</button>
+      </div>
+      <p *ngIf="stations.length === 0">لا توجد محطات مطابقة</p>
+    </div>
+  </div>
+
+  <!-- المودال -->
+  <div class="modal" *ngIf="isModalOpen">
+    <div class="modal-content">
+      <h3>دور قائد الرحلة</h3>
+      <p>
+        كن قائد الرحلة وتحكم في مغامرتك! كقائد رحلة، هتقدر:
+      </p>
+      <ul>
+        <li>تتابع موقع القطار لحظة بلحظة.</li>
+        <li>تتواصل مع الركاب في الشات.</li>
+        <li>تساعد في تنظيم الرحلة وتقديم الدعم.</li>
+      </ul>
+      <p>
+        ملاحظة: بنحتاج إذن الوصول لموقعك عشان نقدر نسجلك كقائد.
+      </p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" (click)="requestGuideRole()">موافق</button>
+        <button class="btn btn-secondary" (click)="closeGuideModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>جاري التحميل...</ng-template>

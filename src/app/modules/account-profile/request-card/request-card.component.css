@@ -1,0 +1,19 @@
+/* src/app/modules/account-profile/request-card/request-card.component.css */
+.request-card {
+  background: white;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.request-card:hover {
+  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+  transform: translateY(-3px);
+}
+
+.request-header {
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+  color: white;
+  border-radius: 10px 10px 0 0;
+  padding: 1rem;
+}

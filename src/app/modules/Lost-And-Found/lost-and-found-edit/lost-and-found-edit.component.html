@@ -1,0 +1,26 @@
+<div class="container mt-4">
+  <h2>تعديل بلاغ المفقود</h2>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">جاري التحميل...</span>
+    </div>
+  </div>
+  <form *ngIf="!loading && !successMessage" novalidate>
+    <div class="mb-3">
+      <label for="itemDescription" class="form-label">وصف المفقود</label>
+      <textarea id="itemDescription" class="form-control" [(ngModel)]="post.ItemDescription" name="itemDescription" required></textarea>
+    </div>
+    <div class="mb-3">
+      <label for="contactDetails" class="form-label">بيانات التواصل</label>
+      <input id="contactDetails" type="text" class="form-control" [(ngModel)]="post.ContactDetails" name="contactDetails" required />
+    </div>
+    <div class="mb-3">
+      <label for="photo" class="form-label">صورة المفقود (اختياري)</label>
+      <input id="photo" type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*" />
+      <img *ngIf="post.Photo" [src]="post.Photo" alt="صورة المفقود" class="img-thumbnail mt-2" style="max-width: 200px;" />
+    </div>
+    <button type="button" class="btn btn-primary" [disabled]="loading" (click)="submit()">حفظ التعديلات</button>
+  </form>
+</div>

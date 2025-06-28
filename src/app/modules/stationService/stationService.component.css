@@ -1,0 +1,49 @@
+.services-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.search-bar {
+  margin-bottom: 20px;
+}
+.services-content {
+  margin-top: 20px;
+}
+.service-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 10px;
+}
+.service-item {
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+.map-container {
+  margin-top: 20px;
+  border: 1px solid #ddd;
+}
+.loading {
+  text-align: center;
+  padding: 20px;
+}
+.spinner-border {
+  width: 2rem;
+  height: 2rem;
+  border: 0.25rem solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border 0.75s linear infinite;
+}
+@keyframes spinner-border {
+  to { transform: rotate(360deg); }
+}
+.pagination {
+  justify-content: center;
+}
+.page-item.disabled .page-link {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

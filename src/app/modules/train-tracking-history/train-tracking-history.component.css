@@ -1,0 +1,20 @@
+.history-card {
+  max-width: 1200px;
+  margin: 20px auto;
+  text-align: right;
+}
+.table-responsive {
+  margin-top: 20px;
+}
+.mat-table {
+  width: 100%;
+}
+.badge {
+  padding: 5px 10px;
+  border-radius: 4px;
+  color: white;
+}
+.bg-success { background-color: #28a745; }
+.bg-warning { background-color: #ffc107; }
+.bg-primary { background-color: #007bff; }
+.bg-secondary { background-color: #6c757d; }

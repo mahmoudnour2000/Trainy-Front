@@ -1,0 +1,9 @@
+.needs-validation .ng-invalid.ng-touched {
+  border-color: #dc3545;
+}
+.invalid-feedback {
+  display: none;
+}
+.ng-invalid.ng-touched ~ .invalid-feedback {
+  display: block;
+}

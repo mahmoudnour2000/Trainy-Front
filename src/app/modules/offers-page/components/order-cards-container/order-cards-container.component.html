@@ -1,0 +1,9 @@
+<div class="orders-container">
+    <div class="order-cards-wrapper">
+        <app-order-card 
+            *ngFor="let order of orders" 
+            [order]="order"
+            (deleteOrder)="onDeleteOrder($event)">
+        </app-order-card>
+    </div>
+</div> 

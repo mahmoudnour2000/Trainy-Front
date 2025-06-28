@@ -1,0 +1,7 @@
+<div class="toggle-container">
+  <label class="switch">
+    <input type="checkbox" [(ngModel)]="isNotificationEnabled" (change)="toggleNotification()">
+    <span class="slider"></span>
+  </label>
+  <span>{{ isNotificationEnabled ? 'Notifications Enabled' : 'Notifications Disabled' }}</span>
+</div>

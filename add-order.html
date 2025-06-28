@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إضافة طلب جديد</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="card-styles.css">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.3s;
+        }
+        
+        body {
+            background-color: #f5f7f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* navBar */
+        .navbar {
+            background: linear-gradient(135deg, #0045e4, #002fb0);
+            padding: 0.75rem 1rem;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            margin-left: 8px;
+        }
+
+        .navbar-brand span {
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .nav-item {
+            margin: 0 5px;
+        }
+
+        .nav-link {
+            color: white !important;
+            padding: 0.5rem 1rem !important;
+            font-size: 0.95rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .bell-icon {
+            color: white;
+            font-size: 1.2rem;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .bell-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-auth {
+            background-color: white;
+            color: #0d6efd;
+            font-weight: 600;
+            border-radius: 4px;
+            padding: 0.25rem 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-auth:hover {
+            background-color: #f8f9fa;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-divider {
+            width: 1px;
+            background-color: rgba(255, 255, 255, 0.3);
+            margin: 0 15px;
+        }
+
+        /* Form styling */
+        .form-section {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--card-shadow);
+            padding: 30px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+
+        .form-title {
+            margin-bottom: 25px;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .photo-upload-container {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .photo-upload-container:hover {
+            border-color: var(--primary-color);
+            background-color: #f1f8ff;
+        }
+
+        #uploadPlaceholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--secondary-color);
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+
+        #photoPreview {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+            object-fit: contain;
+        }
+
+        #removePhotoBtn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 2;
+            transition: all 0.2s ease;
+        }
+
+        #removePhotoBtn:hover {
+            background-color: #f8d7da;
+            color: #dc3545;
+        }
+
+        .photo-upload-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: #e9ecef;
+            display: none;
+        }
+
+        .photo-upload-progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .filter-btn {
+            width: 100%;
+            text-align: right;
+            position: relative;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            color: var(--secondary-color);
+            transition: var(--transition-speed);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .filter-btn::after {
+            content: "\f107";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 15px;
+            right: auto;
+        }
+        
+        .filter-btn:hover {
+            background-color: var(--light-bg);
+        }
+
+        .footer-bottom {
+            background-color: #002fb0;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+            padding: 15px 0;
+            font-size: 0.9rem;
+        }
+        
+        .footer-bottom a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .btn-action {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg">
+          <div class="container">
+            <!-- Logo and Brand -->
+            <a class="navbar-brand" href="arabic-order-management-ui.html">
+              <img src="https://via.placeholder.com/40" alt="Logo">
+              <span>خدمات التوصيل</span>
+            </a>
+            
+            <!-- Toggle Button for Mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <!-- Navbar Content -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+              <!-- Navigation Links - Right Side -->
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a class="nav-link active" href="arabic-order-management-ui.html">الرئيسية</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">خدماتنا</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">تتبع الشحنات</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">تواصل معنا</a>
+                </li>
+              </ul>
+              
+              <!-- Left Side Items: Notification and Auth -->
+              <div class="d-flex align-items-center">
+                <!-- Notification -->
+                <div class="me-3 position-relative">
+                  <i class="fas fa-bell bell-icon"></i>
+                  <div class="notification-badge">3</div>
+                </div>
+                
+                <!-- Divider -->
+                <div class="nav-divider"></div>
+                
+                <!-- Auth Buttons -->
+                <div class="auth-buttons">
+                  <button class="btn btn-auth">تسجيل الدخول</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="form-section">
+            <h3 class="form-title">إضافة طلب جديد</h3>
+            <form id="addOrderForm">
+                <!-- Photo upload section -->
+                <div class="mb-3">
+                    <label for="photoInput" class="form-label">صورة الطلب (اختياري)</label>
+                    <div class="photo-upload-container" id="photoUploadContainer">
+                        <input type="file" id="photoInput" class="d-none" accept="image/*">
+                        <div id="uploadPlaceholder">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <span>انقر لاختيار صورة</span>
+                            <small class="text-muted mt-1">أو اسحب وأفلت هنا</small>
+                        </div>
+                        <img id="photoPreview" src="#" alt="معاينة">
+                        <div id="removePhotoBtn">
+                            <i class="fas fa-times"></i>
+                        </div>
+                        <div class="photo-upload-progress" id="photoUploadProgress">
+                            <div class="photo-upload-progress-bar" id="photoUploadProgressBar"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Title field -->
+                <div class="mb-3">
+                    <label for="orderTitle" class="form-label">عنوان الطلب</label>
+                    <input type="text" class="form-control" id="orderTitle" required>
+                </div>
+                
+                <!-- Description field -->
+                <div class="mb-3">
+                    <label for="orderDescription" class="form-label">وصف الطلب</label>
+                    <textarea class="form-control" id="orderDescription" rows="3" required></textarea>
+                    <div class="form-text text-end">
+                        <span id="charCount">0</span> حرف
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="orderFrom" class="form-label">من</label>
+                        <div class="dropdown">
+                            <button class="btn filter-btn dropdown-toggle w-100" type="button" id="fromDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                اختر الموقع
+                            </button>
+                            <input type="hidden" id="orderFromValue" required>
+                            <ul class="dropdown-menu w-100" aria-labelledby="fromDropdown">
+                                <li>
+                                    <input type="text" class="form-control dropdown-search-input" placeholder="بحث...">
+                                </li>
+                                <li><a class="dropdown-item from-option" href="#" data-value="cairo">القاهرة</a></li>
+                                <li><a class="dropdown-item from-option" href="#" data-value="alexandria">الإسكندرية</a></li>
+                                <li><a class="dropdown-item from-option" href="#" data-value="giza">الجيزة</a></li>
+                                <li><a class="dropdown-item from-option" href="#" data-value="sharm">شرم الشيخ</a></li>
+                                <li><a class="dropdown-item from-option" href="#" data-value="luxor">الأقصر</a></li>
+                                <li><a class="dropdown-item from-option" href="#" data-value="aswan">أسوان</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="orderTo" class="form-label">إلى</label>
+                        <div class="dropdown">
+                            <button class="btn filter-btn dropdown-toggle w-100" type="button" id="toDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                اختر الموقع
+                            </button>
+                            <input type="hidden" id="orderToValue" required>
+                            <ul class="dropdown-menu w-100" aria-labelledby="toDropdown">
+                                <li>
+                                    <input type="text" class="form-control dropdown-search-input" placeholder="بحث...">
+                                </li>
+                                <li><a class="dropdown-item to-option" href="#" data-value="cairo">القاهرة</a></li>
+                                <li><a class="dropdown-item to-option" href="#" data-value="alexandria">الإسكندرية</a></li>
+                                <li><a class="dropdown-item to-option" href="#" data-value="giza">الجيزة</a></li>
+                                <li><a class="dropdown-item to-option" href="#" data-value="sharm">شرم الشيخ</a></li>
+                                <li><a class="dropdown-item to-option" href="#" data-value="luxor">الأقصر</a></li>
+                                <li><a class="dropdown-item to-option" href="#" data-value="aswan">أسوان</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="orderCategory" class="form-label">الفئة</label>
+                        <select class="form-select" id="orderCategory" required>
+                            <option value="" selected disabled>اختر الفئة</option>
+                            <option value="documents">مستندات</option>
+                            <option value="electronics">إلكترونيات</option>
+                            <option value="clothing">ملابس</option>
+                            <option value="food">مواد غذائية</option>
+                            <option value="furniture">أثاث</option>
+                            <option value="other">أخرى</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="orderWeight" class="form-label">الوزن (كجم)</label>
+                        <input type="number" class="form-control" id="orderWeight" min="0.1" step="0.1" required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="isBreakable">
+                            <label class="form-check-label" for="isBreakable">
+                                قابل للكسر <i class="fas fa-wine-glass-alt text-danger ms-1"></i>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="orderPrice" class="form-label">السعر (ج.م)</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="orderPrice" min="0" step="1">
+                            <span class="input-group-text">ج.م</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mt-2">
+                            <small id="suggestedPriceText" class="text-muted">السعر المقترح لهذا الطلب: <span id="suggestedPrice">0</span> ج.م</small>
+                            <small id="priceWarning" class="text-danger d-none"><i class="fas fa-exclamation-circle me-1"></i> لا يمكن أن يكون السعر أقل من السعر المقترح</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="btn-action">
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">إلغاء</button>
+                    <button type="button" class="btn btn-primary" id="saveOrderBtn">حفظ الطلب</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <p class="mb-0">© 2025 خدمات التوصيل. جميع الحقوق محفوظة.</p>
+                        <div class="mt-1">
+                            <a href="#">سياسة الخصوصية</a>
+                            <a href="#">الشروط والأحكام</a>
+                            <a href="#">الدعم الفني</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Global variables
+            let uploadedPhoto = null;
+            let editMode = false;
+            let editOrderId = null;
+            
+            // Get existing orders from localStorage
+            let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            
+            // Check if we're in edit mode (URL has an ID parameter)
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('id');
+            
+            if (orderId) {
+                editMode = true;
+                editOrderId = orderId;
+                
+                // Find the order with the matching ID
+                const orderToEdit = orders.find(order => order.id == orderId);
+                
+                if (orderToEdit) {
+                    // Update page title to indicate edit mode
+                    document.title = 'تعديل الطلب';
+                    document.querySelector('.form-title').textContent = 'تعديل الطلب';
+                    
+                    // Fill form with existing order data
+                    loadOrderData(orderToEdit);
+                } else {
+                    // Order not found - redirect back to main page
+                    alert('لم يتم العثور على الطلب المطلوب!');
+                    window.location.href = 'arabic-order-management-ui.html';
+                }
+            }
+            
+            // Function to load order data into the form
+            function loadOrderData(order) {
+                // Set title and description
+                document.getElementById('orderTitle').value = order.title;
+                document.getElementById('orderDescription').value = order.description;
+                document.getElementById('charCount').textContent = order.description.length;
+                
+                // Set from location
+                document.getElementById('fromDropdown').textContent = order.fromDisplay;
+                document.getElementById('orderFromValue').value = order.from;
+                
+                // Set to location
+                document.getElementById('toDropdown').textContent = order.toDisplay;
+                document.getElementById('orderToValue').value = order.to;
+                
+                // Set category
+                document.getElementById('orderCategory').value = order.category;
+                
+                // Set weight
+                document.getElementById('orderWeight').value = order.weight;
+                
+                // Set breakable status
+                document.getElementById('isBreakable').checked = order.isBreakable;
+                
+                // Set price
+                document.getElementById('orderPrice').value = order.price;
+                
+                // Set photo if available
+                if (order.image && order.image !== 'https://via.placeholder.com/150?text=طلب+جديد') {
+                    uploadedPhoto = order.image;
+                    const photoPreview = document.getElementById('photoPreview');
+                    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+                    const removePhotoBtn = document.getElementById('removePhotoBtn');
+                    
+                    photoPreview.src = order.image;
+                    photoPreview.style.display = 'block';
+                    uploadPlaceholder.style.display = 'none';
+                    removePhotoBtn.style.display = 'flex';
+                }
+                
+                // Update suggested price calculation
+                updateSuggestedPrice();
+            }
+            
+            console.log('Loaded orders:', orders); // Debug log
+            
+            // Get DOM elements
+            const photoInput = document.getElementById('photoInput');
+            const photoPreview = document.getElementById('photoPreview');
+            const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+            const removePhotoBtn = document.getElementById('removePhotoBtn');
+            const photoUploadProgress = document.getElementById('photoUploadProgress');
+            const photoUploadProgressBar = document.getElementById('photoUploadProgressBar');
+            const photoUploadContainer = document.getElementById('photoUploadContainer');
+            
+            // Set up drag and drop for photo upload
+            photoUploadContainer.addEventListener('click', function() {
+                photoInput.click();
+            });
+            
+            photoUploadContainer.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                photoUploadContainer.classList.add('border-primary');
+            });
+            
+            photoUploadContainer.addEventListener('dragleave', function() {
+                photoUploadContainer.classList.remove('border-primary');
+            });
+            
+            photoUploadContainer.addEventListener('drop', function(e) {
+                e.preventDefault();
+                photoUploadContainer.classList.remove('border-primary');
+                
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    photoInput.files = e.dataTransfer.files;
+                    handleFileUpload(file);
+                }
+            });
+            
+            // Photo upload functionality
+            photoInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    handleFileUpload(file);
+                }
+            });
+            
+            function handleFileUpload(file) {
+                const reader = new FileReader();
+                
+                // Show progress bar
+                photoUploadProgress.style.display = 'block';
+                
+                reader.onprogress = function(event) {
+                    if (event.lengthComputable) {
+                        const progress = (event.loaded / event.total) * 100;
+                        photoUploadProgressBar.style.width = progress + '%';
+                    }
+                };
+                
+                reader.onload = function(e) {
+                    // Set preview image
+                    photoPreview.src = e.target.result;
+                    photoPreview.style.display = 'block';
+                    uploadPlaceholder.style.display = 'none';
+                    removePhotoBtn.style.display = 'flex';
+                    
+                    // Store uploaded photo
+                    uploadedPhoto = e.target.result;
+                    
+                    // Complete progress bar animation
+                    photoUploadProgressBar.style.width = '100%';
+                    setTimeout(() => {
+                        photoUploadProgress.style.display = 'none';
+                        photoUploadProgressBar.style.width = '0%';
+                    }, 500);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            // Remove photo button
+            removePhotoBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                
+                // Reset photo input
+                photoInput.value = '';
+                
+                // Hide preview and show placeholder
+                photoPreview.style.display = 'none';
+                uploadPlaceholder.style.display = 'block';
+                removePhotoBtn.style.display = 'none';
+                
+                // Clear stored photo
+                uploadedPhoto = null;
+            });
+            
+            // Character counter for description
+            const orderDescription = document.getElementById('orderDescription');
+            const charCount = document.getElementById('charCount');
+            
+            orderDescription.addEventListener('input', function() {
+                charCount.textContent = this.value.length;
+            });
+            
+            // From dropdown functionality
+            document.querySelectorAll('.from-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const value = this.dataset.value;
+                    const text = this.textContent;
+                    
+                    document.getElementById('fromDropdown').textContent = text;
+                    document.getElementById('orderFromValue').value = value;
+                    
+                    // Update suggested price
+                    updateSuggestedPrice();
+                });
+            });
+            
+            // To dropdown functionality
+            document.querySelectorAll('.to-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const value = this.dataset.value;
+                    const text = this.textContent;
+                    
+                    document.getElementById('toDropdown').textContent = text;
+                    document.getElementById('orderToValue').value = value;
+                    
+                    // Update suggested price
+                    updateSuggestedPrice();
+                });
+            });
+            
+            // Function to update suggested price
+            function updateSuggestedPrice() {
+                const fromValue = document.getElementById('orderFromValue').value;
+                const toValue = document.getElementById('orderToValue').value;
+                const weight = parseFloat(document.getElementById('orderWeight').value) || 0;
+                
+                if (fromValue && toValue) {
+                    // Calculate base price based on locations
+                    const basePrice = calculatePrice(fromValue, toValue);
+                    
+                    // Add additional cost based on weight
+                    const priceWithWeight = basePrice + (weight > 5 ? (weight - 5) * 5 : 0);
+                    
+                    // Round to integer for easier readability
+                    const suggestedPrice = Math.round(priceWithWeight);
+                    
+                    // Update suggested price text
+                    document.getElementById('suggestedPrice').textContent = suggestedPrice;
+                    
+                    // Update order price field if it's empty or less than suggested price
+                    const orderPrice = parseInt(document.getElementById('orderPrice').value) || 0;
+                    if (orderPrice === 0 || document.getElementById('orderPrice').value === '') {
+                        document.getElementById('orderPrice').value = suggestedPrice;
+                    } else {
+                        validateOrderPrice(orderPrice, suggestedPrice);
+                    }
+                }
+            }
+            
+            // Validate order price doesn't go below suggested price
+            function validateOrderPrice(orderPrice, suggestedPrice) {
+                const priceWarning = document.getElementById('priceWarning');
+                
+                if (orderPrice < suggestedPrice) {
+                    priceWarning.classList.remove('d-none');
+                    return false;
+                } else {
+                    priceWarning.classList.add('d-none');
+                    return true;
+                }
+            }
+            
+            // Update price when weight changes
+            document.getElementById('orderWeight').addEventListener('input', function() {
+                updateSuggestedPrice();
+            });
+            
+            // Validate order price doesn't go below suggested price
+            document.getElementById('orderPrice').addEventListener('input', function() {
+                const suggestedPrice = parseInt(document.getElementById('suggestedPrice').textContent) || 0;
+                const orderPrice = parseInt(this.value) || 0;
+                
+                validateOrderPrice(orderPrice, suggestedPrice);
+            });
+            
+            // Dropdown search functionality
+            document.querySelectorAll('.dropdown-search-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    const searchText = this.value.toLowerCase();
+                    const dropdownItems = this.closest('.dropdown-menu').querySelectorAll('.dropdown-item');
+                    
+                    dropdownItems.forEach(item => {
+                        const itemText = item.textContent.toLowerCase();
+                        if (itemText.includes(searchText)) {
+                            item.style.display = '';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+                
+                // Prevent dropdown from closing when clicking on the search input
+                input.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
+            
+            // Function to calculate price based on from/to locations
+            function calculatePrice(from, to) {
+                // Basic price calculation logic
+                const priceMatrix = {
+                    'cairo': {
+                        'alexandria': 50,
+                        'giza': 25,
+                        'sharm': 120,
+                        'luxor': 100,
+                        'aswan': 150,
+                        'cairo': 20
+                    },
+                    'alexandria': {
+                        'cairo': 50,
+                        'giza': 60,
+                        'sharm': 160,
+                        'luxor': 140,
+                        'aswan': 180,
+                        'alexandria': 20
+                    },
+                    'giza': {
+                        'cairo': 25,
+                        'alexandria': 60,
+                        'sharm': 130,
+                        'luxor': 110,
+                        'aswan': 160,
+                        'giza': 20
+                    },
+                    'sharm': {
+                        'cairo': 120,
+                        'alexandria': 160,
+                        'giza': 130,
+                        'luxor': 200,
+                        'aswan': 250,
+                        'sharm': 20
+                    },
+                    'luxor': {
+                        'cairo': 100,
+                        'alexandria': 140,
+                        'giza': 110,
+                        'sharm': 200,
+                        'aswan': 80,
+                        'luxor': 20
+                    },
+                    'aswan': {
+                        'cairo': 150,
+                        'alexandria': 180,
+                        'giza': 160,
+                        'sharm': 250,
+                        'luxor': 80,
+                        'aswan': 20
+                    }
+                };
+                
+                return priceMatrix[from]?.[to] || 100; // Default price if locations not found
+            }
+            
+            // Cancel button functionality
+            document.getElementById('cancelBtn').addEventListener('click', function() {
+                window.location.href = 'arabic-order-management-ui.html';
+            });
+            
+            // Save order button functionality
+            document.getElementById('saveOrderBtn').addEventListener('click', function() {
+                const form = document.getElementById('addOrderForm');
+                
+                // Check if all required fields are filled
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+                
+                // Get values from form
+                const title = document.getElementById('orderTitle').value;
+                const description = document.getElementById('orderDescription').value;
+                const fromValue = document.getElementById('orderFromValue').value;
+                const fromDisplay = document.getElementById('fromDropdown').textContent;
+                const toValue = document.getElementById('orderToValue').value;
+                const toDisplay = document.getElementById('toDropdown').textContent;
+                const category = document.getElementById('orderCategory').value;
+                const categoryDisplay = document.getElementById('orderCategory').options[document.getElementById('orderCategory').selectedIndex].text;
+                const weight = parseFloat(document.getElementById('orderWeight').value);
+                
+                // Get the order price and suggested price
+                const orderPrice = parseInt(document.getElementById('orderPrice').value) || 0;
+                const suggestedPrice = parseInt(document.getElementById('suggestedPrice').textContent) || 0;
+                
+                // Validate price is not below suggested price
+                if (orderPrice < suggestedPrice) {
+                    // Show warning and prevent form submission
+                    validateOrderPrice(orderPrice, suggestedPrice);
+                    return;
+                }
+                
+                // Use valid order price
+                const finalPrice = orderPrice;
+                
+                // Get breakable status
+                const isBreakable = document.getElementById('isBreakable').checked;
+                
+                // Check if we're editing an existing order or creating a new one
+                if (editMode && editOrderId) {
+                    // Find the index of the order to update
+                    const orderIndex = orders.findIndex(order => order.id == editOrderId);
+                    
+                    if (orderIndex !== -1) {
+                        // Update the existing order
+                        orders[orderIndex] = {
+                            ...orders[orderIndex], // Keep the original ID and date
+                            title,
+                            description,
+                            from: fromValue,
+                            fromDisplay,
+                            to: toValue,
+                            toDisplay,
+                            category,
+                            categoryDisplay,
+                            weight,
+                            price: finalPrice,
+                            isBreakable: isBreakable,
+                            image: uploadedPhoto || orders[orderIndex].image || 'https://via.placeholder.com/150?text=طلب+جديد',
+                            // Keep the original date but add lastEdited timestamp
+                            lastEdited: new Date()
+                        };
+                        
+                        // Show success message
+                        alert('تم تحديث الطلب بنجاح!'); // Order updated successfully
+                    } else {
+                        // Order not found - should not happen normally
+                        alert('حدث خطأ أثناء تحديث الطلب.'); // Error updating order
+                        return;
+                    }
+                } else {
+                    // Create new order object
+                    const newOrder = {
+                        id: Date.now(), // Use timestamp as unique ID
+                        title,
+                        description,
+                        from: fromValue,
+                        fromDisplay,
+                        to: toValue,
+                        toDisplay,
+                        category,
+                        categoryDisplay,
+                        weight,
+                        price: finalPrice,
+                        isBreakable: isBreakable,
+                        image: uploadedPhoto || 'https://via.placeholder.com/150?text=طلب+جديد',
+                        date: new Date()
+                    };
+                    
+                    // Add new order to array
+                    orders.unshift(newOrder);
+                    
+                    // Show success message
+                    alert('تم إضافة الطلب بنجاح!'); // Order added successfully
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('orders', JSON.stringify(orders));
+                
+                // Redirect back to main page
+                window.location.href = 'arabic-order-management-ui.html';
+            });
+        });
+    </script>
+</body>
+</html>

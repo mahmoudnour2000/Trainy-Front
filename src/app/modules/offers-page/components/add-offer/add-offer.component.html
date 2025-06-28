@@ -1,0 +1,136 @@
+<div class="container">
+    <div class="form-section">
+        <h3 class="form-title">{{editMode ? 'تعديل الطلب' : 'إضافة طلب جديد'}}</h3>
+        <form [formGroup]="offerForm" (ngSubmit)="onSubmit()">
+            <!-- Photo upload section -->
+            <div class="mb-3">
+                <label for="photoInput" class="form-label">صورة الطلب (اختياري)</label>
+                <div class="photo-upload-container" 
+                    id="photoUploadContainer" 
+                    (dragover)="onDragOver($event)" 
+                    (drop)="onDrop($event)"
+                    (click)="photoInput.click()">
+                    <input #photoInput type="file" id="photoInput" class="d-none" accept="image/*" (change)="onPhotoUpload($event)">
+                    <div #uploadPlaceholder id="uploadPlaceholder" [style.display]="uploadedPhoto ? 'none' : 'block'">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <span>انقر لاختيار صورة</span>
+                        <small class="text-muted mt-1">أو اسحب وأفلت هنا</small>
+                    </div>
+                    <img #photoPreview id="photoPreview" [src]="uploadedPhoto || ''" alt="معاينة" [style.display]="uploadedPhoto ? 'block' : 'none'">
+                    <div #removePhotoBtn id="removePhotoBtn" [style.display]="uploadedPhoto ? 'flex' : 'none'" (click)="removePhoto(); $event.stopPropagation()">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Title field -->
+            <div class="mb-3">
+                <label for="orderTitle" class="form-label">عنوان الطلب</label>
+                <input type="text" class="form-control" id="orderTitle" formControlName="title" required>
+                <div class="form-text text-danger" *ngIf="offerForm.get('title')?.invalid && offerForm.get('title')?.touched">
+                    يرجى إدخال عنوان للطلب
+                </div>
+            </div>
+            
+            <!-- Description field -->
+            <div class="mb-3">
+                <label for="orderDescription" class="form-label">وصف الطلب</label>
+                <textarea class="form-control" id="orderDescription" rows="3" formControlName="description" required></textarea>
+                <div class="d-flex justify-content-between">
+                    <div class="form-text text-danger"
+                         *ngIf="offerForm.get('description')?.errors?.['minlength'] && offerForm.get('description')?.touched">
+                        الوصف قصير جداً (10 أحرف على الأقل).
+                    </div>
+                    <div class="form-text text-danger"
+                         *ngIf="offerForm.get('description')?.errors?.['maxlength'] && offerForm.get('description')?.touched">
+                        الوصف طويل جداً (100 حرف كحد أقصى).
+                    </div>
+                    <div class="form-text text-end">
+                        <span>{{ offerForm.get('description')?.value?.length || 0 }} / 100</span> حرف
+                    </div>
+                </div>
+                <div class="form-text text-danger" 
+                     *ngIf="offerForm.get('description')?.errors?.['required'] && offerForm.get('description')?.touched && !offerForm.get('description')?.errors?.['minlength'] && !offerForm.get('description')?.errors?.['maxlength']">
+                    يرجى إدخال وصف تفصيلي للطلب
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="orderFrom" class="form-label">من</label>
+                    <select class="form-select" id="orderFrom" formControlName="from" required>
+                        <option value="" disabled selected>اختر الموقع</option>
+                        <option *ngFor="let location of locations" [value]="location.id">{{ location.name }}</option>
+                    </select>
+                    <div class="form-text text-danger" *ngIf="offerForm.get('from')?.invalid && offerForm.get('from')?.touched">
+                        يرجى اختيار موقع المصدر
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="orderTo" class="form-label">إلى</label>
+                    <select class="form-select" id="orderTo" formControlName="to" required>
+                        <option value="" disabled selected>اختر الموقع</option>
+                        <option *ngFor="let location of locations" [value]="location.id">{{ location.name }}</option>
+                    </select>
+                    <div class="form-text text-danger" *ngIf="offerForm.get('to')?.invalid && offerForm.get('to')?.touched">
+                        يرجى اختيار موقع الوجهة
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="orderCategory" class="form-label">الفئة</label>
+                    <select class="form-select" id="orderCategory" formControlName="category" required>
+                        <option value="" selected disabled>اختر الفئة</option>
+                        <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+                    </select>
+                    <div class="form-text text-danger" *ngIf="offerForm.get('category')?.invalid && offerForm.get('category')?.touched">
+                        يرجى اختيار فئة الطلب
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="orderWeight" class="form-label">الوزن (كجم)</label>
+                    <input type="number" class="form-control" id="orderWeight" formControlName="weight" min="0.1" step="0.1" required>
+                    <div class="form-text text-danger" *ngIf="offerForm.get('weight')?.invalid && offerForm.get('weight')?.touched">
+                        يرجى إدخال وزن صحيح (0.1 كجم على الأقل)
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="isBreakable" formControlName="isBreakable">
+                        <label class="form-check-label" for="isBreakable">
+                            قابل للكسر <i class="fas fa-wine-glass-alt text-danger ms-1"></i>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-12 mb-3">
+                    <label for="orderPrice" class="form-label">السعر (ج.م)</label>
+                    <div class="input-group">
+                        <input type="number" class="form-control" id="orderPrice" formControlName="price" min="0" step="1" required>
+                        <span class="input-group-text">ج.م</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <small class="text-muted">السعر المقترح لهذا الطلب: <span>{{ suggestedPrice }}</span> ج.م</small>
+                        <small class="text-danger" *ngIf="!validatePrice() && offerForm.get('price')?.value">
+                            <i class="fas fa-exclamation-circle me-1"></i> لا يمكن أن يكون السعر أقل من السعر المقترح
+                        </small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="btn-action">
+                <button type="button" class="btn btn-secondary" (click)="onCancel()">إلغاء</button>
+                <button type="submit" class="btn btn-primary" [disabled]="offerForm.invalid || !validatePrice()">
+                    {{ editMode ? 'تحديث الطلب' : 'حفظ الطلب' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

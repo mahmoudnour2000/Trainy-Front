@@ -1,0 +1,56 @@
+<!-- src/app/modules/account-profile/personal-info/personal-info.component.html -->
+<div class="card info-card mb-4">
+  <div class="card-header bg-white border-0 pb-0">
+    <h5 class="card-title text-primary">
+      <i class="fas fa-user me-2"></i>البيانات الشخصية
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="row" *ngIf="!editMode; else editForm">
+      <div class="col-md-6 mb-3">
+        <label class="text-muted small">الاسم الكامل</label>
+        <p class="fw-bold mb-0">{{ user?.Name }}</p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="text-muted small">البريد الإلكتروني</label>
+        <p class="fw-bold mb-0">{{ user?.Email }}</p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="text-muted small">المحافظة</label>
+        <p class="fw-bold mb-0">{{ user?.Governorate }}</p>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="text-muted small">المدينة</label>
+        <p class="fw-bold mb-0">{{ user?.City }}</p>
+      </div>
+    </div>
+    <ng-template #editForm>
+  <form (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">الاسم الكامل</label>
+        <input type="text" class="form-control" [(ngModel)]="editedUser.Name" name="name" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">البريد الإلكتروني</label>
+        <input type="email" class="form-control" [(ngModel)]="editedUser.Email" name="email" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">المحافظة</label>
+        <select class="form-select" [(ngModel)]="editedUser.Governorate" name="governorate" required>
+          <option *ngFor="let gov of governorates" [value]="gov">{{ gov }}</option>
+        </select>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label class="form-label">المدينة</label>
+        <input type="text" class="form-control" [(ngModel)]="editedUser.City" name="city" required>
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn edit-btn me-2" [disabled]="!isFormValid()">حفظ التغييرات</button>
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">إلغاء</button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+  </div>
+</div>

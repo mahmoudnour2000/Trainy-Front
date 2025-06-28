@@ -1,0 +1,82 @@
+<mat-card dir="rtl" class="history-card">
+  <mat-card-header>
+    <mat-card-title>سجل تتبع القطار رقم {{ trainId }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formGroup]="filterForm" (ngSubmit)="loadHistory()">
+      <mat-form-field appearance="fill">
+        <mat-label>تاريخ البداية</mat-label>
+        <input matInput type="date" formControlName="startDate">
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>تاريخ النهاية</mat-label>
+        <input matInput type="date" formControlName="endDate">
+      </mat-form-field>
+      <button mat-raised-button color="primary" type="submit">تصفية</button>
+    </form>
+    <div class="table-responsive" *ngIf="history.length > 0; else noData">
+      <table mat-table [dataSource]="history" class="mat-elevation-z8">
+        <ng-container matColumnDef="trainNo">
+          <th mat-header-cell *matHeaderCellDef>رقم القطار</th>
+          <td mat-cell *matCellDef="let row">{{ row.trainNo }}</td>
+        </ng-container>
+        <ng-container matColumnDef="currentStation">
+          <th mat-header-cell *matHeaderCellDef>المحطة الحالية</th>
+          <td mat-cell *matCellDef="let row">{{ row.currentStationName }} (ID: {{ row.currentStationId || 'غير متوفر' }})</td>
+        </ng-container>
+        <ng-container matColumnDef="nextStation">
+          <th mat-header-cell *matHeaderCellDef>المحطة التالية</th>
+          <td mat-cell *matCellDef="let row">{{ row.nextStationName }} (ID: {{ row.nextStationId || 'غير متوفر' }})</td>
+        </ng-container>
+        <ng-container matColumnDef="guide">
+          <th mat-header-cell *matHeaderCellDef>المرشد</th>
+          <td mat-cell *matCellDef="let row">{{ row.guideName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="latitude">
+          <th mat-header-cell *matHeaderCellDef>خط العرض</th>
+          <td mat-cell *matCellDef="let row">{{ row.latitude }}</td>
+        </ng-container>
+        <ng-container matColumnDef="longitude">
+          <th mat-header-cell *matHeaderCellDef>خط الطول</th>
+          <td mat-cell *matCellDef="let row">{{ row.longitude }}</td>
+        </ng-container>
+        <ng-container matColumnDef="expectedArrival">
+          <th mat-header-cell *matHeaderCellDef>وقت الوصول</th>
+          <td mat-cell *matCellDef="let row">{{ row.expectedArrival | date:'medium':'ar-EG' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>الحالة</th>
+          <td mat-cell *matCellDef="let row">
+            <span [ngClass]="{
+              'badge': true,
+              'bg-success': row.status === 'OnTime',
+              'bg-warning': row.status === 'Delayed',
+              'bg-primary': row.status === 'Arrived',
+              'bg-secondary': row.status !== 'OnTime' && row.status !== 'Delayed' && row.status !== 'Arrived'
+            }">{{ row.status }}</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="distance">
+          <th mat-header-cell *matHeaderCellDef>المسافة</th>
+          <td mat-cell *matCellDef="let row">{{ row.distanceToNextStation ? (row.distanceToNextStation / 1000 | number:'1.2-2') + ' كم' : 'غير متوفر' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="speed">
+          <th mat-header-cell *matHeaderCellDef>السرعة</th>
+          <td mat-cell *matCellDef="let row">{{ row.speed ? (row.speed | number:'1.2-2') + ' كم/س' : 'غير متوفر' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="lastUpdated">
+          <th mat-header-cell *matHeaderCellDef>آخر تحديث</th>
+          <td mat-cell *matCellDef="let row">{{ row.lastUpdated | date:'medium':'ar-EG' }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+    <ng-template #noData>
+      <div class="alert alert-info">لا توجد سجلات تتبع لهذا القطار</div>
+    </ng-template>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="secondary" [routerLink]="['/train-tracking', trainId]">رجوع</button>
+  </mat-card-actions>
+</mat-card>

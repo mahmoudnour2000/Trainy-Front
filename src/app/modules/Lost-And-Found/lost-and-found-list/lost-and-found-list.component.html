@@ -1,0 +1,38 @@
+<div class="container mt-4">
+  <h2>المفقودات في القطار رقم {{ trainId }}</h2>
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div class="mb-3">
+    <label for="searchDate" class="form-label">البحث بتاريخ الفقدان</label>
+    <input id="searchDate" type="date" class="form-control" [(ngModel)]="searchDate" (ngModelChange)="search()" />
+  </div>
+    <a class="btn btn-success mt-3" (click)="reportLost()">إبلاغ عن مفقود</a>
+
+  <div *ngIf="loading" class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">جاري التحميل...</span>
+    </div>
+  </div>
+  <div *ngIf="!loading && posts.length === 0" class="alert alert-info">
+    لا توجد بلاغات مفقودات لهذا القطار
+  </div>
+  <div *ngFor="let post of posts" class="card mb-3">
+    <div class="card-body">
+      <!-- <pre>{{ post | json }}</pre> -->
+      <h5 class="card-title">بلاغ رقم {{ post.LfId }}</h5>
+      <p class="card-text">الوصف: {{ post.ItemDescription }}</p>
+      <p class="card-text">بيانات التواصل: {{ post.ContactDetails }}</p>
+      <p class="card-text">تاريخ الفقدان: {{ post.DateLost }}</p>
+      <img *ngIf="post.Photo" [src]="post.Photo" alt="صورة المفقود" class="img-thumbnail" style="max-width: 200px;" />
+      <div *ngIf="isUserPost(post)" class="mt-2">
+        <button class="btn btn-primary me-2" (click)="editPost(post.LfId)">تعديل</button>
+        <button class="btn btn-danger" (click)="deletePost(post.LfId)">حذف</button>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-between mt-3">
+    <button class="btn btn-primary" [disabled]="pageNumber === 1" (click)="previousPage()">السابق</button>
+    <span>صفحة {{ pageNumber }} من {{ totalPages }}</span>
+    <button class="btn btn-primary" [disabled]="pageNumber >= totalPages" (click)="nextPage()">التالي</button>
+  </div>
+</div>

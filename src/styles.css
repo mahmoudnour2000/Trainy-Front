@@ -1,1 +1,152 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global styles for Arabic UI */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
+@import 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css';
+
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --light-bg: #f8f9fa;
+    --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.3s;
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: #f5f7f9;
+    direction: rtl;
+    text-align: right;
+}
+
+/* Common Elements */
+.container {
+    padding: 1.5rem;
+}
+
+.app-content {
+    min-height: calc(100vh - 300px);
+}
+
+/* Card Styles */
+.card {
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
+    transition: transform var(--transition-speed);
+    overflow: hidden;
+    height: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+/* Profile style */
+/* src/styles.css */
+
+:root {
+  /* --primary-blue: #2563eb; */
+  --light-blue: #dbeafe;
+  --dark-blue: #1e40af;
+  --gray-bg: #f8fafc;
+}
+
+
+/* ستايلز عامة للكروت والتأثيرات */
+.info-card {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  transition: transform 0.3s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-2px);
+}
+
+.nav-tabs .nav-link {
+  border: none;
+  color: #6b7280;
+  font-weight: 500;
+  padding: 12px 24px;
+  margin: 0 5px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link.active {
+  background: var(--primary-blue);
+  color: white;
+}
+
+.nav-tabs .nav-link:hover {
+  background: var(--light-blue);
+  color: var(--primary-blue);
+}
+
+.nav-tabs .nav-link.disabled {
+  background: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-completed {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.edit-btn {
+  background: var(--primary-blue);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.edit-btn:hover {
+  background: var(--dark-blue);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.form-control:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #6b7280;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #d1d5db;
+}
+
+@media (max-width: 768px) {
+  .balance-amount {
+    font-size: 1.5rem;
+  }
+}

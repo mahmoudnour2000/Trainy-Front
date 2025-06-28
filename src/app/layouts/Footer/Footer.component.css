@@ -1,0 +1,90 @@
+/* Footer Styles */
+footer {
+  background: linear-gradient(135deg, #1d37df 0%, #131c53 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.logo img {
+    height: 50px;
+    margin-bottom: 1rem;
+}
+
+.divider {
+    height: 1px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 1.5rem auto;
+    width: 80%;
+}
+
+.footer-nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.footer-nav a {
+    color: white;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.footer-nav a:hover {
+    color: rgba(255, 255, 255, 0.7);
+    transform: translateY(-2px);
+}
+
+.social-icons {
+    margin: 1.5rem 0;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.social-icons a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.social-icons a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.footer-bottom a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    transition: color 0.3s ease;
+}
+
+.footer-bottom a:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Adding the red line above the logo similar to the image */
+h3::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 3px;
+  background-color: #cf9f3f;
+  margin-top: 3px;
+}

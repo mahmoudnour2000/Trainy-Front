@@ -1,0 +1,18 @@
+<div class="request-card">
+  <div class="request-header">
+    <div class="d-flex justify-content-between align-items-start">
+      <h6 class="mb-1">طلب رقم #{{ request?.Id }}</h6>
+      <span class="status-badge status-{{ request?.Status }}">
+        {{ request?.Status === 'Pending' ? 'قيد الانتظار' : request?.Status === 'Accepted' ? 'تم القبول' : 'مرفوض' }}
+      </span>
+    </div>
+    <small class="opacity-75">بتاريخ: {{ request?.ReqTime | date:'short' }}</small>
+  </div>
+  <div class="card-body">
+    <p class="text-muted small mb-2">{{ request?.Message }}</p>
+    <div class="d-flex justify-content-between align-items-center">
+      <strong class="text-primary">رقم العرض: {{ request?.OfferId }}</strong>
+      <small class="text-muted">أُنشئ: {{ request?.CreatedAt | date:'short' }}</small>
+    </div>
+  </div>
+</div>

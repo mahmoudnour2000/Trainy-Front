@@ -1,0 +1,51 @@
+<div *ngIf="errorMessage" class="alert alert-danger">
+  {{ errorMessage }}
+</div>
+
+<div class="services-container">
+  <!-- حقل البحث -->
+  <div class="search-bar">
+  <input type="text" [(ngModel)]="searchString" (ngModelChange)="onSearchChange(searchString)" placeholder="ابحث عن خدمة..." class="form-control" style="max-width: 300px; margin-bottom: 10px;">
+</div>
+
+  <div *ngIf="services.length > 0" class="services-content">
+    <h2>قائمة خدمات المحطة</h2>
+    <div class="service-list">
+      <div *ngFor="let service of services" class="service-item">
+        <p><strong>الاسم:</strong> {{ service.Name || 'غير محدد' }}</p>
+        <p *ngIf="service.Latitude && service.Longitude">
+          <strong>الإحداثيات:</strong> {{ service.Latitude }}, {{ service.Longitude }}
+        </p>
+        <p *ngIf="service.Description">
+          <strong>الوصف:</strong> {{ service.Description }}
+        </p>
+      </div>
+    </div>
+
+    <!-- الخريطة -->
+    <div id="map" class="map-container" style="height: 400px; width: 100%;"></div>
+
+    <!-- التفريغ (Pagination) -->
+    <nav aria-label="Pagination">
+      <ul class="pagination">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="onPageChange(currentPage - 1)" href="javascript:void(0);">السابق</a>
+        </li>
+        <li *ngFor="let page of getPages()" class="page-item" [class.active]="page === currentPage">
+          <a class="page-link" (click)="onPageChange(page)" href="javascript:void(0);">{{ page }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
+          <a class="page-link" (click)="onPageChange(currentPage + 1)" href="javascript:void(0);">التالي</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div *ngIf="services.length === 0 && !errorMessage" class="loading">
+    <p>جاري تحميل البيانات...</p>
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">جاري التحميل...</span>
+    </div>
+    <p *ngIf="services.length === 0 && errorMessage === null">أو لا توجد خدمات لهذه المحطة</p>
+  </div>
+</div>

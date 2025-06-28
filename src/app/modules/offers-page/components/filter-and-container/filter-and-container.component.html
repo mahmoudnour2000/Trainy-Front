@@ -1,0 +1,115 @@
+<!-- Search and filter section -->
+<div class="offers-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="filter-section">
+                    <div class="search-container">
+                        <input id="searchInput" type="text" placeholder="ابحث عن طلبات..." (input)="onSearch($event)">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <div class="dropdown">
+                            <button id="categoryDropdown" class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                الفئة
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setCategoryFilter('electronics')">إلكترونيات</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setCategoryFilter('clothing')">ملابس</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setCategoryFilter('food')">طعام</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setCategoryFilter('furniture')">أثاث</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="dropdown">
+                            <button id="dateDropdown" class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                التاريخ
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setDateFilter('newest')">الأحدث أولاً</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setDateFilter('oldest')">الأقدم أولاً</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setDateFilter('today')">اليوم</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setDateFilter('this-week')">هذا الأسبوع</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setDateFilter('this-month')">هذا الشهر</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="dropdown">
+                            <button id="fromFilterDropdown" class="dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                من
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('cairo')">القاهرة</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('alexandria')">الإسكندرية</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('giza')">الجيزة</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('sharm')">شرم الشيخ</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('luxor')">الأقصر</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('aswan')">أسوان</a></li>
+                            </ul>
+                        </div>
+                        
+                        <button class="filter-reset" (click)="resetFilters()">
+                            إعادة ضبط
+                        </button>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="add-btn" (click)="addOrder()">
+                            <i class="fas fa-plus"></i> إضافة طلب جديد
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="active-filters" *ngIf="filters.category || filters.date || filters.fromLocation">
+                    <span class="active-filter-label">عوامل التصفية النشطة:</span>
+                    
+                    <div class="filter-tags">
+                        <span *ngIf="filters.category" class="filter-tag">
+                            الفئة: {{getFilterById(filters.category, 'category')}}
+                            <button class="remove-filter" (click)="filters.category = null; applyFilters()">×</button>
+                        </span>
+                        
+                        <span *ngIf="filters.date" class="filter-tag">
+                            التاريخ: {{getFilterById(filters.date, 'date')}}
+                            <button class="remove-filter" (click)="filters.date = null; applyFilters()">×</button>
+                        </span>
+                        
+                        <span *ngIf="filters.fromLocation" class="filter-tag">
+                            من: {{getFilterById(filters.fromLocation, 'location')}}
+                            <button class="remove-filter" (click)="filters.fromLocation = null; applyFilters()">×</button>
+                        </span>
+                    </div>
+                </div>
+                
+                <div *ngIf="filteredOrders.length > 0; else noOrders">
+                    <app-order-cards-container 
+                        [orders]="filteredOrders"
+                        (deleteOrder)="onDeleteOrder($event)">
+                    </app-order-cards-container>
+                </div>
+                
+                <ng-template #noOrders>
+                    <div class="no-orders" *ngIf="hasOrders">
+                        <div class="no-results-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h3>لا توجد نتائج</h3>
+                        <p>لم نتمكن من العثور على أي طلبات تطابق معايير البحث الخاصة بك.</p>
+                    </div>
+                    
+                    <div class="no-orders" *ngIf="!hasOrders">
+                        <div class="empty-icon">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <h3>لا توجد طلبات بعد</h3>
+                        <p>ابدأ بإضافة طلبك الأول للشحن.</p>
+                        <button class="add-first-btn" (click)="addOrder()">
+                            <i class="fas fa-plus"></i> إضافة طلب جديد
+                        </button>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>

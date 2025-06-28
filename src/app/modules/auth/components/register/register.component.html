@@ -1,0 +1,305 @@
+<body class="bg-light py-1">
+  <div class="container">
+    <div class="form-container">
+      <div class="form-header">
+        <h2>
+          <i class="fas fa-train"></i>
+          إنشاء حساب جديد
+        </h2>
+        <p>انضم إلينا في رحلة السكة الحديد</p>
+      </div>
+      
+      <div class="form-body">
+        <form #registerForm="ngForm" (ngSubmit)="onSubmit()">
+          <div class="row g-3">
+            <!-- Username -->
+            <div class="col-md-6">
+              <label for="userName" class="form-label required-field">
+                <i class="fas fa-user"></i>
+                اسم المستخدم
+              </label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="userName" 
+                name="UserName"
+                [(ngModel)]="user.UserName"
+                required
+                #userName="ngModel"
+                placeholder="أدخل اسم المستخدم">
+              <div class="text-danger" *ngIf="userName.invalid && (userName.dirty || userName.touched)">
+                اسم المستخدم مطلوب
+              </div>
+            </div>
+            
+            <!-- Email -->
+            <div class="col-md-6">
+              <label for="email" class="form-label required-field">
+                <i class="fas fa-envelope"></i>
+                البريد الإلكتروني
+              </label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                name="Email"
+                [(ngModel)]="user.Email"
+                required
+                email
+                #email="ngModel"
+                placeholder="أدخل البريد الإلكتروني">
+              <div class="text-danger" *ngIf="email.invalid && (email.dirty || email.touched)">
+                <span *ngIf="email.errors?.['required']">البريد الإلكتروني مطلوب</span>
+                <span *ngIf="email.errors?.['email']">أدخل بريد إلكتروني صحيح</span>
+              </div>
+            </div>
+            
+            <!-- Password -->
+            <div class="col-md-6">
+              <label for="password" class="form-label required-field">
+                <i class="fas fa-lock"></i>
+                كلمة المرور
+              </label>
+              <div class="position-relative">
+                <input 
+                  [type]="showPassword ? 'text' : 'password'"
+                  class="form-control password-input" 
+                  id="password" 
+                  name="Password"
+                  [(ngModel)]="user.Password"
+                  required
+                  minlength="6"
+                  #password="ngModel"
+                  placeholder="أدخل كلمة المرور">
+                <button
+                  type="button"
+                  class="btn password-toggle-btn position-absolute top-50 translate-middle-y border-0 bg-transparent p-0 d-flex align-items-center justify-content-center"
+                  (click)="togglePasswordVisibility()"
+                  tabindex="-1">
+                  <i class="bi text-muted" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
+              <div class="text-danger" *ngIf="password.invalid && (password.dirty || password.touched)">
+                <span *ngIf="password.errors?.['required']">كلمة المرور مطلوبة</span>
+                <span *ngIf="password.errors?.['minlength']">كلمة المرور يجب أن تكون 6 أحرف على الأقل</span>
+              </div>
+            </div>
+            
+            <!-- Confirm Password -->
+            <div class="col-md-6">
+              <label for="confirmPassword" class="form-label required-field">
+                <i class="fas fa-lock"></i>
+                تأكيد كلمة المرور
+              </label>
+              <div class="position-relative">
+                <input 
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  class="form-control password-input" 
+                  id="confirmPassword" 
+                  name="ConfirmPassword"
+                  [(ngModel)]="user.ConfirmPassword"
+                  required
+                  #confirmPassword="ngModel"
+                  placeholder="أعد إدخال كلمة المرور">
+                <button
+                  type="button"
+                  class="btn password-toggle-btn position-absolute top-50 translate-middle-y border-0 bg-transparent p-0 d-flex align-items-center justify-content-center"
+                  (click)="toggleConfirmPasswordVisibility()"
+                  tabindex="-1">
+                  <i class="bi text-muted" [ngClass]="showConfirmPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
+              <div class="text-danger" *ngIf="user.Password !== user.ConfirmPassword && (confirmPassword.dirty || confirmPassword.touched)">
+                كلمتا المرور غير متطابقتان
+              </div>
+            </div>
+            
+            <!-- Governorate -->
+            <div class="col-md-6">
+              <label for="governorate" class="form-label required-field">
+                <i class="fas fa-map-marker-alt"></i>
+                المحافظة
+              </label>
+              <select 
+                class="form-select form-control" 
+                id="governorate" 
+                name="Governorate"
+                [(ngModel)]="user.Governorate"
+                (ngModelChange)="onGovernorateChange()"
+                required
+                #governorate="ngModel">
+                <option value="" disabled selected>اختر المحافظة</option>
+                <option *ngFor="let gov of governorates" [value]="gov.id">{{ gov.name }}</option>
+              </select>
+              <div class="text-danger" *ngIf="governorate.invalid && (governorate.dirty || governorate.touched)">
+                من فضلك اختر المحافظة
+              </div>
+            </div>
+
+            <!-- City -->
+            <div class="col-md-6">
+              <label for="city" class="form-label required-field">
+                <i class="fas fa-city"></i>
+                المدينة
+              </label>
+              <select 
+                class="form-select form-control" 
+                id="city" 
+                name="City"
+                [(ngModel)]="user.City"
+                required
+                #city="ngModel"
+                [disabled]="!user.Governorate">
+                <option value="" disabled selected>اختر المدينة</option>
+                <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+              </select>
+              <div class="text-danger" *ngIf="city.invalid && (city.dirty || city.touched)">
+                من فضلك اختر المدينة
+              </div>
+            </div>
+            
+            <!-- Phone Number -->
+            <div class="col-md-6">
+              <label for="phoneNumber" class="form-label required-field">
+                <i class="fas fa-phone"></i>
+                رقم الهاتف
+              </label>
+              <input 
+                type="tel" 
+                class="form-control" 
+                id="phoneNumber" 
+                name="PhoneNumber"
+                [(ngModel)]="user.PhoneNumber"
+                required
+                pattern="[0-9]{10,15}"
+                #phoneNumber="ngModel"
+                placeholder="أدخل رقم الهاتف">
+              <div class="text-danger" *ngIf="phoneNumber.invalid && (phoneNumber.dirty || phoneNumber.touched)">
+                <span *ngIf="phoneNumber.errors?.['required']">رقم الهاتف مطلوب</span>
+                <span *ngIf="phoneNumber.errors?.['pattern']">أدخل رقم هاتف صحيح</span>
+              </div>
+            </div>
+            
+            <!-- Gender -->
+            <div class="col-md-6">
+              <label class="form-label required-field">
+                <i class="fas fa-venus-mars"></i>
+                الجنس
+              </label>
+              <div class="gender-options mt-2">
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="radio" 
+                    name="Gender" 
+                    id="male" 
+                    [value]="0"
+                    [(ngModel)]="user.Gender"
+                    required
+                    #gender="ngModel">
+                  <label class="form-check-label" for="male">
+                    <i class="fas fa-mars me-1"></i>
+                    ذكر
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input 
+                    class="form-check-input" 
+                    type="radio" 
+                    name="Gender" 
+                    id="female" 
+                    [value]="1"
+                    [(ngModel)]="user.Gender"
+                    required>
+                  <label class="form-check-label" for="female">
+                    <i class="fas fa-venus me-1"></i>
+                    أنثى
+                  </label>
+                </div>
+              </div>
+              <div class="text-danger" *ngIf="gender.invalid && (gender.dirty || gender.touched)">
+                من فضلك اختر الجنس
+              </div>
+            </div>
+            
+            <!-- Birth Date -->
+            <div class="col-md-6">
+              <label for="birthDate" class="form-label required-field">
+                <i class="fas fa-calendar-alt"></i>
+                تاريخ الميلاد
+              </label>
+              <input 
+                type="date" 
+                class="form-control" 
+                id="birthDate" 
+                name="BirthDate"
+                [(ngModel)]="user.DateOfBirth"
+                required
+                #birthDate="ngModel">
+              <div class="text-danger" *ngIf="birthDate.invalid && (birthDate.dirty || birthDate.touched)">
+                تاريخ الميلاد مطلوب
+              </div>
+            </div>
+            
+            <!-- Agreement -->
+            <div class="col-12 mt-3">
+              <div class="form-check agreement-check">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  id="agreeTerms"
+                  name="agreeTerms"
+                  ngModel
+                  required
+                  #agreeTerms="ngModel">
+                <label class="form-check-label" for="agreeTerms">
+                  <i class="fas fa-file-contract me-2"></i>
+                  أوافق على <a href="#" class="terms-link">شروط الخدمة</a> و <a href="#" class="terms-link">سياسة الخصوصية</a>
+                </label>
+                <div class="text-danger" *ngIf="agreeTerms.invalid && (agreeTerms.dirty || agreeTerms.touched)">
+                  يجب الموافقة على الشروط للتسجيل
+                </div>
+              </div>
+            </div>
+
+          <!-- استبدل قسم Error Message في القالب بالكود التالي -->
+<div class="col-12 mt-3" *ngIf="errorMessage">
+  <div class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+  </div>
+</div>
+<div class="col-12 mt-3" *ngIf="successMessage">
+  <div class="alert alert-success">
+    <i class="fas fa-check-circle me-2"></i>
+    {{ successMessage }}
+  </div>
+</div>
+            
+            <!-- Submit Button -->
+            <div class="col-12 mt-4">
+              <button 
+                type="submit" 
+                class="btn btn-primary w-100 py-3"
+                [disabled]="registerForm.invalid || isLoading">
+                <i class="fas fa-user-plus me-2" *ngIf="!isLoading"></i>
+                {{ isLoading ? 'جاري إنشاء الحساب...' : 'إنشاء حساب' }}
+              </button>
+            </div>
+            
+            <!-- Sign In Link -->
+            <div class="col-12 login-link">
+              <p class="mb-0">
+                لديك حساب بالفعل؟ 
+                <a [routerLink]="['/auth/login']">
+                  <i class="fas fa-sign-in-alt me-1"></i>
+                  تسجيل الدخول
+                </a>
+              </p>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>

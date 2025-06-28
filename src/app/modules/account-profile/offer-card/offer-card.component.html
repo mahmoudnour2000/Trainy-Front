@@ -1,0 +1,31 @@
+<div class="offer-card">
+  <div class="offer-header">
+    <div class="d-flex justify-content-between align-items-start">
+      <h6 class="mb-1">عرض رقم #{{ offer?.Id }}</h6>
+      <span class="status-badge status-{{ offer?.OfferStatus }}">
+        {{
+          offer?.OfferStatus === 'Pending' ? 'قيد الانتظار' :
+          offer?.OfferStatus === 'Accepted' ? 'تم القبول' :
+          offer?.OfferStatus === 'Completed' ? 'مكتمل' :
+          offer?.OfferStatus
+        }}
+      </span>
+    </div>
+    <small class="opacity-75">بتاريخ: {{ offer?.CreatedAt | date:'short' }}</small>
+  </div>
+  <div class="card-body">
+    <p class="text-muted small mb-2">{{ offer?.Description }}</p>
+    
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <strong class="text-primary">السعر: {{ offer?.Price }} جنيه</strong>
+      <span class="badge bg-light text-dark">الفئة: {{ offer?.Category }}</span>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center">
+      <span class="badge bg-{{ offer?.IsBreakable ? 'danger' : 'success' }}">
+        {{ offer?.IsBreakable ? 'قابل للكسر' : 'غير قابل للكسر' }}
+      </span>
+      <small class="text-muted">الوزن: {{ offer?.Weight }} كجم</small>
+    </div>
+  </div>
+</div>

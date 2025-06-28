@@ -1,0 +1,49 @@
+<!-- src/app/modules/account-profile/profile-tabs/profile-tabs.component.html -->
+<div class="row">
+  <div class="col-12">
+    <ul class="nav nav-tabs border-0 mb-4" id="profileTabs">
+      <li class="nav-item">
+        <a class="nav-link active" id="offers-tab" data-bs-toggle="tab" href="#offers">
+          <i class="fas fa-bullhorn me-2"></i>عروضي ({{ offers.length }})
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="requests-tab" data-bs-toggle="tab" href="#requests">
+          <i class="fas fa-hand-paper me-2"></i>طلباتي ({{ requests.length }})
+        </a>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="profileTabsContent">
+      <div class="tab-pane fade show active" id="offers">
+        <div class="row" *ngIf="offers.length > 0; else emptyOffers">
+          <div class="col-md-6 mb-4" *ngFor="let offer of offers">
+            <app-offer-card [offer]="offer"></app-offer-card>
+          </div>
+        </div>
+        <ng-template #emptyOffers>
+          <div class="empty-state">
+            <i class="fas fa-bullhorn"></i>
+            <h5>لا توجد عروض حالياً</h5>
+            <p class="text-muted">ابدأ الآن في إنشاء المحتوى الخاص بك</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <div class="tab-pane fade" id="requests">
+        <div class="row" *ngIf="requests.length > 0; else emptyRequests">
+          <div class="col-md-6 mb-4" *ngFor="let request of requests">
+            <app-request-card [request]="request"></app-request-card>
+          </div>
+        </div>
+        <ng-template #emptyRequests>
+          <div class="empty-state">
+            <i class="fas fa-hand-paper"></i>
+            <h5>لا توجد طلبات حالياً</h5>
+            <p class="text-muted">ابدأ الآن في إنشاء المحتوى الخاص بك</p>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

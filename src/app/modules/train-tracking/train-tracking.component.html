@@ -1,0 +1,62 @@
+<mat-card dir="rtl" class="tracking-card">
+  <mat-card-header>
+    <mat-card-title>تتبع القطار رقم {{ trainId }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div *ngIf="tracking; else loading">
+      <p><strong>رقم القطار:</strong> {{ tracking.trainNo }}</p>
+      <p><strong>المحطة الحالية:</strong> {{ tracking.currentStationName }} (ID: {{ tracking.currentStationId || 'غير متوفر' }})</p>
+      <p><strong>المحطة التالية:</strong> {{ tracking.nextStationName }} (ID: {{ tracking.nextStationId || 'غير متوفر' }})</p>
+      <p><strong>المرشد:</strong> {{ tracking.guideName }}</p>
+      <p><strong>خط العرض:</strong> {{ tracking.latitude }}</p>
+      <p><strong>خط الطول:</strong> {{ tracking.longitude }}</p>
+      <p><strong>وقت الوصول المتوقع:</strong> {{ tracking.expectedArrival | date:'medium':'ar-EG' }}</p>
+      <p><strong>الحالة:</strong> <span [ngClass]="{
+        'badge': true,
+        'bg-success': tracking.status === 'OnTime',
+        'bg-warning': tracking.status === 'Delayed',
+        'bg-primary': tracking.status === 'Arrived',
+        'bg-secondary': tracking.status !== 'OnTime' && tracking.status !== 'Delayed' && tracking.status !== 'Arrived'
+      }">{{ tracking.status }}</span></p>
+      <p><strong>المسافة للمحطة التالية:</strong> {{ tracking.distanceToNextStation ? (tracking.distanceToNextStation / 1000 | number:'1.2-2') + ' كم' : 'غير متوفر' }}</p>
+      <p><strong>السرعة:</strong> {{ tracking.speed ? (tracking.speed | number:'1.2-2') + ' كم/س' : 'غير متوفر' }}</p>
+      <p><strong>آخر تحديث:</strong> {{ tracking.lastUpdated | date:'medium':'ar-EG' }}</p>
+      <div id="map" style="height: 400px; margin-top: 20px;"></div> <!-- تأكد إن الـ div موجود هنا -->
+
+      <!-- باقي الفورمات لتحديث التتبع -->
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>تحديث التتبع</mat-panel-title>
+        </mat-expansion-panel-header>
+        <form [formGroup]="updateForm" (ngSubmit)="updateTracking()">
+          <mat-form-field appearance="fill">
+            <mat-label>خط العرض</mat-label>
+            <input matInput formControlName="latitude" type="number">
+            <mat-error *ngIf="updateForm.get('latitude')?.hasError('required')">مطلوب</mat-error>
+            <mat-error *ngIf="updateForm.get('latitude')?.hasError('pattern')">أدخل قيمة صالحة</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>خط الطول</mat-label>
+            <input matInput formControlName="longitude" type="number">
+            <mat-error *ngIf="updateForm.get('longitude')?.hasError('required')">مطلوب</mat-error>
+            <mat-error *ngIf="updateForm.get('longitude')?.hasError('pattern')">أدخل قيمة صالحة</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>وقت الوصول المتوقع</mat-label>
+            <input matInput formControlName="expectedArrival" type="datetime-local">
+            <mat-error *ngIf="updateForm.get('expectedArrival')?.hasError('required')">مطلوب</mat-error>
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!updateForm.valid">تحديث</button>
+        </form>
+      </mat-expansion-panel>
+      <!-- باقي الفورمات (GPS ويدوي) -->
+    </div>
+    <ng-template #loading>
+      <mat-spinner></mat-spinner>
+    </ng-template>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="primary" [routerLink]="['/train-history', trainId]">عرض السجل</button>
+    <button mat-raised-button color="secondary" [routerLink]="['/trains']">رجوع</button>
+  </mat-card-actions>
+</mat-card>
