@@ -8,12 +8,13 @@ import { UserService } from '../../../core/services/user.service';
   styleUrls: ['./wallet-card.component.css']
 })
 export class WalletCardComponent {
-  @Input() balance: number | undefined;
+ balance: number | undefined;
 
   constructor(private userService: UserService) {}
     ngOnInit(): void {
       this.userService.getUserBalance().subscribe({
         next: (res) => {
+          console.log('Balance loaded successfully:', res);
           this.balance = res.balance;
         },
         error: () => {
