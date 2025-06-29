@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { IUserLogin } from '../../../../core/models/auth';
 import { AuthService } from '../../../../core/services/auth.service';
 import { CookieService } from 'ngx-cookie-service';
+import { UserService } from '../../../../core/services/user.service';
+import { User } from '../../../../core/models/user';
 
 @Component({
   standalone: false,
@@ -22,11 +24,12 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private accountSrv: AuthService,
+    private UserSrv: UserService,
     private router: Router,
-    private cookieService: CookieService 
-  ) {}
+    private cookieService: CookieService
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -37,17 +40,26 @@ export class LoginComponent implements OnInit {
       this.errorMessage = 'Please fill in all fields';
       return;
     }
-        this.errorMessage = ''; 
-        this.isLoading = true ;
+    this.errorMessage = '';
+    this.isLoading = true;
 
 
     this.accountSrv.Login(this.user).subscribe({
       next: (res: AuthResponse) => {
         this.isLoading = false;
-        localStorage.setItem('token', res.token);
 
         if (res.token) {
-          this.cookieService.set('TOKEN', res.token, 1, '/');
+
+          this.UserSrv.getUserProfile().subscribe({
+            next: (user: User) => {
+              this.accountSrv.LoggedUser.next(user); // تحديث الـ BehaviorSubject
+              console.log('User profile fetched successfully:', user);
+            },
+            error: (error) => {
+              console.error('Error fetching user profile:', error);
+            }
+          });
+
         } else {
           console.warn('User data missing in login response');
         }

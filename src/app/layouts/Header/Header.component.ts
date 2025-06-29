@@ -25,7 +25,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   showDropdown: boolean = false; // للإشعارات
   showUserDropdown: boolean = false; // لدروب داون المستخدم
   user: User | null = null; // بيانات المستخدم
-  profileImage: string | null = null; // صورة المستخدم
+  profileImage: string | undefined = undefined; // صورة المستخدم
   private notificationSub!: Subscription;
   private userProfileSub!: Subscription;
   private profileImageSub!: Subscription;
@@ -41,44 +41,37 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    
     this.isLoggedIn = this.authService.isAuthenticated();
     if (this.isLoggedIn) {
-      // إظهار الـ spinner
-      this.loaderService.showLoader();
-
+      this.userService.getUserProfile().subscribe({
+         next: (user: User) => {
+           this.authService.LoggedUser.next(user);
+   
+           console.log('User profile fetched successfully', user);
+         },
+         error: (error) => {
+           this.authService.LoggedUser.next(null);
+           console.error('Error fetching user profile:', error);
+         }
+       });
       // جلب بيانات المستخدم
-      this.userProfileSub = this.userService.getUserProfile().subscribe({
-        next: (user: User) => {
+      this.authService.LoggedUser.subscribe({
+        next: (user) => {
+          
           this.user = user;
-          this.profileImage = user.Image || 'assets/default-profile.png'; 
-          console.log('User profile:', user);
-          this.cdr.detectChanges();
-        },
-        error: (error) => {
-          console.error('Error fetching user profile:', error);
-          this.loaderService.hideLoader();
-          this.cdr.detectChanges();
-        }
-      });
-
-      if (!this.user?.Image) {
-        this.profileImageSub = this.userService.getProfileImage().subscribe({
-          next: (response: { imageUrl: string }) => {
-            this.profileImage = response.imageUrl || 'assets/default-profile.png';
-            console.log('Profile image:', response.imageUrl);
-            this.loaderService.hideLoader();
-            this.cdr.detectChanges();
-          },
-          error: (error) => {
-            console.error('Error fetching profile image:', error);
-            this.profileImage = 'assets/default-profile.png';
-            this.loaderService.hideLoader();
-            this.cdr.detectChanges();
+          console.log('User in header:', this.user);
+          if (this.user) {
+            this.isLoggedIn = true
+            this.profileImage = this.user.Image;
           }
-        });
-      } else {
-        this.loaderService.hideLoader();
-      }
+          else {
+            this.isLoggedIn = false;
+            this.profileImage = undefined; // إعادة تعيين صورة المستخدم
+          }
+        }
+      })
+   
 
       // جلب الإشعارات
       this.notificationSub = this.notificationService.getAllNotifications().subscribe({
@@ -123,16 +116,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   logout(): void {
-    this.loaderService.showLoader();
     this.authService.LogOut().subscribe({
       next: () => {
         this.isLoggedIn = false;
         this.user = null;
-        this.profileImage = null;
+        this.profileImage = undefined; // إعادة تعيين صورة المستخدم
         this.authService.clearToken();
-        this.router.navigate(['/']);
-        this.loaderService.hideLoader();
-        this.cdr.detectChanges();
+        this.authService.LoggedUser.next(null); // تحديث الـ BehaviorSubject
+        console.log("jkljjjjjjjjjjjjjjjjjjjjjjjjjj", this.isLoggedIn);
+        
+        this.router.navigate(['auth/login']);
       },
       error: () => {
         console.error('Logout failed');
