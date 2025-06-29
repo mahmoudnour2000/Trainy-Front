@@ -4,7 +4,7 @@
       <div class="time-box">
         <p class="transport">محطة القيام</p>
         <p class="time">{{train.Route_From}}</p>
-        <p class="location">{{train.Current_Location}}</p>
+        <!-- <p class="location">{{train.Current_Location}}</p> -->
       </div>
       <div class="details-section">
         <div class="detail-box">
@@ -19,7 +19,7 @@
       <div class="time-box">
         <p class="transport">محطة الوصول</p>
         <p class="time">{{train.Route_To}}</p>
-        <p class="location">{{train.Current_Location}}</p>
+        <!-- <p class="location">{{train.Current_Location}}</p> -->
       </div>
     </div>
     <div class="buttons-container">
@@ -41,7 +41,7 @@
       <div class="station-row" *ngFor="let i of getStationRows()">
         <li class="station-item" *ngFor="let station of stations.slice(i * 5, i * 5 + 5)">
           <span class="station-name">{{station.StationName}}</span>
-          <span class="station-time">{{station.ArrivalTime | date: 'HH:mm'}}</span>
+          <span class="station-time">{{station.ArrivalTime }}</span>
         </li>
       </div>
     </ul>

@@ -1,12 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { UserService } from '../../core/services/user.service';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../core/services/notification.service';
+import { LoaderService } from '../../core/services/loader.service'; // إضافة LoaderService
 import { Subscription } from 'rxjs';
+import { User } from '../../core/models/user';
 import { Notification } from '../../core/models/notification';
-import { ElementRef, HostListener } from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-Header',
@@ -19,27 +22,91 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
   unreadCount: number = 0;
   notifications: Notification[] = [];
-  showDropdown: boolean = false;
+  showDropdown: boolean = false; // للإشعارات
+  showUserDropdown: boolean = false; // لدروب داون المستخدم
+  user: User | null = null; // بيانات المستخدم
+  profileImage: string | null = null; // صورة المستخدم
   private notificationSub!: Subscription;
+  private userProfileSub!: Subscription;
+  private profileImageSub!: Subscription;
 
   constructor(
     private authService: AuthService,
+    private userService: UserService,
     private router: Router,
     private notificationService: NotificationService,
-     private eRef: ElementRef
+    private loaderService: LoaderService, // إضافة LoaderService
+    private eRef: ElementRef,
+    private cdr: ChangeDetectorRef // لتحديث الـ UI
   ) {}
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isAuthenticated();
     if (this.isLoggedIn) {
-      this.notificationSub = this.notificationService.getAllNotifications().subscribe(notifications => {
-        this.notifications = notifications;
-        console.log('Notifications in header:', notifications);
+      // إظهار الـ spinner
+      this.loaderService.showLoader();
+
+      // جلب بيانات المستخدم
+      this.userProfileSub = this.userService.getUserProfile().subscribe({
+        next: (user: User) => {
+          this.user = user;
+          this.profileImage = user.Image || 'assets/default-profile.png'; 
+          console.log('User profile:', user);
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error fetching user profile:', error);
+          this.loaderService.hideLoader();
+          this.cdr.detectChanges();
+        }
       });
-      this.notificationService.getUnreadCount().subscribe(count => {
-        this.unreadCount = count;
+
+      if (!this.user?.Image) {
+        this.profileImageSub = this.userService.getProfileImage().subscribe({
+          next: (response: { imageUrl: string }) => {
+            this.profileImage = response.imageUrl || 'assets/default-profile.png';
+            console.log('Profile image:', response.imageUrl);
+            this.loaderService.hideLoader();
+            this.cdr.detectChanges();
+          },
+          error: (error) => {
+            console.error('Error fetching profile image:', error);
+            this.profileImage = 'assets/default-profile.png';
+            this.loaderService.hideLoader();
+            this.cdr.detectChanges();
+          }
+        });
+      } else {
+        this.loaderService.hideLoader();
+      }
+
+      // جلب الإشعارات
+      this.notificationSub = this.notificationService.getAllNotifications().subscribe({
+        next: (notifications) => {
+          this.notifications = notifications;
+          console.log('Notifications in header:', notifications);
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error fetching notifications:', error);
+          this.loaderService.hideLoader();
+          this.cdr.detectChanges();
+        }
       });
-      this.notificationService.fetchNotifications(); // جلب الإشعارات عند بدء الـ component
+
+      this.notificationService.getUnreadCount().subscribe({
+        next: (count) => {
+          this.unreadCount = count;
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error fetching unread count:', error);
+          this.loaderService.hideLoader();
+          this.cdr.detectChanges();
+        }
+      });
+
+      this.notificationService.fetchNotifications();
     }
   }
 
@@ -47,35 +114,67 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.notificationSub) {
       this.notificationSub.unsubscribe();
     }
+    if (this.userProfileSub) {
+      this.userProfileSub.unsubscribe();
+    }
+    if (this.profileImageSub) {
+      this.profileImageSub.unsubscribe();
+    }
   }
 
   logout(): void {
+    this.loaderService.showLoader();
     this.authService.LogOut().subscribe({
       next: () => {
         this.isLoggedIn = false;
+        this.user = null;
+        this.profileImage = null;
         this.authService.clearToken();
-        this.router.navigate(['/auth/login']);
+        this.router.navigate(['/']);
+        this.loaderService.hideLoader();
+        this.cdr.detectChanges();
       },
       error: () => {
         console.error('Logout failed');
+        this.loaderService.hideLoader();
+        this.cdr.detectChanges();
       }
     });
   }
 
   toggleDropdown(): void {
     this.showDropdown = !this.showDropdown;
-    // شيلنا المنطق بتاع markAsRead وunreadCount = 0 عشان الإشعارات تبقى موجودة
+    this.showUserDropdown = false; // نقفل دروب داون المستخدم
+    this.cdr.detectChanges();
+  }
+
+  toggleUserDropdown(): void {
+    this.showUserDropdown = !this.showUserDropdown;
+    this.showDropdown = false; // نقفل دروب داون الإشعارات
+    this.cdr.detectChanges();
   }
 
   viewAll(): void {
     this.router.navigate(['/notifications']);
-  }
-  @HostListener('document:click', ['$event'])
-onClickOutside(event: MouseEvent) {
-  const target = event.target as HTMLElement;
-
-  if (this.showDropdown && !this.eRef.nativeElement.contains(target)) {
     this.showDropdown = false;
+    this.cdr.detectChanges();
   }
 
-}}
+  goToProfile(): void {
+    this.router.navigate(['/userProfile']); // تأكدي إن الـ route ده موجود
+    this.showUserDropdown = false;
+    this.cdr.detectChanges();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (this.showDropdown && !this.eRef.nativeElement.contains(target)) {
+      this.showDropdown = false;
+    }
+    if (this.showUserDropdown && !this.eRef.nativeElement.contains(target)) {
+      this.showUserDropdown = false;
+    }
+    this.cdr.detectChanges();
+  }
+}

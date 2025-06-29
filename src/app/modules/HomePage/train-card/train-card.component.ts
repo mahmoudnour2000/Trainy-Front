@@ -25,6 +25,8 @@ showStations: boolean = false; // متغير للتحكم في إظهار/إخف
       this.isLoadingStations = true;
       this.trainService.getTrainStations(this.train.ID).subscribe({
         next: (response) => {
+          console.log(response);
+          
           this.stations = response.Data;
           this.isLoadingStations = false;
           this.showStations = true;

@@ -27,35 +27,41 @@
         </li>
       </ul>
       <div class="d-flex align-items-center">
-       <!-- عدل هذه الجزئية -->
-<div class="position-relative mx-2" *ngIf="isLoggedIn">
-  <i class="fas fa-bell bell-icon" (click)="toggleDropdown()"></i>
-  <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
-  
-  <!-- القائمة المنسدلة -->
-  <div class="dropdown" *ngIf="showDropdown">
-    <ul>
-      <li *ngFor="let notification of notifications">
-        <div class="notif-card">
-          <p>{{ notification.Message }}</p>
-          <small>{{ notification.NotificationTime | date:'short' }}</small>
+        <!-- دروب داون الإشعارات -->
+        <div class="position-relative mx-2" *ngIf="isLoggedIn">
+          <i class="fas fa-bell bell-icon" (click)="toggleDropdown()"></i>
+          <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+          <div class="dropdown" *ngIf="showDropdown">
+            <ul>
+              <li *ngFor="let notification of notifications">
+                <div class="notif-card">
+                  <p>{{ notification.Message }}</p>
+                  <small>{{ notification.NotificationTime | date:'short' }}</small>
+                </div>
+              </li>
+              <li *ngIf="notifications.length === 0" class="empty-msg">لا توجد إشعارات حاليًا</li>
+            </ul>
+            <button (click)="viewAll()">عرض الكل</button>
+          </div>
         </div>
-      </li>
-      <li *ngIf="notifications.length === 0" class="empty-msg">لا توجد إشعارات حاليًا</li>
-    </ul>
-    <button (click)="viewAll()">عرض الكل</button>
-  </div>
-</div>
-
         <div class="nav-divider d-none d-lg-block"></div>
-        <div class="auth-buttons">
-          <ng-container *ngIf="!isLoggedIn; else loggedInButtons">
-            <button class="btn btn-auth" routerLink="/auth/login">تسجيل الدخول</button>
-            <button class="btn btn-auth" routerLink="/auth/register">إنشاء حساب</button>
-          </ng-container>
-          <ng-template #loggedInButtons>
-            <button class="btn btn-auth btn-danger" (click)="logout()">تسجيل الخروج</button>
-          </ng-template>
+        <!-- إذا اليوزر مش مسجّل دخول -->
+        <div class="auth-buttons" *ngIf="!isLoggedIn">
+          <button class="btn btn-auth" routerLink="/auth/login">تسجيل الدخول</button>
+          <button class="btn btn-auth" routerLink="/auth/register">إنشاء حساب</button>
+        </div>
+        <!-- إذا اليوزر مسجّل دخول -->
+        <div class="position-relative mx-2" *ngIf="isLoggedIn">
+          <div class="user-profile" (click)="toggleUserDropdown()">
+            <img [src]="profileImage || 'assets/default-profile.png'" alt="صورة المستخدم" class="profile-img">
+            <span class="username">{{ user?.Name || 'المستخدم' }}</span>
+          </div>
+          <div class="dropdown user-dropdown" *ngIf="showUserDropdown">
+            <ul>
+              <li (click)="goToProfile()">الصفحة الشخصية</li>
+              <li (click)="logout()">تسجيل الخروج</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
