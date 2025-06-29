@@ -1,21 +1,26 @@
-// src/app/core/interceptors/loader.interceptor.ts
-import { HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
+import { HttpEvent, HttpHandlerFn, HttpRequest, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { LoaderService } from '../services/loader.service'; // Adjust path if needed
+import { Observable, finalize } from 'rxjs';
+import { LoaderService } from '../services/loader.service';
 
-export const loaderInterceptor: HttpInterceptorFn = ( // Ensure the export name is correct
+export const loaderInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> => {
   const loaderService = inject(LoaderService);
+  let totalRequests = 0; // عداد الطلبات
 
+  // زيادة عداد الطلبات وإظهار الـ spinner
+  totalRequests++;
   loaderService.showLoader();
 
   return next(req).pipe(
     finalize(() => {
-      loaderService.hideLoader();
+      // تقليل عداد الطلبات وإخفاء الـ spinner لو كل الطلبات خلّصت
+      totalRequests--;
+      if (totalRequests === 0) {
+        loaderService.hideLoader();
+      }
     })
   );
 };

@@ -1,0 +1,33 @@
+.search-section {
+  background-color: #333;
+  padding: 20px;
+  color: white;
+}
+.search-btn {
+  background-color: #0846a0;
+  color: white;
+  border: none;
+  padding: 0.375rem 1.5rem;
+  &:hover {
+    background-color: #0050cf;
+  }
+}
+.dropdown-select {
+  position: relative;
+}
+.select-btn {
+  width: 100%;
+  text-align: right;
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  color: #212529;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dropdown-menu {
+  width: 100%;
+  text-align: right;
+}
