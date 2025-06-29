@@ -1,54 +1,210 @@
-<div *ngIf="errorMessage" class="alert alert-danger">
-  {{ errorMessage }}
+<!-- Hero Section -->
+<div class="hero-section">
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1 class="hero-title">
+        <i class="fas fa-train"></i>
+        محطات السكك الحديدية
+      </h1>
+      <p class="hero-subtitle">اكتشف جميع محطات السكك الحديدية في مصر وخدماتها المتاحة</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-number">{{ totalItems }}</div>
+        <div class="stat-label">محطة</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">{{ stations.length }}</div>
+        <div class="stat-label">محطة في هذه الصفحة</div>
+      </div>
+    </div>
+  </div>
 </div>
 
+<!-- Main Container -->
 <div class="stations-container">
-  <div id="map" class="map-container" style="height: 400px; width: 100%;" *ngIf="stations.length > 0"></div>
-  <!-- حقل البحث -->
-  <div class="search-bar">
-    <input type="text" name="searchInput" [(ngModel)]="searchString" (ngModelChange)="onSearchChange(searchString)" placeholder="ابحث عن محطة..." class="form-control" style="max-width: 300px; margin-bottom: 10px;">
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger alert-modern">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ errorMessage }}
   </div>
 
-  <div *ngIf="stations.length > 0" class="stations-content">
-    <h2>قائمة المحطات</h2>
-    <div class="station-list">
-      <div *ngFor="let station of stations" class="station-item" (click)="goToServices(station.ID)" style="cursor: pointer;">
-        <div class="station-body">
-          <div class="station-header" (click)="$event.stopPropagation(); openPopup(station)">
-            <i class="fas fa-map-marker-alt" style="margin-right: 5px; color: #007bff;"></i>
-            <span><strong>انظر إلى العنوان في الخريطة:</strong></span>
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <i class="fas fa-search search-icon"></i>
+        <input 
+          type="text" 
+          [(ngModel)]="searchString" 
+          (ngModelChange)="onSearchChange(searchString)" 
+          placeholder="ابحث عن محطة..." 
+          class="search-input"
+        >
+        <button *ngIf="searchString" (click)="searchString = ''; onSearchChange('')" class="clear-search">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="search-info">
+        <span class="search-results">{{ stations.length }} نتيجة</span>
+        <span class="search-tip">اضغط على أي محطة لعرض خدماتها</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Layout: Map on Left, Stations on Right -->
+  <div class="main-content-layout" *ngIf="!isLoading && !errorMessage && stations.length > 0">
+    <!-- Left Side: Map -->
+    <div class="map-sidebar">
+      <div class="map-container-wrapper">
+        <div class="map-header">
+          <h4><i class="fas fa-map-marked-alt me-2"></i>خريطة المحطات</h4>
+          <small class="text-muted">انقر على أي علامة لعرض تفاصيل المحطة</small>
+        </div>
+        <div id="map" class="map-container"></div>
+        <div class="map-legend">
+          <div class="legend-item">
+            <i class="fas fa-train text-primary"></i>
+            <span>محطات السكك الحديدية</span>
           </div>
-          <p><strong>محطة:</strong> {{ station.Name || 'غير محدد' }}</p>
-          <p *ngIf="station.Location">
-            <strong>الموقع:</strong> {{ station.Location }}
-          </p>
+          <div class="legend-item">
+            <i class="fas fa-map-marker-alt text-success"></i>
+            <span>الموقع المحدد</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- الخريطة -->
+    <!-- Right Side: Stations Content -->
+    <div class="stations-content">
+      <div class="section-header">
+        <h2><i class="fas fa-list"></i>قائمة المحطات</h2>
+        <div class="view-controls">
+          <button class="view-btn active" (click)="setViewMode('grid')">
+            <i class="fas fa-th"></i>
+          </button>
+          <button class="view-btn" (click)="setViewMode('list')">
+            <i class="fas fa-list"></i>
+          </button>
+        </div>
+      </div>
 
-    <!-- التفريغ (Pagination) - تم نقله إلى الأسفل -->
-    <nav aria-label="Pagination" class="pagination-container">
-      <ul class="pagination">
-        <li class="page-item" [class.disabled]="currentPage === 1">
-          <a class="page-link" (click)="onPageChange(currentPage - 1)" href="javascript:void(0);">السابق</a>
-        </li>
-        <li *ngFor="let page of getPages()" class="page-item" [class.active]="page === currentPage">
-          <a class="page-link" (click)="onPageChange(page)" href="javascript:void(0);">{{ page }}</a>
-        </li>
-        <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
-          <a class="page-link" (click)="onPageChange(currentPage + 1)" href="javascript:void(0);">التالي</a>
-        </li>
-      </ul>
-    </nav>
+      <div class="stations-grid" [class.list-view]="viewMode === 'list'">
+        <div 
+          *ngFor="let station of stations; trackBy: trackByStationId" 
+          class="station-card"
+          (click)="goToServices(station.ID)"
+        >
+          <div class="station-card-header">
+            <div class="station-icon">
+              <i class="fas fa-train"></i>
+            </div>
+            <div class="station-info">
+              <h3 class="station-name">{{ station.Name || 'غير محدد' }}</h3>
+              <p class="station-location" *ngIf="station.Location">
+                <i class="fas fa-map-marker-alt"></i>
+                {{ station.Location }}
+              </p>
+            </div>
+            <div class="station-actions">
+              <button 
+                class="btn-map" 
+                (click)="$event.stopPropagation(); openPopup(station)"
+                title="عرض على الخريطة"
+              >
+                <i class="fas fa-map-marked-alt"></i>
+              </button>
+              <button 
+                class="btn-services" 
+                (click)="$event.stopPropagation(); goToServices(station.ID)"
+                title="عرض الخدمات"
+              >
+                <i class="fas fa-arrow-left"></i>
+              </button>
+            </div>
+          </div>
+          
+          <div class="station-card-body">
+            <div class="station-details">
+              <div class="detail-item">
+                <i class="fas fa-id-card"></i>
+                <span>المعرف: {{ station.ID }}</span>
+              </div>
+              <div class="detail-item" *ngIf="station.Location">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>{{ station.Location }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="station-card-footer">
+            <div class="station-status">
+              <span class="status-badge available">
+                <i class="fas fa-check-circle"></i>
+                متاح
+              </span>
+            </div>
+            <button class="btn-primary" (click)="$event.stopPropagation(); goToServices(station.ID)">
+              <i class="fas fa-arrow-left"></i>
+              عرض الخدمات
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-section" *ngIf="getTotalPages() > 1">
+        <nav class="pagination-nav">
+          <ul class="pagination">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+              <a class="page-link" (click)="onPageChange(currentPage - 1)">
+                <i class="fas fa-chevron-right"></i>
+                السابق
+              </a>
+            </li>
+            
+            <li *ngFor="let page of getPageNumbers()" class="page-item" [class.active]="page === currentPage">
+              <a class="page-link" (click)="onPageChange(page)">{{ page }}</a>
+            </li>
+            
+            <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
+              <a class="page-link" (click)="onPageChange(currentPage + 1)">
+                التالي
+                <i class="fas fa-chevron-left"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        
+        <div class="pagination-info">
+          <span>الصفحة {{ currentPage }} من {{ getTotalPages() }}</span>
+          <span>إجمالي {{ totalItems }} محطة</span>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div *ngIf="stations.length === 0 && !errorMessage" class="loading">
-    <p>جاري تحميل البيانات...</p>
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">جاري التحميل...</span>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-section">
+    <div class="loading-content">
+      <div class="loading-spinner">
+        <i class="fas fa-train"></i>
+      </div>
+      <h3>جاري تحميل المحطات...</h3>
+      <p>يرجى الانتظار قليلاً</p>
     </div>
-    <p *ngIf="stations.length === 0 && errorMessage === null">أو لا توجد محطات</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="stations.length === 0 && !errorMessage && searchString" class="empty-section">
+    <div class="empty-content">
+      <i class="fas fa-search"></i>
+      <h3>لا توجد نتائج</h3>
+      <p>لم نتمكن من العثور على محطات تطابق بحثك "{{ searchString }}"</p>
+      <button class="btn-primary" (click)="searchString = ''; onSearchChange('')">
+        <i class="fas fa-arrow-left"></i>
+        عرض جميع المحطات
+      </button>
+    </div>
   </div>
 </div>

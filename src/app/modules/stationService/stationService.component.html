@@ -1,51 +1,476 @@
-<div *ngIf="errorMessage" class="alert alert-danger">
-  {{ errorMessage }}
-</div>
-
 <div class="services-container">
-  <!-- حقل البحث -->
-  <div class="search-bar">
-  <input type="text" [(ngModel)]="searchString" (ngModelChange)="onSearchChange(searchString)" placeholder="ابحث عن خدمة..." class="form-control" style="max-width: 300px; margin-bottom: 10px;">
+    <!-- Debug Information (remove in production) -->
+    
+
+    <!-- رسائل التحميل أو الخطأ -->
+    <div *ngIf="isLoading" class="alert alert-info">
+        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+        جاري تحميل البيانات...
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        {{ errorMessage }}
+    </div>
+    <div *ngIf="!isLoading && !errorMessage && services.length === 0" class="alert alert-warning">
+        <i class="fas fa-info-circle me-2"></i>
+      لا توجد خدمات لهذه المحطة
+    </div>
+
+    <!-- Main Content Layout: Map on Left, Services on Right -->
+    <div class="main-content-layout" *ngIf="!isLoading && !errorMessage && services.length > 0">
+        <!-- Left Side: Map -->
+        <div class="map-sidebar">
+            <div class="map-container-wrapper">
+                <div class="map-header">
+                    <h4><i class="fas fa-map-marked-alt me-2"></i>خريطة الخدمات</h4>
+                    <small class="text-muted">انقر على أي علامة لعرض تفاصيل الخدمة</small>
+                </div>
+                <div #mapElement class="map-container"></div>
+                <div class="map-legend">
+                    <div class="legend-item">
+                        <i class="fas fa-utensils text-primary"></i>
+                        <span>مطاعم</span>
+                    </div>
+                    <div class="legend-item">
+                        <i class="fas fa-hotel text-success"></i>
+                        <span>فنادق</span>
+                    </div>
+                    <div class="legend-item">
+                        <i class="fas fa-pills text-warning"></i>
+                        <span>صيدليات</span>
+                    </div>
+                    <div class="legend-item">
+                        <i class="fas fa-coffee text-info"></i>
+                        <span>كافيهات</span>
+                    </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Right Side: Services Content -->
+        <div class="services-content">
+            <h2 class="mb-4 text-center">
+                <i class="fas fa-list-alt me-2"></i>
+                خدمات المحطة
+            </h2>
+            
+            <!-- إحصائيات سريعة -->
+            <div class="row mb-4">
+                <div class="col-md-6 col-lg-3" *ngFor="let category of serviceCategories">
+                    <div class="stats-card">
+                        <div class="stats-icon">
+                            <i class="fas" [class.fa-utensils]="category.type === 0" 
+                               [class.fa-hotel]="category.type === 1"
+                               [class.fa-pills]="category.type === 3"
+                               [class.fa-coffee]="category.type === 5"></i>
+                        </div>
+                        <div class="stats-content">
+                            <h5>{{ category.name }}</h5>
+                            <p class="stats-number">{{ category.totalItems }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- أقسام الخدمات -->
+            <div class="service-sections">
+                <!-- المطاعم -->
+                <div class="service-section mb-5" *ngIf="serviceCategories[0].totalItems > 0">
+                    <div class="section-header">
+                        <h3><i class="fas fa-utensils me-2"></i>{{ serviceCategories[0].name }}</h3>
+                        <span class="badge bg-primary">{{ serviceCategories[0].totalItems }} خدمة</span>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div *ngFor="let service of getPaginatedServices(serviceCategories[0]); trackBy: trackByServiceId" class="col-md-6 col-lg-4">
+                            <div class="service-card">
+                                <div class="service-image-container" *ngIf="service.ImagePath">
+                                    <img [src]="service.ImagePath" 
+                                         [alt]="service.Name || 'صورة الخدمة'" 
+                                         class="service-image"
+                                         (error)="onImageError($event)">
+                                </div>
+                                <div class="service-content">
+                                    <h5 class="service-title">{{ service.Name || 'غير محدد' }}</h5>
+                                    <div class="service-details">
+                                        <p class="mb-1" *ngIf="service.PhoneNumber">
+                                            <i class="fas fa-phone me-1"></i>
+                                            <strong>الهاتف:</strong> {{ service.PhoneNumber }}
+                                        </p>
+                                        <p class="mb-1" *ngIf="service.OperatingHours">
+                                            <i class="fas fa-clock me-1"></i>
+                                            <strong>ساعات العمل:</strong> {{ service.OperatingHours }}
+                                        </p>
+                                        <p class="mb-1" *ngIf="service.IsAvailable !== undefined">
+                                            <i class="fas fa-circle me-1" [class.text-success]="service.IsAvailable" [class.text-danger]="!service.IsAvailable"></i>
+                                            <strong>الحالة:</strong> {{ service.IsAvailable ? 'متاح' : 'غير متاح' }}
+                                        </p>
+                                    </div>
+                                    <div class="service-actions mt-3">
+                                        <button class="btn btn-primary btn-sm me-2" 
+                                                (click)="showLocation(service)"
+                                                *ngIf="service.Latitude && service.Longitude">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            عرض الموقع
+                                        </button>
+                                        <button class="btn btn-secondary btn-sm" 
+                                                (click)="openModal(service)">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            التفاصيل
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pagination for Restaurants -->
+                    <div class="pagination-container" *ngIf="getTotalPages(serviceCategories[0]) > 1">
+                        <nav aria-label="Restaurants pagination">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" [class.disabled]="serviceCategories[0].currentPage === 1">
+                                    <a class="page-link" (click)="onPageChange(serviceCategories[0], serviceCategories[0].currentPage - 1)" style="cursor: pointer;">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" *ngFor="let page of getPageNumbers(serviceCategories[0])" 
+                                    [class.active]="page === serviceCategories[0].currentPage">
+                                    <a class="page-link" (click)="onPageChange(serviceCategories[0], page)" style="cursor: pointer;">{{ page }}</a>
+                                </li>
+                                <li class="page-item" [class.disabled]="serviceCategories[0].currentPage === getTotalPages(serviceCategories[0])">
+                                    <a class="page-link" (click)="onPageChange(serviceCategories[0], serviceCategories[0].currentPage + 1)" style="cursor: pointer;">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- الفنادق -->
+                <div class="service-section mb-5" *ngIf="serviceCategories[1].totalItems > 0">
+                    <div class="section-header">
+                        <h3><i class="fas fa-hotel me-2"></i>{{ serviceCategories[1].name }}</h3>
+                        <span class="badge bg-success">{{ serviceCategories[1].totalItems }} خدمة</span>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div *ngFor="let service of getPaginatedServices(serviceCategories[1]); trackBy: trackByServiceId" class="col-md-6 col-lg-4">
+                            <div class="service-card">
+                                <div class="service-image-container" *ngIf="service.ImagePath">
+                                    <img [src]="service.ImagePath" 
+                                         [alt]="service.Name || 'صورة الخدمة'" 
+                                         class="service-image"
+                                         (error)="onImageError($event)">
+                                </div>
+                                <div class="service-content">
+                                    <h5 class="service-title">{{ service.Name || 'غير محدد' }}</h5>
+                                    <div class="service-details">
+                                        <p class="mb-1" *ngIf="service.PhoneNumber">
+                                            <i class="fas fa-phone me-1"></i>
+                                            <strong>الهاتف:</strong> {{ service.PhoneNumber }}
+                                        </p>
+                                        <p class="mb-1" *ngIf="service.OperatingHours">
+                                            <i class="fas fa-clock me-1"></i>
+                                            <strong>ساعات العمل:</strong> {{ service.OperatingHours }}
+                                        </p>
+                                        <p class="mb-1" *ngIf="service.IsAvailable !== undefined">
+                                            <i class="fas fa-circle me-1" [class.text-success]="service.IsAvailable" [class.text-danger]="!service.IsAvailable"></i>
+                                            <strong>الحالة:</strong> {{ service.IsAvailable ? 'متاح' : 'غير متاح' }}
+                                        </p>
+                                    </div>
+                                    <div class="service-actions mt-3">
+                                        <button class="btn btn-primary btn-sm me-2" 
+                                                (click)="showLocation(service)"
+                                                *ngIf="service.Latitude && service.Longitude">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            عرض الموقع
+                                        </button>
+                                        <button class="btn btn-secondary btn-sm" 
+                                                (click)="openModal(service)">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            التفاصيل
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pagination for Hotels -->
+                    <div class="pagination-container" *ngIf="getTotalPages(serviceCategories[1]) > 1">
+                        <nav aria-label="Hotels pagination">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" [class.disabled]="serviceCategories[1].currentPage === 1">
+                                    <a class="page-link" (click)="onPageChange(serviceCategories[1], serviceCategories[1].currentPage - 1)" style="cursor: pointer;">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" *ngFor="let page of getPageNumbers(serviceCategories[1])" 
+                                    [class.active]="page === serviceCategories[1].currentPage">
+                                    <a class="page-link" (click)="onPageChange(serviceCategories[1], page)" style="cursor: pointer;">{{ page }}</a>
+                                </li>
+                                <li class="page-item" [class.disabled]="serviceCategories[1].currentPage === getTotalPages(serviceCategories[1])">
+                                    <a class="page-link" (click)="onPageChange(serviceCategories[1], serviceCategories[1].currentPage + 1)" style="cursor: pointer;">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- الصيدليات -->
+                <div class="service-section mb-5" *ngIf="serviceCategories[2].totalItems > 0">
+                    <div class="section-header">
+                        <h3><i class="fas fa-pills me-2"></i>{{ serviceCategories[2].name }}</h3>
+                        <span class="badge bg-warning">{{ serviceCategories[2].totalItems }} خدمة</span>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div *ngFor="let service of getPaginatedServices(serviceCategories[2]); trackBy: trackByServiceId" class="col-md-6 col-lg-4">
+                            <div class="service-card">
+                                <div class="service-image-container" *ngIf="service.ImagePath">
+                                    <img [src]="service.ImagePath" 
+                                         [alt]="service.Name || 'صورة الخدمة'" 
+                                         class="service-image"
+                                         (error)="onImageError($event)">
+                                </div>
+                                <div class="service-content">
+                                    <h5 class="service-title">{{ service.Name || 'غير محدد' }}</h5>
+                                    <div class="service-details">
+                                        <p class="mb-1" *ngIf="service.PhoneNumber">
+                                            <i class="fas fa-phone me-1"></i>
+                                            <strong>الهاتف:</strong> {{ service.PhoneNumber }}
+                                        </p>
+                                        <p class="mb-1" *ngIf="service.OperatingHours">
+                                            <i class="fas fa-clock me-1"></i>
+                                            <strong>ساعات العمل:</strong> {{ service.OperatingHours }}
+                                        </p>
+                                        <p class="mb-1" *ngIf="service.IsAvailable !== undefined">
+                                            <i class="fas fa-circle me-1" [class.text-success]="service.IsAvailable" [class.text-danger]="!service.IsAvailable"></i>
+                                            <strong>الحالة:</strong> {{ service.IsAvailable ? 'متاح' : 'غير متاح' }}
+                                        </p>
+                                    </div>
+                                    <div class="service-actions mt-3">
+                                        <button class="btn btn-primary btn-sm me-2" 
+                                                (click)="showLocation(service)"
+                                                *ngIf="service.Latitude && service.Longitude">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            عرض الموقع
+                                        </button>
+                                        <button class="btn btn-secondary btn-sm" 
+                                                (click)="openModal(service)">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            التفاصيل
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pagination for Pharmacies -->
+                    <div class="pagination-container" *ngIf="getTotalPages(serviceCategories[2]) > 1">
+                        <nav aria-label="Pharmacies pagination">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" [class.disabled]="serviceCategories[2].currentPage === 1">
+                                    <a class="page-link" (click)="onPageChange(serviceCategories[2], serviceCategories[2].currentPage - 1)" style="cursor: pointer;">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" *ngFor="let page of getPageNumbers(serviceCategories[2])" 
+                                    [class.active]="page === serviceCategories[2].currentPage">
+                                    <a class="page-link" (click)="onPageChange(serviceCategories[2], page)" style="cursor: pointer;">{{ page }}</a>
+                                </li>
+                                <li class="page-item" [class.disabled]="serviceCategories[2].currentPage === getTotalPages(serviceCategories[2])">
+                                    <a class="page-link" (click)="onPageChange(serviceCategories[2], serviceCategories[2].currentPage + 1)" style="cursor: pointer;">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <!-- الكافيهات -->
+                <div class="service-section mb-5" *ngIf="serviceCategories[3].totalItems > 0">
+                    <div class="section-header">
+                        <h3><i class="fas fa-coffee me-2"></i>{{ serviceCategories[3].name }}</h3>
+                        <span class="badge bg-info">{{ serviceCategories[3].totalItems }} خدمة</span>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div *ngFor="let service of getPaginatedServices(serviceCategories[3]); trackBy: trackByServiceId" class="col-md-6 col-lg-4">
+                            <div class="service-card">
+                                <div class="service-image-container" *ngIf="service.ImagePath">
+                                    <img [src]="service.ImagePath" 
+                                         [alt]="service.Name || 'صورة الخدمة'" 
+                                         class="service-image"
+                                         (error)="onImageError($event)">
+                                </div>
+                                <div class="service-content">
+                                    <h5 class="service-title">{{ service.Name || 'غير محدد' }}</h5>
+                                    <div class="service-details">
+                                        <p class="mb-1" *ngIf="service.PhoneNumber">
+                                            <i class="fas fa-phone me-1"></i>
+                                            <strong>الهاتف:</strong> {{ service.PhoneNumber }}
+                                        </p>
+                                        <p class="mb-1" *ngIf="service.OperatingHours">
+                                            <i class="fas fa-clock me-1"></i>
+                                            <strong>ساعات العمل:</strong> {{ service.OperatingHours }}
+                                        </p>
+                                        <p class="mb-1" *ngIf="service.IsAvailable !== undefined">
+                                            <i class="fas fa-circle me-1" [class.text-success]="service.IsAvailable" [class.text-danger]="!service.IsAvailable"></i>
+                                            <strong>الحالة:</strong> {{ service.IsAvailable ? 'متاح' : 'غير متاح' }}
+                                        </p>
+                                    </div>
+                                    <div class="service-actions mt-3">
+                                        <button class="btn btn-primary btn-sm me-2" 
+                                                (click)="showLocation(service)"
+                                                *ngIf="service.Latitude && service.Longitude">
+                                            <i class="fas fa-map-marker-alt me-1"></i>
+                                            عرض الموقع
+                                        </button>
+                                        <button class="btn btn-secondary btn-sm" 
+                                                (click)="openModal(service)">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            التفاصيل
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pagination for Cafes -->
+                    <div class="pagination-container" *ngIf="getTotalPages(serviceCategories[3]) > 1">
+                        <nav aria-label="Cafes pagination">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" [class.disabled]="serviceCategories[3].currentPage === 1">
+                                    <a class="page-link" (click)="onPageChange(serviceCategories[3], serviceCategories[3].currentPage - 1)" style="cursor: pointer;">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item" *ngFor="let page of getPageNumbers(serviceCategories[3])" 
+                                    [class.active]="page === serviceCategories[3].currentPage">
+                                    <a class="page-link" (click)="onPageChange(serviceCategories[3], page)" style="cursor: pointer;">{{ page }}</a>
+                                </li>
+                                <li class="page-item" [class.disabled]="serviceCategories[3].currentPage === getTotalPages(serviceCategories[3])">
+                                    <a class="page-link" (click)="onPageChange(serviceCategories[3], serviceCategories[3].currentPage + 1)" style="cursor: pointer;">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- Modal لعرض التفاصيل -->
+  <div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+                <h5 class="modal-title" id="serviceModalLabel">
+                    <i class="fas fa-info-circle me-2"></i>
+                    {{ selectedService?.Name || 'تفاصيل الخدمة' }}
+                </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" *ngIf="selectedService">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="mb-3"><i class="fas fa-building me-2"></i><strong>اسم المحطة:</strong></h6>
+                        <p class="mb-2">{{ selectedService.StationName || 'غير محدد' }}</p>
+                        
+                        <h6 class="mb-3"><i class="fas fa-tag me-2"></i><strong>النوع:</strong></h6>
+                        <p class="mb-2">{{ getServiceTypeName(selectedService.Type) }}</p>
+                        
+                        <h6 class="mb-3"><i class="fas fa-align-left me-2"></i><strong>الوصف:</strong></h6>
+                        <p class="mb-2">{{ selectedService.Description || 'غير محدد' }}</p>
+                        
+                        <h6 class="mb-3"><i class="fas fa-phone me-2"></i><strong>رقم الهاتف:</strong></h6>
+                        <p class="mb-2">{{ selectedService.PhoneNumber || 'غير متاح' }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="mb-3"><i class="fas fa-map-marker-alt me-2"></i><strong>الموقع:</strong></h6>
+                        <p class="mb-2">{{ selectedService.Location || (selectedService.Latitude && selectedService.Longitude ? 
+                            selectedService.Latitude + ', ' + selectedService.Longitude : 'غير متاح') }}</p>
+                        
+                        <h6 class="mb-3"><i class="fas fa-circle me-2"></i><strong>متاح حاليًا:</strong></h6>
+                        <p class="mb-2">
+                            <span class="badge" [class.bg-success]="selectedService.IsAvailable" [class.bg-danger]="!selectedService.IsAvailable">
+                                {{ selectedService.IsAvailable ? 'نعم' : 'لا' }}
+                            </span>
+                        </p>
+                        
+                        <h6 class="mb-3"><i class="fas fa-clock me-2"></i><strong>ساعات العمل:</strong></h6>
+                        <p class="mb-2">{{ selectedService.OperatingHours || 'غير محدد' }}</p>
+                        
+                        <h6 class="mb-3"><i class="fas fa-utensils me-2"></i><strong>القائمة:</strong></h6>
+                        <p class="mb-2">{{ selectedService.Menu || 'غير متاح' }}</p>
+                    </div>
+                </div>
+                
+                <!-- الصور -->
+                <div class="row mt-3" *ngIf="selectedService.ImagePath || selectedService.MenuImagePath">
+                    <div class="col-md-6" *ngIf="selectedService.ImagePath">
+                        <h6><i class="fas fa-image me-2"></i>صورة الخدمة:</h6>
+                        <img [src]="selectedService.ImagePath" 
+                             alt="صورة الخدمة" 
+                             class="modal-image"
+                             (error)="onImageError($event)">
+                    </div>
+                    <div class="col-md-6" *ngIf="selectedService.MenuImagePath">
+                        <h6><i class="fas fa-image me-2"></i>صورة القائمة:</h6>
+                        <img [src]="selectedService.MenuImagePath" 
+                             alt="صورة القائمة" 
+                             class="modal-image"
+                             (error)="onImageError($event)">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>
+                    إغلاق
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
-  <div *ngIf="services.length > 0" class="services-content">
-    <h2>قائمة خدمات المحطة</h2>
-    <div class="service-list">
-      <div *ngFor="let service of services" class="service-item">
-        <p><strong>الاسم:</strong> {{ service.Name || 'غير محدد' }}</p>
-        <p *ngIf="service.Latitude && service.Longitude">
-          <strong>الإحداثيات:</strong> {{ service.Latitude }}, {{ service.Longitude }}
-        </p>
-        <p *ngIf="service.Description">
-          <strong>الوصف:</strong> {{ service.Description }}
-        </p>
+<!-- Debug Panel -->
+<div class="debug-panel" *ngIf="debugInfo.showDebug">
+    <div class="debug-header">
+        <h6><i class="fas fa-bug"></i> معلومات التصحيح</h6>
+        <button class="btn-close" (click)="debugInfo.showDebug = false">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="debug-content">
+        <div class="debug-section">
+            <h6>حالة البيانات:</h6>
+            <p>عدد الخدمات: {{ services.length }}</p>
+            <p>حالة التحميل: {{ isLoading ? 'جاري التحميل' : 'تم التحميل' }}</p>
+            <p>رسالة الخطأ: {{ errorMessage || 'لا توجد أخطاء' }}</p>
+            <p>حالة الخريطة: {{ map ? 'مُهيأة' : 'غير مُهيأة' }}</p>
+            <p>عنصر الخريطة: {{ mapElement ? 'موجود' : 'غير موجود' }}</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline-primary btn-sm" (click)="debugInfo.showDebug = !debugInfo.showDebug">
+            <i class="fas fa-bug"></i> تصحيح
+          </button>
+          <button class="btn btn-outline-secondary btn-sm" (click)="loadAllServices()">
+            <i class="fas fa-sync"></i> إعادة تحميل
+          </button>
+          <button class="btn btn-outline-info btn-sm" (click)="initializeMap()">
+            <i class="fas fa-map"></i> تهيئة الخريطة
+          </button>
       </div>
     </div>
-
-    <!-- الخريطة -->
-    <div id="map" class="map-container" style="height: 400px; width: 100%;"></div>
-
-    <!-- التفريغ (Pagination) -->
-    <nav aria-label="Pagination">
-      <ul class="pagination">
-        <li class="page-item" [class.disabled]="currentPage === 1">
-          <a class="page-link" (click)="onPageChange(currentPage - 1)" href="javascript:void(0);">السابق</a>
-        </li>
-        <li *ngFor="let page of getPages()" class="page-item" [class.active]="page === currentPage">
-          <a class="page-link" (click)="onPageChange(page)" href="javascript:void(0);">{{ page }}</a>
-        </li>
-        <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
-          <a class="page-link" (click)="onPageChange(currentPage + 1)" href="javascript:void(0);">التالي</a>
-        </li>
-      </ul>
-    </nav>
   </div>
-
-  <div *ngIf="services.length === 0 && !errorMessage" class="loading">
-    <p>جاري تحميل البيانات...</p>
-    <div class="spinner-border text-primary" role="status">
-      <span class="visually-hidden">جاري التحميل...</span>
-    </div>
-    <p *ngIf="services.length === 0 && errorMessage === null">أو لا توجد خدمات لهذه المحطة</p>
-  </div>
-</div>

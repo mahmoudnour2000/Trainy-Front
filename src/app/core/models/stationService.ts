@@ -1,28 +1,31 @@
 export interface Service {
   Id: number;
-  stationId: number;
-  stationName: string;
+  StationId: number;
+  StationName: string;
   Name: string; 
-  type: string;
+  Type: number;
   Description: string;
-  phoneNumber: string;
-  location: string;
+  PhoneNumber: string;
+  Location: string;
   Latitude: number;
   Longitude: number;
-  isAvailable: boolean;
-  operatingHours: string;
-  menu: string;
-  imagePath: string;
-  menuImagePath: string;
+  IsAvailable: boolean;
+  OperatingHours: string;
+  Menu: string;
+  ImagePath: string;
+  MenuImagePath: string;
 }
 
 export interface ServiceResponse {
-    items?: Service[];
+  items?: Service[];
   Data?: Service[];
   Services?: Service[];
-  results?: Service[]; // أضف results كخيار
-  TotalItems: number;
-  PageNumber: number;
-  PageSize: number;
-  TotalPages: number;
+  results?: Service[];
+  TotalItems?: number;
+  PageNumber?: number;
+  PageSize?: number;
+  TotalPages?: number;
+  // Additional properties from actual API response
+  StationId?: number;
+  StationName?: string;
 }
