@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { TrainListViewModel, TrainSearchRequest, PaginatedResponse,TrainWithStations,TrainStation
@@ -11,7 +11,7 @@ import { TrainListViewModel, TrainSearchRequest, PaginatedResponse,TrainWithStat
 })
 export class TrainService {
   private apiUrl = `${environment.apiUrl}TrainApi`;
-
+private stationApiUrl = `${environment.apiUrl}Station`;
   constructor(private http: HttpClient) { }
  private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
@@ -31,16 +31,37 @@ export class TrainService {
   }
 
   //Not used in any component yet
-searchTrains(request: TrainSearchRequest = {}): Observable<PaginatedResponse<TrainListViewModel>> {
-    const params: { [key: string]: string } = {
-      pageNumber: (request.pageNumber?.toString() || '1'),
-      pageSize: (request.pageSize?.toString() || '10')
-    };
-    if (request['no'] && request['no'].trim() !== '') params['no'] = request['no'];
-    if (request['type'] && request['type'].trim() !== '') params['type'] = request['type'];
-    if (request['stationName'] && request['stationName'].trim() !== '') params['stationName'] = request['stationName'];
+searchTrains(request: TrainSearchRequest): Observable<PaginatedResponse<TrainListViewModel>> {
+    let params = new HttpParams()
+      .set('pageNumber', (request.pageNumber ?? 1).toString()) // قيمة افتراضية 1
+      .set('pageSize', (request.pageSize ?? 10).toString()); // قيمة افتراضية 10
+    if (request.no) params = params.set('no', request.no);
+    if (request.type) params = params.set('type', request.type);
+    if (request.stationName) params = params.set('routeFrom', request.stationName);
+    return this.http.get<PaginatedResponse<TrainListViewModel>>(`${this.apiUrl}/searchByRouteFrom`, {
+      headers: this.getAuthHeaders(),
+      params
+    });
+  }
 
-    return this.http.get<PaginatedResponse<TrainListViewModel>>(`${this.apiUrl}/search`, { params });
+  getStations(searchString: string = '', pageNumber: number = 1, pageSize: number = 100): Observable<PaginatedResponse<{ Name: string; Location: string }>> {
+    let params = new HttpParams()
+      .set('pageNumber', pageNumber.toString())
+      .set('pageSize', pageSize.toString());
+    if (searchString) params = params.set('searchString', searchString);
+    return this.http.get<PaginatedResponse<{ Name: string; Location: string }>>(`${this.stationApiUrl}/all`, { params });
+  }
+
+  getTrainTypes(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/types`, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  getTrainNumbers(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/numbers`, {
+      headers: this.getAuthHeaders()
+    });
   }
 
   getTrainStations(trainId: number, searchTerm: string = ''): Observable<PaginatedResponse<TrainStation>> {

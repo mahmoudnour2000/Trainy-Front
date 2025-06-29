@@ -1,0 +1,231 @@
+.train-card {
+  border-radius: 15px;
+  overflow: hidden;
+  margin-top: 10px;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, backdrop-filter 0.3s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.4);
+  }
+}
+.stations-container {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 10px;
+  display: none;
+  width: 100%;
+  border-radius: 0 0 15px 15px;
+  &.expanded {
+    display: block;
+  }
+}
+.stations-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.station-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.station-item {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+.station-time {
+  font-weight: bold;
+  color: #3947df;
+}
+.station-name {
+  flex-grow: 1;
+  text-align: right;
+  padding-left: 15px;
+}
+.time-section {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+  gap: 15px;
+}
+.time-box {
+  text-align: center;
+  flex: 1;
+}
+.time {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0;
+}
+.location {
+  font-size: 1rem;
+  color: #3b3535;
+}
+.details-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding-top: 35px;
+  flex-grow: 2;
+}
+.detail-box {
+  text-align: center;
+  flex: 1;
+}
+.detail-label {
+  font-size: 1rem;
+  color: #373434;
+  margin-bottom: 3px;
+}
+.detail-value {
+  font-size: 1rem;
+  color: #0d6efd;
+  font-weight: 600;
+}
+.buttons-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 10px;
+}
+.action-btn {
+  background-color: #0846a0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 140px;
+  height: 45px;
+  display: flex;
+  margin-right: 3px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  gap: 5px;
+  transition: 0.3s;
+  i {
+    margin-left: 5px;
+  }
+  &:hover {
+    background-color: #0050cf;
+  }
+}
+.transport {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 3px;
+}
+@media (max-width: 768px) {
+  .train-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 90%;
+    padding: 6px;
+    margin: 8px auto;
+  }
+  .time-section {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 3px;
+    width: 100%;
+  }
+  .details-section {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    font-size: 0.75rem;
+    padding-top: 5px;
+  }
+  .detail-box {
+    flex: 1;
+    text-align: center;
+    min-width: 30%;
+  }
+  .buttons-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 3px;
+  }
+  .action-btn {
+    width: 48%;
+    max-width: 120px;
+    font-size: 0.8rem;
+    padding: 6px;
+  }
+  .time {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .location {
+    font-size: 0.8rem;
+    color: #3b3535;
+  }
+  .transport {
+    font-size: 0.9rem;
+    font-weight: bold;
+  }
+}
+@media (max-width: 1024px) {
+  .train-card {
+    width: 95%;
+    padding: 10px;
+    margin: 10px auto;
+    flex-direction: column;
+    text-align: center;
+  }
+  .time-section {
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    gap: 10px;
+  }
+  .details-section {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    font-size: 0.85rem;
+    padding-top: 10px;
+  }
+  .detail-box {
+    flex: 1;
+    min-width: 30%;
+  }
+  .buttons-container {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    gap: 5px;
+  }
+  .time {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .location, .transport {
+    font-size: 0.9rem;
+  }
+}
