@@ -1,0 +1,73 @@
+<div class="card" id="requestForm">
+  <div class="card-header d-flex align-items-center">
+    <img src="assets/default-user.jpg" class="rounded-circle me-2 profile-picture" id="userProfilePic" alt="الصورة الشخصية">
+    <span class="fw-bold">المستخدم (صاحب الطلب)</span>
+  </div>
+  <div class="card-body">
+    <!-- Error message -->
+    <div *ngIf="errorMessage" class="alert alert-danger mb-3">
+      {{ errorMessage }}
+      <!-- Login button for unauthenticated users -->
+      <button *ngIf="!authService.isAuthenticated()" class="btn btn-primary btn-sm ms-2" (click)="navigateToLogin()">
+        تسجيل الدخول
+      </button>
+    </div>
+
+    <!-- Content only visible for authenticated couriers who aren't the offer owner -->
+    <ng-container *ngIf="authService.isAuthenticated() && authService.isCourier() && !isOfferOwner">
+      <!-- Text area with character counter -->
+      <textarea class="form-control" id="requestText" rows="6" 
+                placeholder="اكتب تفاصيل طلبك هنا" 
+                [(ngModel)]="requestText" 
+                (input)="onTextChange()"
+                [maxlength]="maxLength"></textarea>
+      <div [class]="getCounterClass()">{{charCount}} / {{maxLength}} حرف</div>
+      
+      <div class="buttons-container">
+        <!-- From City Dropdown with Search -->
+        <div class="dropdown form-button">
+          <button class="btn btn-primary dropdown-toggle w-100" type="button" id="fromDropdown" 
+                  data-bs-toggle="dropdown" aria-expanded="false">
+            {{selectedFromCity || 'من'}}
+          </button>
+          <div class="dropdown-menu p-2" style="width: 220px;">
+            <input type="text" class="form-control mb-2 city-search" 
+                  placeholder="ابحث عن المدن..." 
+                  [(ngModel)]="fromCitySearch" 
+                  (input)="filterFromCities()">
+            <div class="city-list">
+              <a class="dropdown-item from-city" href="#" 
+                *ngFor="let city of filteredFromCities" 
+                (click)="$event.preventDefault(); selectFromCity(city)">
+                {{city.name}}
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Age Input -->
+        <div class="form-button">
+          <input type="number" class="form-control" id="ageInput" 
+                style="width: 150px;" 
+                placeholder="العمر (سنوات)" 
+                [(ngModel)]="age" 
+                min="18" max="70">
+        </div>
+        
+        <!-- Post Button -->
+        <div class="post-button">
+          <button type="button" class="btn btn-primary w-100" 
+                  id="submitRequest" 
+                  (click)="submitRequest()" 
+                  [disabled]="isSubmitting">
+            <span *ngIf="!isSubmitting">إرسال الطلب</span>
+            <span *ngIf="isSubmitting">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              جاري الإرسال...
+            </span>
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div> 

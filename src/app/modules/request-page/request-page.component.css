@@ -1,0 +1,10 @@
+/* Styling for the request page layout */
+.container {
+  direction: rtl;
+}
+
+@media (max-width: 992px) {
+  .row {
+    flex-direction: column-reverse;
+  }
+} 

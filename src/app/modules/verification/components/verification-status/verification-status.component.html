@@ -1,0 +1,99 @@
+<div class="verification-status-container">
+  <div class="verification-status-card">
+    <h2 class="title">حالة التحقق</h2>
+    
+    <div class="spinner-container" *ngIf="loading">
+      <app-spinner></app-spinner>
+    </div>
+    
+    <!-- Success/Info message -->
+    <div class="alert alert-info" *ngIf="successMessage">
+      <i class="bi bi-info-circle-fill me-2"></i>
+      {{ successMessage }}
+    </div>
+    
+    <!-- Error message -->
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      {{ errorMessage }}
+      <button class="btn btn-sm btn-outline-danger ms-3" (click)="refreshStatus()">
+        <i class="bi bi-arrow-clockwise me-1"></i> إعادة المحاولة
+      </button>
+    </div>
+    
+    <ng-container *ngIf="!loading && !errorMessage">
+      <ng-container *ngIf="currentStatus$ | async as verificationStatus">
+        <!-- Main verification status display -->
+        <div class="verification-status-main">
+          <div class="status-icon">
+            <i [class]="'bi ' + getStatusIcon(verificationStatus.senderStatus) + ' status-icon-large'"></i>
+          </div>
+          
+          <div class="status-info">
+            <div class="status-badge" [ngClass]="getStatusClass(verificationStatus.senderStatus)">
+              {{ getStatusText(verificationStatus.senderStatus) }}
+            </div>
+            
+            <div class="status-description">
+              <ng-container [ngSwitch]="verificationStatus.senderStatus">
+                <p *ngSwitchCase="'Accepted'">
+                  تم قبول طلب التحقق الخاص بك. يمكنك الآن استخدام جميع ميزات المنصة.
+                </p>
+                <p *ngSwitchCase="'Pending'">
+                  طلب التحقق الخاص بك قيد المراجعة من قبل فريقنا.
+                </p>
+                <p *ngSwitchCase="'Rejected'" class="rejection-reason">
+                  تم رفض طلب التحقق. 
+                  <span *ngIf="verificationStatus.lastSenderRejectionReason">
+                    السبب: {{ verificationStatus.lastSenderRejectionReason }}
+                  </span>
+                </p>
+                <p *ngSwitchDefault>
+                  طلب التحقق الخاص بك قيد المراجعة من قبل فريقنا.
+                </p>
+              </ng-container>
+            </div>
+            
+            <!-- Processing time message -->
+            <div class="processing-time-notice">
+              <div class="notice-content">
+                <i class="bi bi-clock me-2"></i>
+                <span>تستغرق عملية المراجعة حوالي 24 ساعة</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Action buttons -->
+        <div class="navigation-section">
+          <div class="navigation-buttons">
+            <!-- Retry button for rejected status -->
+            <button 
+              *ngIf="verificationStatus.senderStatus === 'Rejected'"
+              class="submit-btn retry-btn me-2"
+              (click)="goToVerificationForm()"
+            >
+              <i class="bi bi-arrow-clockwise me-2"></i>
+              إعادة المحاولة
+            </button>
+            
+            <!-- Main navigation to offers page for accepted users -->
+            <button 
+              *ngIf="verificationStatus.senderStatus === 'Accepted'" 
+              class="submit-btn primary-action me-2" 
+              (click)="goToOffers()"
+            >
+              <i class="bi bi-box me-2"></i>
+              انتقل إلى صفحة العروض
+            </button>
+            
+            <!-- Home navigation button -->
+            <button class="outline-btn" (click)="goToHome()">
+              <i class="bi bi-house me-1"></i> العودة للرئيسية
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</div> 

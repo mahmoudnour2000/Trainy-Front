@@ -1,0 +1,327 @@
+.verification-status-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+  direction: rtl;
+  text-align: right;
+}
+
+.verification-status-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 100%;
+  max-width: 800px;
+}
+
+.title {
+  color: #333;
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+}
+
+.verification-box {
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  background-color: #f8f9fa;
+}
+
+.role-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.role-title i {
+  font-size: 1.5rem;
+  margin-right: 0.75rem;
+  color: #0d6efd;
+}
+
+.role-title h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.status-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 50px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  width: fit-content;
+}
+
+.status-accepted {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-rejected {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+// Removed status-not-submitted as it's no longer used
+
+.status-description {
+  margin-bottom: 1rem;
+}
+
+.status-description p {
+  margin: 0;
+  color: #495057;
+}
+
+.action-buttons {
+  margin-top: 1rem;
+}
+
+.submit-btn {
+  background-color: #0d6efd;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.submit-btn:hover {
+  background-color: #0b5ed7;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+.submit-btn.primary-action {
+  font-size: 1.1rem;
+  padding: 0.875rem 2rem;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  border-radius: 8px;
+  
+  &:hover {
+    background: linear-gradient(135deg, #218838 0%, #17a2b8 100%);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+  }
+}
+
+.outline-btn {
+  background-color: transparent;
+  border: 1px solid #0d6efd;
+  border-radius: 4px;
+  color: #0d6efd;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.outline-btn:hover {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.navigation-section {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.status-summary {
+  margin-top: 1.5rem;
+  
+  .info-box {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    align-items: flex-start;
+    text-align: right;
+    
+    .info-icon {
+      color: #0d6efd;
+      font-size: 1.2rem;
+      margin-left: 0.75rem;
+      margin-top: 0.1rem;
+    }
+    
+    .info-content {
+      flex: 1;
+      
+      p {
+        margin: 0;
+        color: #495057;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+    }
+  }
+}
+
+.alert {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  border: 1px solid #f5c2c7;
+  color: #842029;
+}
+
+.alert-info {
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+  color: #0c5460;
+}
+
+// New styles for simplified verification status layout
+.verification-status-main {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.status-icon {
+  margin-bottom: 1.5rem;
+}
+
+.status-icon-large {
+  font-size: 4rem;
+  color: #0d6efd;
+}
+
+.status-icon-large.bi-check-circle-fill {
+  color: #28a745;
+}
+
+.status-icon-large.bi-x-circle-fill {
+  color: #dc3545;
+}
+
+.status-icon-large.bi-hourglass-split {
+  color: #ffc107;
+}
+
+.verification-status-main .status-badge {
+  font-size: 1.2rem;
+  padding: 0.75rem 1.5rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.verification-status-main .status-description {
+  margin-bottom: 1.5rem;
+  
+  p {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #495057;
+    line-height: 1.6;
+  }
+  
+  .rejection-reason {
+    color: #dc3545;
+    font-weight: 500;
+  }
+}
+
+.processing-time-notice {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+  
+  .notice-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #856404;
+    font-weight: 500;
+    
+    i {
+      color: #f39c12;
+    }
+  }
+}
+
+.retry-btn {
+  background-color: #ffc107;
+  color: #212529;
+  
+  &:hover {
+    background-color: #e0a800;
+    color: #212529;
+  }
+}
+
+@media (max-width: 768px) {
+  .verification-status-card {
+    padding: 1.5rem;
+  }
+  
+  .verification-status-main {
+    padding: 1.5rem;
+  }
+  
+  .status-icon-large {
+    font-size: 3rem;
+  }
+  
+  .verification-box {
+    padding: 1rem;
+  }
+  
+  .role-title i {
+    font-size: 1.25rem;
+  }
+  
+  .role-title h3 {
+    font-size: 1.1rem;
+  }
+} 
