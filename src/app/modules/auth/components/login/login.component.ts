@@ -77,10 +77,10 @@ export class LoginComponent implements OnInit {
 
 interface AuthResponse {
   token: string;
-  // user: {
-  //   id: string;
-  //   email: string;
-  //   name: string;
-  //   role: string;
-  // };
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    role: string;
+  };
 }

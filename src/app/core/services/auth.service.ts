@@ -3,7 +3,7 @@ import { IUserLogin, IUserRegister } from '../models/auth';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, throwError, BehaviorSubject } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthResponse, User } from '../models/auth';
+import { AuthResponse } from '../models/auth';
 import { tap, map } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service'; 
 import { jwtDecode } from 'jwt-decode';
