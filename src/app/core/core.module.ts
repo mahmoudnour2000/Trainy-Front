@@ -1,7 +1,7 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors } from '@angular/common/http';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { authInterceptor } from './interceptors/auth.interceptor';
 import { loaderInterceptor } from './interceptors/loader.interceptor';
 
 @NgModule({
@@ -10,8 +10,7 @@ import { loaderInterceptor } from './interceptors/loader.interceptor';
     CommonModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    provideHttpClient(withInterceptors([loaderInterceptor]))
+    provideHttpClient(withInterceptors([authInterceptor, loaderInterceptor]))
   ]
 })
 export class CoreModule {

@@ -111,7 +111,17 @@ export const routes: Routes = [
         path: 'userProfile',
         canActivate: [AuthGuard],
         loadChildren: () => import('./modules/account-profile/account-profile.module').then(m => m.AccountProfileModule)
-      }
+      },
+      {
+        path: 'verification',
+        loadComponent: () => import('./modules/verification/components/verification-images/verification-images.component').then(m => m.VerificationImagesComponent),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'verification/status',
+        loadComponent: () => import('./modules/verification/components/verification-status/verification-status.component').then(m => m.VerificationStatusComponent),
+        canActivate: [AuthGuard]
+      },
     ]
   },
 

@@ -1,0 +1,145 @@
+<div class="verification-container">
+  <div class="verification-card">
+    <h2 class="title">التحقق من الهوية</h2>
+    <p class="subtitle">
+      لاستخدام منصتنا كـ <b>{{ getRoleInArabic(verificationForm.get('requestedRole')?.value) || 'مرسل أو موصل' }}</b>، نحتاج للتحقق من هويتك. 
+      يرجى رفع المستندات التالية:
+    </p>
+    
+    <div class="info-box">
+      <div class="info-icon">
+        <i class="bi bi-info-circle"></i>
+      </div>
+      <div class="info-content">
+        <p>سيتم مراجعة مستندات التحقق الخاصة بك من قبل فريقنا. تستغرق هذه العملية عادة من يوم إلى يومين عمل.</p>
+      </div>
+    </div>
+    
+    <!-- Error message -->
+    <div class="alert alert-danger" *ngIf="errorMessage">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      {{ errorMessage }}
+    </div>
+    
+    <!-- Success message -->
+    <div class="alert alert-success" *ngIf="successMessage">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      {{ successMessage }}
+    </div>
+    
+    <form [formGroup]="verificationForm" (ngSubmit)="onSubmit()">
+      <!-- Role Selection -->
+      <div class="form-group">
+        <label for="requestedRole">نوع التحقق المطلوب</label>
+        <select id="requestedRole" formControlName="requestedRole" class="form-control">
+          <option value="">اختر نوع التحقق</option>
+          <option value="Sender" [disabled]="!canSubmitSender">مرسل</option>
+          <option value="Courier" [disabled]="!canSubmitCourier">موصل</option>
+        </select>
+        <div class="error-message" *ngIf="verificationForm.get('requestedRole')?.invalid && verificationForm.get('requestedRole')?.touched">
+          يرجى اختيار نوع التحقق
+        </div>
+      </div>
+
+      <!-- National ID -->
+      <div class="form-group">
+        <label for="nationalId">رقم الهوية الوطنية</label>
+        <input 
+          type="text" 
+          id="nationalId" 
+          formControlName="nationalId" 
+          class="form-control"
+          placeholder="أدخل رقم الهوية الوطنية (14 رقم)"
+          maxlength="14"
+          (input)="onNationalIdInput($event)"
+        >
+        <div class="error-message" *ngIf="verificationForm.get('nationalId')?.invalid && verificationForm.get('nationalId')?.touched">
+          <span *ngIf="verificationForm.get('nationalId')?.errors?.['required']">يرجى إدخال رقم الهوية الوطنية</span>
+          <span *ngIf="verificationForm.get('nationalId')?.errors?.['pattern'] || verificationForm.get('nationalId')?.errors?.['minlength'] || verificationForm.get('nationalId')?.errors?.['maxlength']">
+            رقم الهوية الوطنية يجب أن يكون 14 رقم بالضبط
+          </span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="idImage">الهوية الوطنية أو جواز السفر (الوجه الأمامي)</label>
+        <div class="file-upload">
+          <input 
+            type="file" 
+            id="idImage" 
+            accept="image/*" 
+            (change)="onIdImageChange($event)" 
+            class="file-input"
+          >
+          <div class="upload-btn">
+            <i class="bi bi-upload"></i> اختر ملف
+          </div>
+          <div class="file-name">
+            {{ verificationForm.get('idImage')?.value?.name || 'لم يتم اختيار ملف' }}
+          </div>
+        </div>
+        
+        <div class="image-preview" *ngIf="idImagePreview">
+          <img [src]="idImagePreview" alt="معاينة الهوية">
+        </div>
+        
+        <div class="error-message" *ngIf="verificationForm.get('idImage')?.invalid && verificationForm.get('idImage')?.touched">
+          يرجى رفع صورة الهوية
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="selfieImage">صورة شخصية مع وثيقة الهوية</label>
+        <div class="file-upload">
+          <input 
+            type="file" 
+            id="selfieImage" 
+            accept="image/*" 
+            (change)="onSelfieImageChange($event)" 
+            class="file-input"
+          >
+          <div class="upload-btn">
+            <i class="bi bi-upload"></i> اختر ملف
+          </div>
+          <div class="file-name">
+            {{ verificationForm.get('selfieImage')?.value?.name || 'لم يتم اختيار ملف' }}
+          </div>
+        </div>
+        
+        <div class="image-preview" *ngIf="selfieImagePreview">
+          <img [src]="selfieImagePreview" alt="معاينة الصورة الشخصية">
+        </div>
+        
+        <div class="error-message" *ngIf="verificationForm.get('selfieImage')?.invalid && verificationForm.get('selfieImage')?.touched">
+          يرجى رفع الصورة الشخصية
+        </div>
+      </div>
+      
+      <div class="mt-4">
+        <p class="text-muted small">
+          <i class="bi bi-info-circle me-1"></i>
+          الحد الأقصى لحجم الملف: 5 ميجابايت لكل صورة. الصيغ المدعومة: JPG، PNG.
+        </p>
+      </div>
+      
+      <button 
+        type="submit" 
+        class="submit-btn" 
+        [disabled]="verificationForm.invalid || isSubmitting"
+      >
+        <span *ngIf="isSubmitting">
+          <i class="bi bi-arrow-repeat spin me-2"></i> جاري الإرسال...
+        </span>
+        <span *ngIf="!isSubmitting">
+          <i class="bi bi-check-circle me-2"></i> تحقق من حسابي
+        </span>
+      </button>
+      
+      <div class="mt-3 text-center" *ngIf="successMessage">
+        <a routerLink="/verification/status" class="text-decoration-none">
+          <i class="bi bi-arrow-left me-1"></i> العودة إلى حالة التحقق
+        </a>
+      </div>
+    </form>
+  </div>
+</div> 
