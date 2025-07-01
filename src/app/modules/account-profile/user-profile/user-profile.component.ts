@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../core/services/user.service';
 import { User, Offer, Request as UserRequest } from '../../../core/models/user';
+import { forkJoin } from 'rxjs';
 
 @Component({
   standalone: false,
@@ -23,11 +24,44 @@ errorMessage: string | null = null; // For error display
     private userService: UserService
   ) {}
 
-  ngOnInit(): void {
-    this.loadUserProfile();
-    this.loadOffers();
-    this.loadRequests();
-  }
+  // ngOnInit(): void {
+  //   this.loadUserProfile();
+  //   this.loadOffers();
+  //   this.loadRequests();
+  // }
+
+
+ngOnInit(): void {
+  this.loadAllUserData();
+}
+
+loadAllUserData(): void {
+  this.isLoadingProfile = true;
+  this.isLoadingOffers = true;
+  this.isLoadingRequests = true;
+
+  forkJoin({
+    user: this.userService.getUserProfile(),
+    offers: this.userService.getUserOffers(),
+    requests: this.userService.getUserRequests()
+  }).subscribe({
+    next: (result) => {
+      console.log('User data loaded successfully:', result);
+      this.user = result.user;
+      this.offers = result.offers;
+      this.requests = result.requests;
+    },
+    error: (err) => {
+      console.error('Error loading user data:', err);
+    },
+    complete: () => {
+      this.isLoadingProfile = false;
+      this.isLoadingOffers = false;
+      this.isLoadingRequests = false;
+    }
+  });
+}
+
 
   loadUserProfile(): void {
     this.isLoadingProfile = true;

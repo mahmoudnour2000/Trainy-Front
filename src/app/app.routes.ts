@@ -7,6 +7,10 @@ import { LostAndFoundListComponent } from './modules/Lost-And-Found/lost-and-fou
 import { AboutUsComponent } from '../app/modules/AboutUs/about-us/about-us.component'; 
 import{ AuthGuard } from './core/guards/auth.guard';
 import { NotFoundComponent } from './modules/NotFoundPage/not-found/not-found.component';
+import { ActivatedRoute } from '@angular/router';
+import { TrainTrackingService } from './core/services/train-tracking.service';
+import { interval } from 'rxjs';
+
 export const routes: Routes = [
   // {
   //   path: '',
@@ -63,7 +67,7 @@ export const routes: Routes = [
         path: 'train-history/:trainId',
         canActivate: [AuthGuard],
         loadComponent: () =>
-          import('./modules/train-tracking-history/train-tracking-history.component').then(m => m.TrainHistoryComponent)
+          import('./modules/train-tracking-history/train-tracking-history.component').then(m => m.TrainTrackingHistoryComponent)
       },
       {
         path: 'report-lost/:trainId',

@@ -101,10 +101,10 @@ export class StationsComponent implements OnInit {
       
       this.map = L.map('map').setView([centerLat, centerLng], 8);
       
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
         attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-      }).addTo(this.map);
+    }).addTo(this.map);
 
       // Add markers for all stations
       const bounds = L.latLngBounds([]);

@@ -7,11 +7,15 @@ import { AuthResponse, AUser } from '../models/auth';
 import { tap, map } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service'; 
 import { jwtDecode } from 'jwt-decode';
+import { User } from '../models/user';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  LoggedUser: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
+
   private apiUrl: string = environment.apiUrl + 'Account/';
   
   // Reactive state management
@@ -64,7 +68,7 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return this.cookieService.get('auth_token') || localStorage.getItem('token');
+    return this.cookieService.get('auth_token');
   }
 
   clearToken(): void {
@@ -91,14 +95,14 @@ export class AuthService {
   resetPassword(model: { email: string, token: string, newPassword: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}reset-password`, model);
   }
-  
+
   getCurrentUserId(): string | null {
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const decoded: any = jwtDecode(token);
         console.log('Decoded token:', decoded);
-        
+
         return decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || null;
       } catch (error) {
         console.error('Error decoding token:', error);

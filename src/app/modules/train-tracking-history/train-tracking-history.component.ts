@@ -1,65 +1,88 @@
-import { TrainTrackingService } from '../../core/services/train-tracking.service';
-import { TrainTrackingViewModel } from '../../core/models/train-tracking-view-model';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { TrainTrackingService } from '../../core/services/train-tracking.service';
+import { TrainTracking } from '../../core/models/train-tracking.model';
 
 @Component({
-  selector: 'app-train-history',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule, // عشان routerLink
-    MatCardModule, // عشان mat-card-actions
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatTableModule,
-    ReactiveFormsModule
-  ],
+  selector: 'app-train-tracking-history',
   templateUrl: './train-tracking-history.component.html',
-  styleUrls: ['./train-tracking-history.component.css']
+  styleUrls: ['./train-tracking-history.component.css'],
+  standalone: true,
+  imports: [CommonModule, FormsModule]
 })
-export class TrainHistoryComponent implements OnInit {
-  trainId?: number;
-  history: TrainTrackingViewModel[] = [];
-  filterForm: FormGroup;
-  displayedColumns: string[] = [
-    'trainNo', 'currentStation', 'nextStation', 'guide', 'latitude', 'longitude',
-    'expectedArrival', 'status', 'distance', 'speed', 'lastUpdated'
-  ];
+export class TrainTrackingHistoryComponent implements OnInit {
+  trainId: number = 0;
+  history: TrainTracking[] = [];
+  startDate: string = '';
+  endDate: string = '';
+  errorMessage: string = '';
+  isLoading: boolean = false;
+  currentDate: string = new Date().toISOString().split('T')[0];
 
   constructor(
-    private route: ActivatedRoute,
     private trainTrackingService: TrainTrackingService,
-    private fb: FormBuilder
-  ) {
-    this.filterForm = this.fb.group({
-      startDate: [''],
-      endDate: ['']
-    });
-  }
+    private route: ActivatedRoute
+  ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
+    // Get trainId from route parameters
     this.trainId = +this.route.snapshot.paramMap.get('trainId')!;
+    // Set default date range to last 7 days
+    const end = new Date();
+    const start = new Date();
+    start.setDate(start.getDate() - 7);
+    
+    this.startDate = start.toISOString().split('T')[0];
+    this.endDate = end.toISOString().split('T')[0];
+    
     this.loadHistory();
   }
 
-  loadHistory(): void {
-    const startDate = this.filterForm.get('startDate')?.value ? new Date(this.filterForm.get('startDate')?.value) : undefined;
-    const endDate = this.filterForm.get('endDate')?.value ? new Date(this.filterForm.get('endDate')?.value) : undefined;
-
-    if (this.trainId) {
-      this.trainTrackingService.getTrackingHistory(this.trainId, startDate, endDate).subscribe({
-        next: (data) => this.history = data,
-        error: (err) => console.error('Error fetching history:', err)
-      });
+  loadHistory() {
+    if (!this.validateDates()) {
+      return;
     }
+
+    this.isLoading = true;
+    this.trainTrackingService.getTrackingHistory(this.trainId, this.startDate, this.endDate).subscribe({
+      next: (data) => {
+        this.history = data;
+        this.errorMessage = '';
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.errorMessage = 'خطأ في استرجاع سجل التتبع';
+        console.error(err);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  validateDates(): boolean {
+    if (!this.startDate || !this.endDate) {
+      this.errorMessage = 'يرجى إدخال تاريخ البداية والنهاية';
+      return false;
+    }
+
+    const start = new Date(this.startDate);
+    const end = new Date(this.endDate);
+    
+    if (start > end) {
+      this.errorMessage = 'تاريخ البداية يجب أن يكون قبل تاريخ النهاية';
+      return false;
+    }
+
+    if (end > new Date()) {
+      this.errorMessage = 'تاريخ النهاية لا يمكن أن يكون في المستقبل';
+      return false;
+    }
+
+    return true;
+  }
+
+  filterHistory() {
+    this.loadHistory();
   }
 }
