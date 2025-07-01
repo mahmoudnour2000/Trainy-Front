@@ -1,0 +1,28 @@
+<div class="request-card" *ngIf="request">
+  <div class="request-header">
+    <div class="courier-info">
+      <img [src]="request.courierImage || '/assets/images/default-user.png'" alt="Courier Image" class="courier-avatar">
+      <span class="courier-name">{{request.courierName || 'Unknown Courier'}}</span>
+    </div>
+  </div>
+  <div class="request-body">
+    <p class="request-message">{{request.message}}</p>
+    <div class="request-details">
+      <!-- Replace non-existent properties with appropriate ones -->
+      <div class="request-status">
+        <span [ngClass]="getStatusClass()">{{getStatusText()}}</span>
+      </div>
+      <!-- If specific travel details aren't available in the Request model, we can hide these or fill them from Offer data -->
+      <!-- 
+      <div class="travel-details">
+        <span>من: {{offer?.fromStationName || 'غير محدد'}}</span>
+        <span>إلى: {{offer?.toStationName || 'غير محدد'}}</span>
+      </div>
+      -->
+    </div>
+  </div>
+  <div class="request-date">{{formatDate(request.createdAt)}}</div>
+  <div class="request-actions">
+    <ng-content></ng-content>
+  </div>
+</div> 

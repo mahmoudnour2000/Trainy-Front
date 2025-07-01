@@ -55,9 +55,29 @@
                     </div>
                     
                     <div class="action-buttons">
-                        <button class="add-btn" (click)="addOrder()">
+                        <button class="add-btn" 
+                                [class.disabled]="!canAddOrder()" 
+                                [disabled]="!canAddOrder()"
+                                (click)="addOrder()">
                             <i class="fas fa-plus"></i> إضافة طلب جديد
                         </button>
+                    </div>
+                </div>
+                
+                <!-- Authentication/Verification notice -->
+                <div class="verification-notice" *ngIf="!isAuthenticated">
+                    <div class="notice-content">
+                        <i class="fas fa-info-circle"></i>
+                        <span>يجب تسجيل الدخول أولاً لإضافة طلب جديد.</span>
+                        <a [routerLink]="['/auth/login']" [queryParams]="{returnUrl: '/offers/add-offer'}">تسجيل الدخول</a>
+                    </div>
+                </div>
+                
+                <div class="verification-notice" *ngIf="isAuthenticated && !isSenderVerified">
+                    <div class="notice-content">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>يجب التحقق من حسابك كمرسل قبل إضافة طلب.</span>
+                        <a [routerLink]="['/verification/status']">التحقق الآن</a>
                     </div>
                 </div>
                 
@@ -82,7 +102,27 @@
                     </div>
                 </div>
                 
-                <div *ngIf="filteredOrders.length > 0; else noOrders">
+                <!-- Loading state -->
+                <div class="loading-state" *ngIf="isLoading">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <p>جاري تحميل العروض...</p>
+                </div>
+                
+                <!-- Error state -->
+                <div class="error-state" *ngIf="error && !isLoading">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3>حدث خطأ</h3>
+                    <p>{{ error }}</p>
+                    <button class="retry-btn" (click)="loadOrders()">
+                        <i class="fas fa-redo"></i> إعادة المحاولة
+                    </button>
+                </div>
+                
+                <div *ngIf="!isLoading && !error && filteredOrders.length > 0; else noOrders">
                     <app-order-cards-container 
                         [orders]="filteredOrders"
                         (deleteOrder)="onDeleteOrder($event)">
@@ -104,9 +144,21 @@
                         </div>
                         <h3>لا توجد طلبات بعد</h3>
                         <p>ابدأ بإضافة طلبك الأول للشحن.</p>
-                        <button class="add-first-btn" (click)="addOrder()">
+                        <button class="add-first-btn" 
+                                [class.disabled]="!canAddOrder()" 
+                                [disabled]="!canAddOrder()"
+                                (click)="addOrder()">
                             <i class="fas fa-plus"></i> إضافة طلب جديد
                         </button>
+                        
+                        <!-- Authentication/verification instructions for empty state -->
+                        <div class="verification-instructions" *ngIf="!isAuthenticated">
+                            <p>يجب عليك <a [routerLink]="['/auth/login']" [queryParams]="{returnUrl: '/offers/add-offer'}">تسجيل الدخول</a> أولاً لإضافة طلب جديد.</p>
+                        </div>
+                        
+                        <div class="verification-instructions" *ngIf="isAuthenticated && !isSenderVerified">
+                            <p>يجب عليك <a [routerLink]="['/verification/status']">التحقق من حسابك كمرسل</a> قبل إضافة طلب جديد.</p>
+                        </div>
                     </div>
                 </ng-template>
             </div>

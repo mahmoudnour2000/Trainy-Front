@@ -1,0 +1,109 @@
+.card {
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  direction: rtl;
+  text-align: right;
+}
+
+.card-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  padding: 12px 15px;
+}
+
+.profile-picture {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border: 2px solid #0d6efd;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+textarea.form-control {
+  resize: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  padding: 12px;
+  margin-bottom: 10px;
+  direction: rtl;
+  text-align: right;
+}
+
+.char-counter {
+  text-align: left;
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.char-counter.warning {
+  color: #f57f17;
+}
+
+.char-counter.danger {
+  color: #dc3545;
+}
+
+.buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form-button {
+  margin-bottom: 10px;
+  flex-grow: 1;
+  max-width: 220px;
+}
+
+.post-button {
+  flex-basis: 100%;
+  margin-top: 10px;
+}
+
+.dropdown-menu {
+  direction: rtl;
+  text-align: right;
+}
+
+.city-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown-item {
+  padding: 8px 12px;
+  color: #212529;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #e9ecef;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0b5ed7;
+}
+
+input[type="number"] {
+  padding: 10px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .form-button {
+    max-width: 100%;
+  }
+} 

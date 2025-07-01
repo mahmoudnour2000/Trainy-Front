@@ -1,62 +1,102 @@
-<mat-card dir="rtl" class="tracking-card">
-  <mat-card-header>
-    <mat-card-title>تتبع القطار رقم {{ trainId }}</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <div *ngIf="tracking; else loading">
-      <p><strong>رقم القطار:</strong> {{ tracking.trainNo }}</p>
-      <p><strong>المحطة الحالية:</strong> {{ tracking.currentStationName }} (ID: {{ tracking.currentStationId || 'غير متوفر' }})</p>
-      <p><strong>المحطة التالية:</strong> {{ tracking.nextStationName }} (ID: {{ tracking.nextStationId || 'غير متوفر' }})</p>
-      <p><strong>المرشد:</strong> {{ tracking.guideName }}</p>
-      <p><strong>خط العرض:</strong> {{ tracking.latitude }}</p>
-      <p><strong>خط الطول:</strong> {{ tracking.longitude }}</p>
-      <p><strong>وقت الوصول المتوقع:</strong> {{ tracking.expectedArrival | date:'medium':'ar-EG' }}</p>
-      <p><strong>الحالة:</strong> <span [ngClass]="{
-        'badge': true,
-        'bg-success': tracking.status === 'OnTime',
-        'bg-warning': tracking.status === 'Delayed',
-        'bg-primary': tracking.status === 'Arrived',
-        'bg-secondary': tracking.status !== 'OnTime' && tracking.status !== 'Delayed' && tracking.status !== 'Arrived'
-      }">{{ tracking.status }}</span></p>
-      <p><strong>المسافة للمحطة التالية:</strong> {{ tracking.distanceToNextStation ? (tracking.distanceToNextStation / 1000 | number:'1.2-2') + ' كم' : 'غير متوفر' }}</p>
-      <p><strong>السرعة:</strong> {{ tracking.speed ? (tracking.speed | number:'1.2-2') + ' كم/س' : 'غير متوفر' }}</p>
-      <p><strong>آخر تحديث:</strong> {{ tracking.lastUpdated | date:'medium':'ar-EG' }}</p>
-      <div id="map" style="height: 400px; margin-top: 20px;"></div> <!-- تأكد إن الـ div موجود هنا -->
-
-      <!-- باقي الفورمات لتحديث التتبع -->
-      <mat-expansion-panel>
-        <mat-expansion-panel-header>
-          <mat-panel-title>تحديث التتبع</mat-panel-title>
-        </mat-expansion-panel-header>
-        <form [formGroup]="updateForm" (ngSubmit)="updateTracking()">
-          <mat-form-field appearance="fill">
-            <mat-label>خط العرض</mat-label>
-            <input matInput formControlName="latitude" type="number">
-            <mat-error *ngIf="updateForm.get('latitude')?.hasError('required')">مطلوب</mat-error>
-            <mat-error *ngIf="updateForm.get('latitude')?.hasError('pattern')">أدخل قيمة صالحة</mat-error>
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>خط الطول</mat-label>
-            <input matInput formControlName="longitude" type="number">
-            <mat-error *ngIf="updateForm.get('longitude')?.hasError('required')">مطلوب</mat-error>
-            <mat-error *ngIf="updateForm.get('longitude')?.hasError('pattern')">أدخل قيمة صالحة</mat-error>
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>وقت الوصول المتوقع</mat-label>
-            <input matInput formControlName="expectedArrival" type="datetime-local">
-            <mat-error *ngIf="updateForm.get('expectedArrival')?.hasError('required')">مطلوب</mat-error>
-          </mat-form-field>
-          <button mat-raised-button color="primary" type="submit" [disabled]="!updateForm.valid">تحديث</button>
-        </form>
-      </mat-expansion-panel>
-      <!-- باقي الفورمات (GPS ويدوي) -->
+<div class="tracking-container">
+  <h2>🚂 تتبع القطار رقم {{ trainId }}</h2>
+  
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  
+  <div *ngIf="trainData" class="train-info">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+      <div>
+        <p><strong>🚂 رقم القطار:</strong> {{ trainData.TrainNo }}</p>
+        <p><strong>📍 المحطة الحالية:</strong> {{ trainData.CurrentStationName }}</p>
+        <p><strong>🎯 المحطة التالية:</strong> {{ trainData.NextStationName }}</p>
+      </div>
+      <div>
+        <p><strong>📍 الإحداثيات:</strong> {{ trainData.Latitude }}, {{ trainData.Longitude }}</p>
+        <p><strong>⏰ وقت الوصول المتوقع:</strong> {{ trainData.ExpectedArrival | date:'medium' }}</p>
+        <p><strong>🚀 السرعة:</strong> {{ trainData.Speed }} كم/س</p>
+      </div>
+      <div>
+        <p><strong>📏 المسافة إلى المحطة التالية:</strong> {{ trainData.DistanceToNextStation }} كم</p>
+        <p><strong>📊 الحالة:</strong> {{ trainData.Status }}</p>
+        <p><strong>🕒 آخر تحديث:</strong> {{ trainData.LastUpdated | date:'medium' }}</p>
+      </div>
     </div>
-    <ng-template #loading>
-      <mat-spinner></mat-spinner>
-    </ng-template>
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button color="primary" [routerLink]="['/train-history', trainId]">عرض السجل</button>
-    <button mat-raised-button color="secondary" [routerLink]="['/trains']">رجوع</button>
-  </mat-card-actions>
-</mat-card>
+  </div>
+
+  <div *ngIf="!trainData && !isLoading" class="alert alert-info">
+    <div style="text-align: center; padding: 20px;">
+      <div style="font-size: 48px; margin-bottom: 10px;">🚂</div>
+      <p>جاري تحميل بيانات القطار...</p>
+    </div>
+  </div>
+
+  <ng-container *ngIf="isGuide">
+    <div class="map-container">
+      <div leaflet [leafletOptions]="options" [leafletLayers]="layers"></div>
+    </div>
+
+    <div class="controls">
+      <div class="buttons-container">
+        <button class="btn btn-primary" (click)="updateGps()" [disabled]="isLoading">
+          <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          📍 تحديث GPS
+        </button>
+      </div>
+
+      <h3>✏️ تحديث يدوي</h3>
+      <form #manualForm="ngForm" (ngSubmit)="updateManual()">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+          <div class="form-group">
+            <label for="latitude">📍 خط العرض</label>
+            <input 
+              type="number" 
+              id="latitude"
+              class="form-control" 
+              [(ngModel)]="manualLat" 
+              name="manualLat" 
+              placeholder="مثال: 30.0444"
+              required
+              step="0.000001"
+              min="-90"
+              max="90"
+            >
+          </div>
+          <div class="form-group">
+            <label for="longitude">📍 خط الطول</label>
+            <input 
+              type="number" 
+              id="longitude"
+              class="form-control" 
+              [(ngModel)]="manualLng" 
+              name="manualLng" 
+              placeholder="مثال: 31.2357"
+              required
+              step="0.000001"
+              min="-180"
+              max="180"
+            >
+          </div>
+          <div class="form-group">
+            <label for="arrival">⏰ وقت الوصول</label>
+            <input 
+              type="datetime-local" 
+              id="arrival"
+              class="form-control" 
+              [(ngModel)]="manualArrival" 
+              name="manualArrival"
+              required
+            >
+          </div>
+        </div>
+        <button 
+          type="submit" 
+          class="btn btn-success" 
+          [disabled]="manualForm.invalid || isLoading"
+        >
+          <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          ✅ تحديث يدوي
+        </button>
+      </form>
+    </div>
+  </ng-container>
+</div>

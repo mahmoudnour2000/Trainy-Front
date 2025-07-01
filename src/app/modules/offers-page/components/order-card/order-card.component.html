@@ -6,7 +6,13 @@
     </div>
     <div class="card-body">
         <h5 class="card-title">{{order.title}}</h5>
-        <p class="card-text">{{order.description}}</p>
+        <div class="order-description">
+            {{ order.description }}
+        </div>
+        <div class="order-breakable-status">
+            <span *ngIf="order.isBreakable; else notBreakable">قابل للكسر</span>
+            <ng-template #notBreakable>غير قابل للكسر</ng-template>
+        </div>
         
         <div class="card-info">
             <div class="info-item">
@@ -25,10 +31,6 @@
                 <i class="fas fa-calendar"></i>
                 <span>{{formatDate(order.date)}}</span>
             </div>
-            <div class="breakable-item" *ngIf="order.isBreakable">
-                <i class="fas fa-wine-glass-alt"></i>
-                <span>قابل للكسر</span>
-            </div>
         </div>
         
         <div class="card-actions">
@@ -40,9 +42,46 @@
                     <i class="fas fa-trash"></i> حذف
                 </button>
             </div>
-            <button class="btn btn-send" (click)="onSendRequest()">
+            <button class="btn btn-send" 
+                    [class.disabled]="!canSendRequest()"
+                    [disabled]="!canSendRequest()"
+                    (click)="onSendRequest()">
                 <i class="fas fa-paper-plane"></i> إرسال
             </button>
         </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            <i class="fas fa-comment-dots me-2"></i>
+            <span>{{order.requestsCount || '0'}} طلب</span>
+        </div>
+        
+        <ng-container *ngIf="authService.isAuthenticated()">
+            <button *ngIf="authService.isSender() && isOwner(order.senderId)" 
+                    class="btn btn-primary btn-sm" 
+                    (click)="onShowDetails()">
+                <i class="fas fa-eye me-1"></i> عرض التفاصيل
+            </button>
+            
+            <button *ngIf="authService.isCourier() && !isOwner(order.senderId)" 
+                    class="btn btn-primary btn-sm" 
+                    [class.disabled]="!canSendRequest()"
+                    [disabled]="!canSendRequest()"
+                    (click)="onSendRequest()">
+                <i class="fas fa-paper-plane me-1"></i> إرسال طلب
+            </button>
+            
+            <button *ngIf="authService.isSender() && !isOwner(order.senderId)" 
+                    class="btn btn-secondary btn-sm" 
+                    (click)="onShowDetails()">
+                <i class="fas fa-eye me-1"></i> عرض
+            </button>
+        </ng-container>
+        
+        <button *ngIf="!authService.isAuthenticated()" 
+                class="btn btn-primary btn-sm" 
+                (click)="onLoginPrompt()">
+            <i class="fas fa-sign-in-alt me-1"></i> تسجيل الدخول للمتابعة
+        </button>
     </div>
 </div>

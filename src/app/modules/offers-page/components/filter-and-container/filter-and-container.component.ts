@@ -1,8 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../../core/services/auth.service';
 import { OrderCardsContainerComponent } from '../order-cards-container/order-cards-container.component';
+import { AuthService } from '../../../../core/services/auth.service';
+import { VerificationService } from '../../../../core/services/verification.service';
+import { OfferService, Offer, PaginatedResponse } from '../../../../core/services/offer.service';
+import { catchError, finalize } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-filter-and-container',
@@ -13,9 +18,12 @@ import { OrderCardsContainerComponent } from '../order-cards-container/order-car
 })
 export class FilterAndContainerComponent implements OnInit {
   @Input() hasOrders: boolean = true;
-  
+
   orders: any[] = [];
   filteredOrders: any[] = [];
+  isLoading: boolean = false;
+  error: string | null = null;
+  
   filters: {
     category: string | null,
     date: string | null,
@@ -27,18 +35,18 @@ export class FilterAndContainerComponent implements OnInit {
     fromLocation: null,
     search: ''
   };
-  
-  currentUserRole: string = 'Sender'; // Setting default role to Sender
-  isAuthenticated: boolean = true; // Setting default authentication to true
 
-  // These will be replaced with API data
+  currentUserRole: string = 'Sender'; // Setting default role to Sender
+  isAuthenticated: boolean = false; 
+  isSenderVerified: boolean = false;
+
   categories: { id: string, name: string }[] = [
     { id: 'electronics', name: 'إلكترونيات' },
     { id: 'clothing', name: 'ملابس' },
     { id: 'food', name: 'طعام' },
     { id: 'furniture', name: 'أثاث' }
   ];
-  
+
   dateFilters: { id: string, name: string }[] = [
     { id: 'newest', name: 'الأحدث أولاً' },
     { id: 'oldest', name: 'الأقدم أولاً' },
@@ -46,7 +54,7 @@ export class FilterAndContainerComponent implements OnInit {
     { id: 'this-week', name: 'هذا الأسبوع' },
     { id: 'this-month', name: 'هذا الشهر' }
   ];
-  
+
   locations: { id: string, name: string }[] = [
     { id: 'cairo', name: 'القاهرة' },
     { id: 'alexandria', name: 'الإسكندرية' },
@@ -58,74 +66,126 @@ export class FilterAndContainerComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private verificationService: VerificationService,
+    private offerService: OfferService
   ) { }
 
   ngOnInit(): void {
-    // Removing authentication check temporarily
-    this.isAuthenticated = true;
-    this.currentUserRole = 'Sender'; // Default to Sender role
+    this.loadUserInfo();
     this.loadOrders();
-    
-    // Update hasOrders based on the orders array length
-    this.hasOrders = this.orders.length > 0;
+    this.debugAPIs(); // Add debugging method
   }
 
   private loadUserInfo(): void {
-    // This is a placeholder - replaced with default values
-    this.currentUserRole = 'Sender';
+    // Check authentication status
+    this.authService.authStateChanged$.subscribe(isAuth => {
+      this.isAuthenticated = isAuth;
+      if (isAuth) {
+        this.checkVerificationStatus();
+      }
+    });
+  }
+
+  private checkVerificationStatus(): void {
+    this.verificationService.verificationStatus$.subscribe(status => {
+      console.log('🔍 Verification status in offers page:', status);
+      this.isSenderVerified = status.senderStatus === 'Accepted';
+      console.log('🔐 Is sender verified:', this.isSenderVerified);
+    });
   }
 
   loadOrders(): void {
-    // First check if there are orders in localStorage
-    const ordersJson = localStorage.getItem('orders');
+    console.log('🔄 Loading orders...');
+    console.log('🔑 Is authenticated:', this.isAuthenticated);
     
-    if (ordersJson) {
-      try {
-        // Parse the stored orders
-        this.orders = JSON.parse(ordersJson);
-      } catch (error) {
-        console.error('Error parsing orders from localStorage:', error);
-        this.orders = [];
-      }
-    } else {
-      // If no orders found in localStorage, initialize with empty array
-      this.orders = [];
-      
-      // Optionally create a sample order for first-time users
-      // Comment this out if you don't want a default order
-      /*
-      this.orders = [
-        {
-          id: 1,
-          title: 'شحن حقيبة يد',
-          description: 'حقيبة يد جلدية فاخرة تحتاج للشحن بعناية خاصة، التغليف متوفر.',
-          from: 'cairo',
-          fromDisplay: 'القاهرة',
-          to: 'aswan',
-          toDisplay: 'أسوان',
-          category: 'clothing',
-          categoryDisplay: 'ملابس',
-          weight: 2.5,
-          price: 50,
-          image: 'assets/0001699_bags-handbags.jpeg',
-          date: new Date(2023, 4, 15),
-          userId: 'user123'
-        }
-      ];
-      // Save the initial orders to localStorage
-      localStorage.setItem('orders', JSON.stringify(this.orders));
-      */
-    }
-    
-    this.applyFilters();
+    this.isLoading = true;
+    this.error = null;
+
+    this.offerService.getOffers(1, 50) // Get first 50 offers
+      .pipe(
+        catchError(error => {
+          console.error('❌ Error loading offers:', error);
+          console.error('API URL:', `${environment.apiUrl}Offer`);
+          this.error = 'حدث خطأ أثناء تحميل العروض';
+          return of({ items: [], totalCount: 0, pageNumber: 1, pageSize: 50, totalPages: 0 });
+        }),
+        finalize(() => {
+          this.isLoading = false;
+        })
+      )
+      .subscribe((response: any) => {
+        console.log('✅ Offers API response:', response);
+        // Support both direct and wrapped (Data) responses
+        const offersArray = response.items || response.Data || [];
+        this.orders = Array.isArray(offersArray) ? offersArray.map(offer => this.transformOfferToOrder(offer)) : [];
+        console.log('🔄 Transformed orders:', this.orders);
+        this.hasOrders = this.orders.length > 0;
+        this.applyFilters();
+      });
+  }
+
+  private transformOfferToOrder(offer: any): any {
+    return {
+      id: offer.ID,
+      description: offer.Description,
+      from: offer.PickupStationId,
+      fromDisplay: offer.PickupStationName || 'غير محدد',
+      to: offer.DropoffStationId,
+      toDisplay: offer.DropoffStationName || 'غير محدد',
+      category: offer.Category,
+      categoryDisplay: offer.Category,
+      weight: offer.Weight,
+      price: offer.Price,
+      image: offer.Picture || 'assets/0001699_bags-handbags.jpeg',
+      date: offer.CreatedAt || offer.OfferTime,
+      userId: offer.SenderId,
+      senderName: offer.SenderName,
+      senderImage: null,
+      status: offer.OfferStatus,
+      requestsCount: offer.RequestsCount || 0,
+      isBreakable: offer.IsBreakable
+    };
+  }
+
+  private getLocationIdFromStationName(stationName: string): string {
+    // Map station names to location IDs
+    const stationMap: { [key: string]: string } = {
+      'القاهرة': 'cairo',
+      'الإسكندرية': 'alexandria',
+      'الجيزة': 'giza',
+      'شرم الشيخ': 'sharm',
+      'الأقصر': 'luxor',
+      'أسوان': 'aswan'
+    };
+    return stationMap[stationName] || 'cairo';
+  }
+
+  private mapCategoryToId(category: string): string {
+    // Map API categories to frontend category IDs
+    const categoryMap: { [key: string]: string } = {
+      'Electronics': 'electronics',
+      'Clothing': 'clothing',
+      'Food': 'food',
+      'Furniture': 'furniture'
+    };
+    return categoryMap[category] || 'electronics';
+  }
+
+  private getCategoryDisplayName(category: string): string {
+    const categoryMap: { [key: string]: string } = {
+      'Electronics': 'إلكترونيات',
+      'Clothing': 'ملابس',
+      'Food': 'طعام',
+      'Furniture': 'أثاث'
+    };
+    return categoryMap[category] || 'إلكترونيات';
   }
 
   applyFilters(): void {
     this.filteredOrders = this.orders.filter(order => {
       // Search text filter
       if (this.filters.search && 
-          !order.title.toLowerCase().includes(this.filters.search.toLowerCase()) && 
           !order.description.toLowerCase().includes(this.filters.search.toLowerCase())) {
         return false;
       }
@@ -158,16 +218,14 @@ export class FilterAndContainerComponent implements OnInit {
           if (orderDate < monthAgo) {
             return false;
           }
-        } else if (this.filters.date === 'newest') {
-          // Sorting will be handled separately
-        } else if (this.filters.date === 'oldest') {
-          // Sorting will be handled separately
         }
       }
       
-      // From location filter
-      if (this.filters.fromLocation && order.from !== this.filters.fromLocation) {
-        return false;
+      // From location filter - Note: This would need to be implemented based on station data
+      // For now, we'll skip this filter as it requires station mapping
+      if (this.filters.fromLocation) {
+        // TODO: Implement station-based filtering when station data is available
+        // return false;
       }
       
       return true;
@@ -227,39 +285,108 @@ export class FilterAndContainerComponent implements OnInit {
   }
 
   onDeleteOrder(orderId: number): void {
-    // Filter out the deleted order
-    this.orders = this.orders.filter(order => order.id !== orderId);
-    
-    // Update localStorage
-    localStorage.setItem('orders', JSON.stringify(this.orders));
-    
-    // Update hasOrders flag if all orders are deleted
-    this.hasOrders = this.orders.length > 0;
-    
-    // Re-apply filters to update the displayed orders
-    this.applyFilters();
+    // Use the API to delete the offer
+    this.offerService.deleteOffer(orderId)
+      .pipe(
+        catchError(error => {
+          console.error('Error deleting offer:', error);
+          alert('حدث خطأ أثناء حذف العرض');
+          return of(null);
+        })
+      )
+      .subscribe(() => {
+        // Remove the order from the local array
+        this.orders = this.orders.filter(order => order.id !== orderId);
+        
+        // Update hasOrders flag if all orders are deleted
+        this.hasOrders = this.orders.length > 0;
+        
+        // Re-apply filters to update the displayed orders
+        this.applyFilters();
+      });
   }
 
   addOrder(): void {
-    console.log('addOrder method called');
+    if (!this.isAuthenticated) {
+      // If not authenticated, redirect to login
+      this.router.navigate(['/auth/login'], { 
+        queryParams: { returnUrl: '/offers/add-offer' } 
+      });
+      return;
+    }
     
-    // Use direct navigation instead of router
-    window.location.href = '/offers/add-offer';
+    // Check comprehensive verification status
+    this.verificationService.verificationStatus$.subscribe(status => {
+      if (status.senderStatus === 'Pending') {
+        alert('طلب التحقق الخاص بك قيد المراجعة. يرجى انتظار الموافقة قبل إضافة عروض جديدة.');
+        this.router.navigate(['/verification/status']);
+        return;
+      }
+      
+      if (status.senderStatus === 'Rejected') {
+        if (confirm('تم رفض طلب التحقق الخاص بك. هل تريد إعادة المحاولة؟')) {
+          this.router.navigate(['/verification'], { 
+            queryParams: { roleType: 'Sender', returnUrl: '/offers/add-offer' } 
+          });
+        }
+        return;
+      }
+      
+      if (status.senderStatus === 'Accepted') {
+        // Navigate to add offer page
+        this.router.navigate(['/offers/add-offer']);
+      } else {
+        // Not verified, redirect to verification
+        alert('يجب التحقق من حسابك كمرسل قبل إضافة عروض جديدة.');
+        this.router.navigate(['/verification'], { 
+          queryParams: { roleType: 'Sender', returnUrl: '/offers/add-offer' } 
+        });
+      }
+    });
   }
 
-  // Helpers for template
   getFilterById(filterId: string, filterType: 'category' | 'date' | 'location'): string {
-    if (filterType === 'category') {
-      return this.categories.find(c => c.id === filterId)?.name || '';
-    } else if (filterType === 'date') {
-      return this.dateFilters.find(d => d.id === filterId)?.name || '';
-    } else {
-      return this.locations.find(l => l.id === filterId)?.name || '';
+    let filterArray: { id: string, name: string }[] = [];
+    
+    switch (filterType) {
+      case 'category':
+        filterArray = this.categories;
+        break;
+      case 'date':
+        filterArray = this.dateFilters;
+        break;
+      case 'location':
+        filterArray = this.locations;
+        break;
     }
+    
+    const filter = filterArray.find(f => f.id === filterId);
+    return filter ? filter.name : filterId;
   }
 
   canAddOrder(): boolean {
-    // Temporarily always return true to enable the button
-    return true;
+    return this.isAuthenticated && this.isSenderVerified;
+  }
+
+  private debugAPIs(): void {
+    console.log('🔍 DEBUG: Testing API endpoints...');
+    
+    // Test authentication
+    console.log('🔑 Token:', this.authService.getToken());
+    console.log('🔐 Is authenticated:', this.authService.isAuthenticated());
+    console.log('👤 Current user:', this.authService.getCurrentUser());
+    
+    // Test verification API manually
+    this.verificationService.getMyVerificationStatus().subscribe({
+      next: (data) => {
+        console.log('✅ Verification API Response:', data);
+      },
+      error: (error) => {
+        console.error('❌ Verification API Error:', error);
+        console.error('❌ Error Status:', error.status);
+        console.error('❌ Error Message:', error.message);
+        console.error('❌ Error URL:', error.url);
+      }
+    });
   }
 }

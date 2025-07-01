@@ -8,6 +8,10 @@ import { AboutUsComponent } from '../app/modules/AboutUs/about-us/about-us.compo
 import{ AuthGuard } from './core/guards/auth.guard';
 import { NotFoundComponent } from './modules/NotFoundPage/not-found/not-found.component';
 import { OfferDetailsComponent } from './modules/account-profile/offer-details/offer-details.component';
+import { ActivatedRoute } from '@angular/router';
+import { TrainTrackingService } from './core/services/train-tracking.service';
+import { interval } from 'rxjs';
+
 export const routes: Routes = [
   // {
   //   path: '',
@@ -65,7 +69,7 @@ export const routes: Routes = [
         path: 'train-history/:trainId',
         canActivate: [AuthGuard],
         loadComponent: () =>
-          import('./modules/train-tracking-history/train-tracking-history.component').then(m => m.TrainHistoryComponent)
+          import('./modules/train-tracking-history/train-tracking-history.component').then(m => m.TrainTrackingHistoryComponent)
       },
       {
         path: 'report-lost/:trainId',
@@ -112,7 +116,17 @@ export const routes: Routes = [
       },
       { path: 'userProfile/offer-details/:id',
          canActivate: [AuthGuard],
-         component: OfferDetailsComponent }
+         component: OfferDetailsComponent },
+      {
+        path: 'verification',
+        loadComponent: () => import('./modules/verification/components/verification-images/verification-images.component').then(m => m.VerificationImagesComponent),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'verification/status',
+        loadComponent: () => import('./modules/verification/components/verification-status/verification-status.component').then(m => m.VerificationStatusComponent),
+        canActivate: [AuthGuard]
+      },
     ]
   },
   {

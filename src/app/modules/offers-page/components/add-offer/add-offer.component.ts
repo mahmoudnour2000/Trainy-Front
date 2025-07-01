@@ -123,9 +123,7 @@ export class AddOfferComponent implements OnInit {
     const token = this.authService.getToken();
     if (token) {
       // Decode token or get user info from service
-      const userRole = 'Sender'; // Placeholder
-      
-      if (userRole !== 'Sender' && userRole !== 'Admin') {
+      if (!this.authService.isSender()) {
         // Navigate to verification page
         this.router.navigate(['/verification']);
       }
