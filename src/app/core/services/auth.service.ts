@@ -53,8 +53,7 @@ export class AuthService {
   }
 
   clearToken(): void {
-    this.cookieService.delete('auth_token');
-    
+    this.cookieService.delete('auth_token');  
   }
 
   isAuthenticated(): boolean {

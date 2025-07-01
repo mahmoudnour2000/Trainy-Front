@@ -1,19 +1,27 @@
 /* src/app/modules/account-profile/request-card/request-card.component.css */
+
 .request-card {
-  background: white;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  transition: all 0.3s ease;
+  background: #ecf3ff;
+  border-radius: 14px;
+  border: 1.5px solid #9db7ff;
+  color: #1e206b;
+  box-shadow: 0 2px 8px rgba(37,41,174,0.10);
+  transition: box-shadow 0.2s, background 0.2s;
 }
 
+
 .request-card:hover {
-  box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 8px 25px rgba(37,41,174,0.16);
+  background: #dde8ff;
   transform: translateY(-3px);
 }
 
+
 .request-header {
-  background: linear-gradient(135deg, #7c3aed, #5b21b6);
-  color: white;
-  border-radius: 10px 10px 0 0;
+  background: #2529ae;
+  color: #ecf3ff;
+  border-radius: 12px 12px 0 0;
   padding: 1rem;
+  font-weight: 700;
+  font-size: 1.08rem;
 }

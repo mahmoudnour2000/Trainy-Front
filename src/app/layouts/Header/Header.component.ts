@@ -39,7 +39,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private eRef: ElementRef,
     private cdr: ChangeDetectorRef // لتحديث الـ UI
   ) {}
-
+  
+  
   ngOnInit(): void {
     
     this.isLoggedIn = this.authService.isAuthenticated();

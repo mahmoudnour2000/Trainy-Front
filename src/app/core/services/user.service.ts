@@ -80,14 +80,16 @@ private getUserRole(): string{
     return this.http.get<{ balance: number }>(`${this.apiUrl}UserProfile/GetUserBalance`, { withCredentials: true });
   }
 
-  getUserOffers(): Observable<Offer[]> {
-    // const userId = this.getUserId();
-    return this.http.get<Offer[]>(`${this.apiUrl}UserProfile/GetUserOffers`, { withCredentials: true });
+ getUserOffers(): Observable<Offer[] | { message: string }> {
+    return this.http.get<Offer[] | { message: string }>(`${this.apiUrl}UserProfile/GetUserOffers`, { withCredentials: true });
   }
 
-  getUserRequests(): Observable<Request[]> {
-    // const userId = this.getUserId();
-    return this.http.get<Request[]>(`${this.apiUrl}UserProfile/GetUserRequests`, { withCredentials: true });
+  getUserRequests(): Observable<Request[] | { message: string }> {
+    return this.http.get<Request[] | { message: string }>(`${this.apiUrl}UserProfile/GetUserRequests`, { withCredentials: true });
+  }
+
+  getOfferById(offerId: number): Observable<Offer | { message: string }> {
+    return this.http.get<Offer | { message: string }>(`${this.apiUrl}UserProfile/GetOfferById/${offerId}`, { withCredentials: true });
   }
   deposit(Amount: number, PaymentMethod: paymentMethod): Observable<{ PaymentToken: string, PaymentId: number, PaymentMethod: string }> {
     console.log('Sending deposit request:', { Amount, PaymentMethod });

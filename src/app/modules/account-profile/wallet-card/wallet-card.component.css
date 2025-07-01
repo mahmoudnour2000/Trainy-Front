@@ -1,10 +1,90 @@
+/* Modal Action Buttons: Deposit/Withdraw & Close */
+.modal .btn-action {
+  background: #2529ae !important;
+  color: #ecf3ff !important;
+  border: 1.5px solid #dde8ff !important;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-radius: 8px;
+  min-width: 110px;
+  box-shadow: 0 2px 8px rgba(37, 41, 174, 0.08);
+  margin: 0 8px 0 0;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.modal .btn-action:hover {
+  background: #1e206b !important;
+  color: #dde8ff !important;
+  border-color: #9db7ff !important;
+}
+
+
+
+.modal .btn-close {
+  background: #c82333 !important;
+  color: #fff !important;
+  border: 1.5px solid #a71d2a !important;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-radius: 8px;
+  min-width: 110px;
+  box-shadow: 0 2px 8px rgba(200, 35, 51, 0.13);
+  margin: 0 8px 0 0;
+  padding: 0.55rem 1.2rem !important;
+  display: inline-block;
+  text-align: center;
+  /* transition: background 0.2s, color 0.2s, box-shadow 0.2s; */
+}
+.modal .btn-close:hover {
+  background: #a71d2a !important;
+  color: #fff !important;
+  border-color: #c82333 !important;
+}
+/* Force modal buttons to use palette colors */
+.modal .btn-success {
+  background: #2529ae !important;
+  color: #ecf3ff !important;
+  border: 1.5px solid #dde8ff !important;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-radius: 8px;
+  min-width: 110px;
+  box-shadow: 0 2px 8px rgba(37, 41, 174, 0.08);
+  margin: 0 8px 0 0;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.modal .btn-success:hover {
+  background: #1e206b !important;
+  color: #dde8ff !important;
+  border-color: #9db7ff !important;
+}
+.modal .btn-danger {
+  background: #cf9f3f !important;
+  color: #fff !important;
+  border: 1.5px solid #dde8ff !important;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-radius: 8px;
+  min-width: 110px;
+  box-shadow: 0 2px 8px rgba(37, 41, 174, 0.08);
+  margin: 0 0 0 8px;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.modal .btn-danger:hover {
+  background: #262b89 !important;
+  color: #fff !important;
+  border-color: #cf9f3f !important;
+}
+.modal .btn + .btn {
+  margin-left: 16px !important;
+}
 /* Wallet Card Component Enhanced Styles */
+
 .wallet-card {
-  background: linear-gradient(135deg, #00b894 0%, #00a085 50%, #008f7a 100%);
+  background: #dde8ff;
   border-radius: 20px;
   padding: 2rem;
-  color: white;
-  box-shadow: 0 10px 30px rgba(0, 184, 148, 0.25);
+  color: #1e206b;
+  box-shadow: 0 10px 30px rgba(37, 41, 174, 0.10);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -13,6 +93,7 @@
   height: fit-content;
 }
 
+
 .wallet-card::before {
   content: '';
   position: absolute;
@@ -20,9 +101,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.05) 100%);
+  background: none;
   pointer-events: none;
 }
+
 
 .wallet-card::after {
   content: '';
@@ -31,14 +113,15 @@
   right: -50%;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  background: none;
   border-radius: 50%;
   transition: all 0.3s ease;
 }
 
+
 .wallet-card:hover {
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 184, 148, 0.35);
+  box-shadow: 0 20px 40px rgba(37, 41, 174, 0.18);
 }
 
 .wallet-card:hover::after {
@@ -47,8 +130,9 @@
 }
 
 /* Icon Styling */
+
 .wallet-card i {
-  background: rgba(255, 255, 255, 0.2);
+  background: #c2d4ff;
   width: 80px;
   height: 80px;
   border-radius: 50%;
@@ -57,67 +141,67 @@
   justify-content: center;
   margin: 0 auto 1.5rem;
   font-size: 2rem !important;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 25px rgba(37, 41, 174, 0.08);
+  border: 2px solid #9db7ff;
   transition: all 0.3s ease;
   position: relative;
   z-index: 2;
 }
 
+
 .wallet-card:hover i {
   transform: rotateY(360deg) scale(1.1);
-  background: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+  background: #9db7ff;
+  box-shadow: 0 12px 35px rgba(37, 41, 174, 0.13);
 }
 
 /* Title Styling */
+
 .wallet-card h5 {
   font-size: 1.3rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #2529ae;
   position: relative;
   z-index: 2;
 }
 
 /* Balance Amount */
+
 .balance-amount {
   font-size: 2.2rem;
   font-weight: 800;
   margin-bottom: 0.8rem;
-  text-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
-  background: linear-gradient(45deg, #ffffff, #e8f8f5);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #262b89;
   position: relative;
   z-index: 2;
   line-height: 1.2;
 }
 
 /* Last Update Text */
+
 .wallet-card small {
   opacity: 0.85 !important;
   font-size: 0.9rem;
   font-weight: 500;
-  background: rgba(255, 255, 255, 0.1);
+  background: #c2d4ff;
   padding: 0.4rem 1rem;
   border-radius: 20px;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #9db7ff;
   position: relative;
   z-index: 2;
   display: inline-block;
   transition: all 0.3s ease;
 }
 
+
 .wallet-card:hover small {
-  background: rgba(255, 255, 255, 0.15);
+  background: #9db7ff;
   opacity: 1 !important;
 }
 
 /* Decorative Elements */
+
 .wallet-card .text-center::before {
   content: '';
   position: absolute;
@@ -125,10 +209,11 @@
   left: 10px;
   width: 30px;
   height: 30px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid #c2d4ff;
   border-radius: 50%;
   animation: pulse 2s ease-in-out infinite;
 }
+
 
 .wallet-card .text-center::after {
   content: '';
@@ -137,7 +222,7 @@
   right: 15px;
   width: 15px;
   height: 15px;
-  background: rgba(255, 255, 255, 0.3);
+  background: #9db7ff;
   border-radius: 50%;
   animation: float 3s ease-in-out infinite;
 }
@@ -254,4 +339,108 @@
 [dir="rtl"] .wallet-card .text-center::after {
   right: auto;
   left: 15px;
+}
+
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1050;
+  overflow: auto;
+  background: rgba(37, 41, 174, 0.15) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-dialog {
+  margin: 0 auto;
+  max-width: 420px;
+  width: 95%;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(37, 41, 174, 0.18);
+}
+
+
+.modal-content {
+  border-radius: 18px;
+  background: #fff;
+  border: 1.5px solid #dde8ff;
+  box-shadow: 0 8px 32px rgba(37, 41, 174, 0.13), 0 1.5px 8px #dde8ff;
+  padding: 1.5rem 1.5rem 1.2rem 1.5rem;
+  animation: modalPop 0.35s cubic-bezier(.4,1.6,.6,1) both;
+}
+
+.modal-header {
+  border-bottom: 1px solid #ecf3ff;
+  background: #f8faff;
+  border-radius: 18px 18px 0 0;
+  padding: 1.1rem 1.5rem 1rem 1.5rem;
+}
+.modal-title{
+  color: #2529ae;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+.modal-body {
+  background: #fff;
+  border-radius: 0 0 18px 18px;
+  padding: 1.2rem 0 0 0;
+}
+.modal-footer, .modal .close {
+  background: transparent;
+  border: none;
+  color: #2529ae;
+  font-size: 1.3rem;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.modal .close:hover {
+  opacity: 1;
+  color: #cf9f3f;
+}
+
+@keyframes modalPop {
+  0% { opacity: 0; transform: scale(0.95) translateY(30px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+/* Deposit & Withdraw Buttons Styling */
+.wallet-card .btn-success,
+.wallet-card .btn-danger {
+  min-width: 110px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  border-radius: 8px;
+  margin: 0 8px 0 0;
+  box-shadow: 0 2px 8px rgba(37, 41, 174, 0.08);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.wallet-card .btn-success {
+  background: #2529ae;
+  color: #ecf3ff;
+  border: 1.5px solid #dde8ff;
+}
+.wallet-card .btn-success:hover {
+  background: #1e206b;
+  color: #dde8ff;
+  border-color: #9db7ff;
+}
+.wallet-card .btn-danger {
+  background: #cf9f3f;
+  color: #fff;
+  border: 1.5px solid #dde8ff;
+}
+.wallet-card .btn-danger:hover {
+  background: #262b89;
+  color: #fff;
+  border-color: #cf9f3f;
+}
+.wallet-card .text-center.mt-3 {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
 }

@@ -1,18 +1,28 @@
 <div class="request-card">
   <div class="request-header">
     <div class="d-flex justify-content-between align-items-start">
-      <h6 class="mb-1">طلب رقم #{{ request?.Id }}</h6>
-      <span class="status-badge status-{{ request?.Status }}">
-        {{ request?.Status === 'Pending' ? 'قيد الانتظار' : request?.Status === 'Accepted' ? 'تم القبول' : 'مرفوض' }}
+                <small class="opacity-75">تفاصيل العرض: {{ request?.OfferDescription }}</small>
+      <!-- <h6 class="mb-1">طلب رقم #{{ request?.Id }}</h6> -->
+      <span class="status-badge" [class.status-Pending]="request?.RequestStatus === 0"
+            [class.status-Accepted]="request?.RequestStatus === 1"
+            [class.status-Rejected]="request?.RequestStatus === 2"
+            [class.status-Completed]="request?.RequestStatus === 3">
+        {{ request?.RequestStatus === 0 ? 'قيد الانتظار' :
+           request?.RequestStatus === 1 ? 'تم القبول' :
+           request?.RequestStatus === 2 ? 'مرفوض' :
+           request?.RequestStatus === 3 ? 'مكتمل' : 'غير معروف' }}
       </span>
+
     </div>
-    <small class="opacity-75">بتاريخ: {{ request?.ReqTime | date:'short' }}</small>
   </div>
   <div class="card-body">
     <p class="text-muted small mb-2">{{ request?.Message }}</p>
     <div class="d-flex justify-content-between align-items-center">
-      <strong class="text-primary">رقم العرض: {{ request?.OfferId }}</strong>
+      <!-- <strong class="text-primary">رقم العرض: {{ request?.OfferId }}</strong> -->
       <small class="text-muted">أُنشئ: {{ request?.CreatedAt | date:'short' }}</small>
     </div>
   </div>
+   <div class="mt-3">
+      <a [routerLink]="['offer-details/', request?.OfferId]" class="btn btn-primary btn-sm">تفاصيل الطلب</a>
+    </div>
 </div>

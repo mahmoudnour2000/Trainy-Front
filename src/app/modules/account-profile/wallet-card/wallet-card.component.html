@@ -1,9 +1,48 @@
-<!-- src/app/modules/account-profile/wallet-card/wallet-card.component.html -->
+<!-- wallet-card.component.html -->
 <div class="wallet-card mb-4">
   <div class="text-center">
     <i class="fas fa-wallet fa-2x mb-3"></i>
     <h5>رصيد المحفظة</h5>
     <div class="balance-amount">{{ balance?.toFixed(2) || '0.00' }} جنيه</div>
     <small class="opacity-75">آخر تحديث: اليوم</small>
+  </div>
+  <div class="text-center mt-3">
+    <button class="btn btn-success mr-2" (click)="toggleModal('deposit')">شحن</button>
+    <button class="btn btn-danger" (click)="toggleModal('withdraw')">سحب</button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div *ngIf="showModal" class="modal" tabindex="-1" role="dialog" style="display: block; background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ modalType === 'deposit' ? 'شحن المحفظة' : 'سحب الرصيد' }}</h5>
+        <button type="button" class="close" (click)="closeModal()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="modalType === 'deposit' ? onDeposit() : onWithdraw()">
+          <div class="form-group">
+            <label for="amount">المبلغ (جنيه):</label>
+            <input type="number" id="amount" [(ngModel)]="amount" name="amount" min="1" max="10000" class="form-control" required>
+          </div>
+          <div *ngIf="modalType === 'withdraw'" class="form-group">
+            <label for="accountNumber">رقم الحساب:</label>
+            <input type="text" id="accountNumber" [(ngModel)]="accountNumber" name="accountNumber" class="form-control" required pattern="\d{10,}">
+          </div>
+          <div class="form-group">
+            <label for="paymentMethod">وسيلة الدفع/السحب:</label>
+            <select id="paymentMethod" [(ngModel)]="selectedPaymentMethod" name="paymentMethod" class="form-control" required>
+              <option *ngFor="let method of paymentMethods" [value]="method.id">{{ method.name }}</option>
+            </select>
+          </div>
+        <button type="submit" class="btn btn-action" [disabled]="isSubmitting">{{ modalType === 'deposit' ? 'شحن' : 'سحب' }}</button>
+<button type="button" class="btn btn-close ml-2" (click)="closeModal()">إغلاق</button>
+ <div *ngIf="errorMessage" class="alert alert-danger mt-2">{{ errorMessage }}</div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>

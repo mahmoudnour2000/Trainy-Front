@@ -7,10 +7,11 @@ import { LostAndFoundListComponent } from './modules/Lost-And-Found/lost-and-fou
 import { AboutUsComponent } from '../app/modules/AboutUs/about-us/about-us.component'; 
 import{ AuthGuard } from './core/guards/auth.guard';
 import { NotFoundComponent } from './modules/NotFoundPage/not-found/not-found.component';
+import { OfferDetailsComponent } from './modules/account-profile/offer-details/offer-details.component';
 export const routes: Routes = [
   // {
   //   path: '',
-  //   redirectTo: 'auth/login',
+  //   redirectTo: '/',
   //   pathMatch: 'full'
   // },
 
@@ -20,11 +21,12 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: TrainListComponent // الـ Homepage
+        component: TrainListComponent,
+        pathMatch: 'full'
       },
       {
         path: 'about-us',
-        component: AboutUsComponent // صفحة "من نحن" بدون guard
+        component: AboutUsComponent 
       },
       {
         path: 'auth',
@@ -107,10 +109,12 @@ export const routes: Routes = [
         path: 'userProfile',
         canActivate: [AuthGuard],
         loadChildren: () => import('./modules/account-profile/account-profile.module').then(m => m.AccountProfileModule)
-      }
+      },
+      { path: 'userProfile/offer-details/:id',
+         canActivate: [AuthGuard],
+         component: OfferDetailsComponent }
     ]
   },
-
   {
     path: '**',
     component: NotFoundComponent

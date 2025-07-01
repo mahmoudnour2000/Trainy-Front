@@ -1,10 +1,10 @@
-/* Profile Header Enhanced Styles */
+/* Profile Header Enhanced Styles - Modern Design */
 .profile-header {
-  background: #ffffff; /* خلفية بيضاء */
-  color: white;
-  padding: 3rem 0;
+  /* background: linear-gradient(135deg, #ecf3ff 0%, #dde8ff 50%, #c2d4ff 100%); */
+  padding: 4rem 0;
   position: relative;
   overflow: hidden;
+  min-height: 300px;
 }
 
 .profile-header::before {
@@ -14,8 +14,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(0, 0, 0, 0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-  opacity: 0.1;
+  /* background: 
+    radial-gradient(circle at 20% 80%, rgba(157, 183, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(194, 212, 255, 0.15) 0%, transparent 50%),
+    url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.5" fill="rgba(38, 43, 137, 0.05)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23dots)"/></svg>'); */
+  opacity: 0.8;
 }
 
 .profile-header .container {
@@ -24,19 +27,42 @@
 }
 
 .profile-header .row {
-  background: linear-gradient(135deg, #1d37df 0%, #131c53 100%); /* كارد بدرجات الأزرق */
-  color: white; /* نصوص بيضاء */
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 2.5rem;
+  border: 1px solid rgba(157, 183, 255, 0.2);
+  box-shadow: 
+    0 20px 40px rgba(38, 43, 137, 0.08),
+    0 8px 16px rgba(157, 183, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.profile-header .row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(157, 183, 255, 0.05) 0%, rgba(194, 212, 255, 0.03) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
 .profile-header .row:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 
+    0 32px 64px rgba(38, 43, 137, 0.12),
+    0 16px 32px rgba(157, 183, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.profile-header .row:hover::before {
+  opacity: 1;
 }
 
 /* Profile Image Section */
@@ -47,72 +73,148 @@
 .profile-header .col-md-3::after {
   content: '';
   position: absolute;
-  top: 50%;
-  right: -15px;
-  width: 2px;
-  height: 80%;
-  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.3), transparent); /* تدرج أبيض */
+  top: 15%;
+  right: -20px;
+  width: 3px;
+  height: 70%;
+  background: linear-gradient(
+    to bottom, 
+    transparent 0%, 
+    rgba(157, 183, 255, 0.3) 20%, 
+    rgba(38, 43, 137, 0.6) 50%, 
+    rgba(157, 183, 255, 0.3) 80%, 
+    transparent 100%
+  );
+  border-radius: 2px;
   transform: translateY(-50%);
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.profile-header .row:hover .col-md-3::after {
+  opacity: 1;
+  height: 80%;
+  background: linear-gradient(
+    to bottom, 
+    transparent 0%, 
+    rgba(157, 183, 255, 0.4) 15%, 
+    rgba(38, 43, 137, 0.8) 50%, 
+    rgba(157, 183, 255, 0.4) 85%, 
+    transparent 100%
+  );
 }
 
 /* Profile Info Section */
 .profile-header h2 {
-  font-size: 2.2rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: #ffffff; /* نص أبيض */
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #262b89 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  position: relative;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.profile-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #9db7ff 0%, #262b89 100%);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.profile-header .row:hover h2::after {
+  width: 120px;
 }
 
 .profile-header p {
-  font-size: 1rem;
-  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  color: #ffffff; /* نص أبيض */
-  opacity: 0.95;
-  transition: all 0.3s ease;
+  color: #1e206b;
+  opacity: 0.9;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+  padding: 0.5rem 0;
+  border-radius: 8px;
 }
 
 .profile-header p:hover {
   opacity: 1;
-  transform: translateX(5px);
+  transform: translateX(8px);
+  background: rgba(157, 183, 255, 0.1);
+  padding: 0.5rem 1rem;
+  color: #262b89;
 }
 
 .profile-header p i {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.2); /* خلفية أيقونات بيضاء فاتحة */
-  border-radius: 50%;
-  margin-left: 0.5rem;
-  font-size: 0.8rem;
-  color: #ffffff; /* أيقونات بيضاء */
-  transition: all 0.3s ease;
-}
-
-.profile-header p:hover i {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
-}
-
-/* Edit Button Section */
-.profile-header .btn {
-  background: linear-gradient(135deg, #1d37df 0%, #131c53 100%); /* زر بدرجات الأزرق */
-  color: #ffffff; /* نص زر أبيض */
-  border: none;
+  background: linear-gradient(135deg, #c2d4ff 0%, #9db7ff 100%);
   border-radius: 12px;
-  padding: 0.8rem 1.5rem;
-  font-weight: 600;
-  font-size: 1rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  margin-left: 0.8rem;
+  font-size: 0.9rem;
+  color: #262b89;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(157, 183, 255, 0.3);
   position: relative;
   overflow: hidden;
 }
 
+.profile-header p i::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  transition: left 0.5s ease;
+}
+
+.profile-header p:hover i {
+  background: linear-gradient(135deg, #9db7ff 0%, #262b89 100%);
+  color: white;
+  transform: scale(1.15) rotate(5deg);
+  box-shadow: 0 4px 16px rgba(38, 43, 137, 0.4);
+}
+
+.profile-header p:hover i::before {
+  left: 100%;
+}
+
+/* Edit Button Section */
+.profile-header .btn {
+  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 16px;
+  padding: 1rem 2rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 
+    0 8px 24px rgba(38, 43, 137, 0.25),
+    0 4px 12px rgba(30, 32, 107, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(10px);
+}
 
 .profile-header .btn::before {
   content: '';
@@ -121,43 +223,73 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent
+  );
   transition: left 0.6s ease;
+}
+
+.profile-header .btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .profile-header .btn:hover::before {
   left: 100%;
 }
 
+.profile-header .btn:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
 .profile-header .btn:hover {
-  background: linear-gradient(135deg, #2c4cff 0%, #131c53 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(76, 117, 255, 0.3);
+  background: linear-gradient(135deg, #2529ae 0%, #262b89 50%, #1e206b 100%);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 16px 40px rgba(38, 43, 137, 0.35),
+    0 8px 24px rgba(30, 32, 107, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .profile-header .btn:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 
+    0 8px 24px rgba(38, 43, 137, 0.25),
+    0 4px 12px rgba(30, 32, 107, 0.15);
 }
 
 .profile-header .btn i {
-  margin-left: 0.5rem;
-  transition: transform 0.3s ease;
+  margin-left: 0.8rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1rem;
 }
 
 .profile-header .btn:hover i {
-  transform: rotate(15deg);
+  transform: rotate(15deg) scale(1.1);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .profile-header {
-    padding: 2rem 0;
+    padding: 3rem 0;
+    min-height: 250px;
   }
   
   .profile-header .row {
-    padding: 1.5rem;
-    border-radius: 15px;
+    padding: 2rem;
+    border-radius: 20px;
   }
   
   .profile-header .col-md-3::after {
@@ -165,42 +297,49 @@
   }
   
   .profile-header h2 {
-    font-size: 1.8rem;
+    font-size: 2rem;
     text-align: center;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
   }
   
   .profile-header .col-md-6 {
     text-align: center;
-    margin: 1.5rem 0;
+    margin: 2rem 0;
   }
   
   .profile-header p {
     justify-content: center;
+    font-size: 1rem;
   }
   
   .profile-header .btn {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
+    padding: 0.9rem 1.8rem;
   }
 }
 
 @media (max-width: 576px) {
+  .profile-header {
+    padding: 2rem 0;
+  }
+  
   .profile-header .row {
-    padding: 1rem;
+    padding: 1.5rem;
     margin: 0 0.5rem;
+    border-radius: 16px;
   }
   
   .profile-header h2 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
   }
   
   .profile-header p {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
   }
   
   .profile-header .btn {
-    padding: 0.7rem 1.2rem;
-    font-size: 0.9rem;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
   }
 }
 
@@ -208,29 +347,137 @@
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(40px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
   }
 }
 
 .profile-header .row {
-  animation: fadeInUp 0.8s ease-out;
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.profile-header h2 {
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
 }
 
 /* RTL Support for Arabic text */
 [dir="rtl"] .profile-header .col-md-3::after {
   right: auto;
-  left: -15px;
+  left: -20px;
 }
 
 [dir="rtl"] .profile-header p:hover {
-  transform: translateX(-5px);
+  transform: translateX(-8px);
 }
 
 [dir="rtl"] .profile-header p i {
   margin-left: 0;
-  margin-right: 0.5rem;
+  margin-right: 0.8rem;
+}
+
+[dir="rtl"] .profile-header .btn i {
+  margin-left: 0;
+  margin-right: 0.8rem;
+}
+
+/* Camera Icon Styling - Profile Image Component */
+::ng-deep app-profile-image .camera-overlay {
+  background: linear-gradient(135deg, #262b89 0%, #1e206b 100%) !important;
+  border: 3px solid #9db7ff !important;
+  box-shadow: 
+    0 4px 16px rgba(38, 43, 137, 0.3),
+    0 2px 8px rgba(157, 183, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+::ng-deep app-profile-image .camera-overlay:hover {
+  background: linear-gradient(135deg, #2529ae 0%, #262b89 100%) !important;
+  border-color: #c2d4ff !important;
+  transform: scale(1.1) !important;
+  box-shadow: 
+    0 8px 24px rgba(38, 43, 137, 0.4),
+    0 4px 16px rgba(157, 183, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+::ng-deep app-profile-image .camera-overlay i,
+::ng-deep app-profile-image .camera-overlay .fa-camera {
+  color: #ecf3ff !important;
+  font-size: 18px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  transition: all 0.3s ease !important;
+}
+
+::ng-deep app-profile-image .camera-overlay:hover i,
+::ng-deep app-profile-image .camera-overlay:hover .fa-camera {
+  color: #ffffff !important;
+  transform: scale(1.1) !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Alternative styling if the camera button has different classes */
+::ng-deep app-profile-image .camera-button,
+::ng-deep app-profile-image .upload-button,
+::ng-deep app-profile-image .image-upload-btn {
+  background: linear-gradient(135deg, #262b89 0%, #1e206b 100%) !important;
+  border: 3px solid #9db7ff !important;
+  color: #ecf3ff !important;
+  box-shadow: 
+    0 4px 16px rgba(38, 43, 137, 0.3),
+    0 2px 8px rgba(157, 183, 255, 0.2) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+::ng-deep app-profile-image .camera-button:hover,
+::ng-deep app-profile-image .upload-button:hover,
+::ng-deep app-profile-image .image-upload-btn:hover {
+  background: linear-gradient(135deg, #2529ae 0%, #262b89 100%) !important;
+  border-color: #c2d4ff !important;
+  color: #ffffff !important;
+  transform: scale(1.1) !important;
+  box-shadow: 
+    0 8px 24px rgba(38, 43, 137, 0.4),
+    0 4px 16px rgba(157, 183, 255, 0.3) !important;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .profile-header {
+    background: linear-gradient(135deg, #1e206b 0%, #262b89 50%, #2529ae 100%);
+  }
+  
+  .profile-header .row {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(157, 183, 255, 0.1);
+  }
+  
+  .profile-header h2 {
+    background: linear-gradient(135deg, #c2d4ff 0%, #9db7ff 50%, #dde8ff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .profile-header p {
+    color: #dde8ff;
+  }
+  
+  .profile-header p:hover {
+    color: #ecf3ff;
+    background: rgba(157, 183, 255, 0.05);
+  }
 }
