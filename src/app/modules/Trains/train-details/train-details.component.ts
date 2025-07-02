@@ -102,7 +102,7 @@ loadNotificationStatus(): void {
     this.trainService.getServicesByStationId(stationId).subscribe({
       next: (response) => {
         console.log(`Services for station ${stationId} (${response.StationName}):`, response.Services);
-        // this.router.navigate([`/station/${stationId}/services`]);
+        this.router.navigate([`stations/services/${stationId}`]);
       },
       error: (error) => {
         console.error(`Error fetching services for station ${stationId}:`, error);
@@ -164,7 +164,7 @@ openGuideModal(): void {
             });
             localStorage.setItem('token', response.refreshToken);
             this.closeGuideModal();
-            this.router.navigate(['/train-tracking']);
+            this.router.navigate(['/train-tracking/', this.trainId]);
           },
           error: (error) => {
             console.error('Error requesting guide role:', error);
