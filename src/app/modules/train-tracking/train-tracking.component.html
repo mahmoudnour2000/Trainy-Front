@@ -1,6 +1,32 @@
 <div class="tracking-container">
-  <h2>🚂 تتبع القطار رقم {{ trainId }}</h2>
-  
+  <div *ngIf="trainData">
+    <h2>🚂 تتبع القطار رقم {{ trainData.TrainNo }}</h2>
+    <div class="guide-badge" *ngIf="isGuide">
+      <span>🛡️ لديك صلاحية المرشد (Guide)</span>
+    </div>
+    <div class="guide-badge not-guide" *ngIf="!isGuide">
+      <span>🚫 ليس لديك صلاحية المرشد (Guide)</span>
+      <button class="btn btn-outline-primary request-guide-btn" (click)="requestGuideRole()" [disabled]="isRequestingGuide">
+        <span *ngIf="isRequestingGuide" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        طلب صلاحية المرشد
+      </button>
+    </div>
+    <div class="station-cards-row">
+      <div class="station-card current">
+        <h3>المحطة الحالية</h3>
+        <p><strong>الاسم:</strong> {{ trainData.CurrentStationName }}</p>
+        <p *ngIf="trainData.Latitude && trainData.Longitude"><strong>الإحداثيات:</strong> {{ trainData.Latitude }}, {{ trainData.Longitude }}</p>
+        <p *ngIf="!trainData.Latitude || !trainData.Longitude" class="text-danger">لا تتوفر إحداثيات للمحطة الحالية</p>
+      </div>
+      <div class="station-card next">
+        <h3>المحطة التالية</h3>
+        <p><strong>الاسم:</strong> {{ trainData.NextStationName }}</p>
+        <!-- Coordinates for next station are not available in current data model -->
+        <p class="text-muted">الإحداثيات غير متوفرة</p>
+      </div>
+    </div>
+  </div>
+
   <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
   
   <div *ngIf="trainData" class="train-info">
@@ -30,11 +56,16 @@
     </div>
   </div>
 
-  <ng-container *ngIf="isGuide">
-    <div class="map-container">
+  <div *ngIf="trainData" class="map-container">
+    <div *ngIf="trainData.Latitude && trainData.Longitude; else noCoordsMap">
       <div leaflet [leafletOptions]="options" [leafletLayers]="layers"></div>
     </div>
+    <ng-template #noCoordsMap>
+      <div class="no-coords-message">لا تتوفر إحداثيات لعرض الخريطة</div>
+    </ng-template>
+  </div>
 
+  <ng-container *ngIf="isGuide && trainData">
     <div class="controls">
       <div class="buttons-container">
         <button class="btn btn-primary" (click)="updateGps()" [disabled]="isLoading">
@@ -99,4 +130,13 @@
       </form>
     </div>
   </ng-container>
+
+  <!-- Debug panel for development -->
+  <div *ngIf="trainData" class="debug-panel" style="margin-top: 32px; background: #f1f3f6; border: 1.5px dashed #007bff; border-radius: 8px; padding: 16px; color: #222;">
+    <h4 style="color: #007bff; margin-bottom: 8px;">��️ Debug Panel</h4>
+    <div><strong>Latitude:</strong> {{ trainData.Latitude }}</div>
+    <div><strong>Longitude:</strong> {{ trainData.Longitude }}</div>
+    <div><strong>Raw trainData:</strong></div>
+    <pre style="background: #e9ecef; border-radius: 6px; padding: 8px; font-size: 13px; overflow-x: auto;">{{ trainData | json }}</pre>
+  </div>
 </div>

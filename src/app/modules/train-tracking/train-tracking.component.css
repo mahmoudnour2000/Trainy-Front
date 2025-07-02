@@ -220,3 +220,115 @@ h2 {
 leaflet {
   display: block;
 }
+
+.station-cards-row {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.station-card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 18px 28px;
+  min-width: 220px;
+  max-width: 320px;
+  border: 2px solid #e9ecef;
+  text-align: right;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+.station-card.current {
+  border-left: 6px solid #007bff;
+}
+.station-card.next {
+  border-left: 6px solid #28a745;
+}
+.station-card h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #333;
+}
+.station-card p {
+  margin: 6px 0;
+  font-size: 15px;
+}
+.station-card .text-danger {
+  color: #dc3545;
+  font-size: 14px;
+}
+.station-card .text-muted {
+  color: #888;
+  font-size: 14px;
+}
+
+.no-coords-message {
+  text-align: center;
+  color: #dc3545;
+  font-size: 18px;
+  padding: 40px 0;
+  background: #f8d7da;
+  border-radius: 8px;
+  border: 2px solid #f5c6cb;
+}
+
+.guide-badge {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.guide-badge span {
+  background: #007bff;
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guide-badge.not-guide {
+  background: #f8f9fa;
+  border: 1.5px solid #adb5bd;
+  color: #495057;
+  border-radius: 20px;
+  padding: 8px 18px;
+  margin-bottom: 16px;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.guide-badge.not-guide span {
+  background: none;
+  color: #495057;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  box-shadow: none;
+}
+.request-guide-btn {
+  margin-right: 12px;
+  font-size: 15px;
+  border-radius: 16px;
+  padding: 6px 18px;
+  border: 1.5px solid #007bff;
+  color: #007bff;
+  background: #fff;
+  transition: background 0.2s, color 0.2s;
+}
+.request-guide-btn:hover:not(:disabled) {
+  background: #007bff;
+  color: #fff;
+}

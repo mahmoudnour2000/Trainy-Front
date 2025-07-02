@@ -9,6 +9,7 @@ import { latLng, tileLayer, marker, icon, popup, divIcon } from 'leaflet';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { interval, Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-train-tracking',
@@ -25,7 +26,9 @@ export class TrainTrackingComponent implements OnInit, OnDestroy {
   manualArrival = '';
   errorMessage = '';
   isLoading = false;
-  isGuide = true; // TODO: Replace with real role check from auth service
+  isGuide = false;
+  guideRoleAtTop = false;
+  isRequestingGuide = false;
   options = {
     layers: [
       tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -40,13 +43,16 @@ export class TrainTrackingComponent implements OnInit, OnDestroy {
 
   constructor(
     private trainTrackingService: TrainTrackingService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     const trainIdParam = this.route.snapshot.paramMap.get('trainId');
     if (!trainIdParam) return;
     this.trainId = +trainIdParam;
+    this.isGuide = this.authService.hasRole('Guide');
+    this.guideRoleAtTop = this.isGuide;
     this.loadTrackingData();
     this.startTracking();
   }
@@ -196,5 +202,14 @@ export class TrainTrackingComponent implements OnInit, OnDestroy {
     this.manualLat = 0;
     this.manualLng = 0;
     this.manualArrival = '';
+  }
+
+  requestGuideRole() {
+    this.isRequestingGuide = true;
+    // TODO: Call the real service to request the guide role
+    setTimeout(() => {
+      this.isRequestingGuide = false;
+      alert('تم إرسال طلب الحصول على صلاحية المرشد. سيتم مراجعة طلبك قريبًا.');
+    }, 1500);
   }
 } 
