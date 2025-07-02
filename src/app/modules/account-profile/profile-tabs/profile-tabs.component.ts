@@ -1,14 +1,17 @@
-// src/app/modules/account-profile/profile-tabs/profile-tabs.component.ts
 import { Component, Input } from '@angular/core';
 import { Offer, Request } from '../../../core/models/user';
-
+import { CommonModule } from '@angular/common';
+import { OfferCardComponent } from '../offer-card/offer-card.component';
+import { RequestCardComponent } from '../request-card/request-card.component';
 @Component({
-    standalone:false,
   selector: 'app-profile-tabs',
+  standalone: true,
+  imports: [CommonModule, OfferCardComponent,RequestCardComponent],
   templateUrl: './profile-tabs.component.html',
   styleUrls: ['./profile-tabs.component.css']
 })
 export class ProfileTabsComponent {
   @Input() offers: Offer[] = [];
   @Input() requests: Request[] = [];
+  activeTab: 'offers' | 'requests' = 'offers';
 }

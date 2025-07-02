@@ -1,9 +1,12 @@
 <div class="notifications-container">
-  <h2>الإشعارات</h2>
+  <h2 class="page-title">
+    الإشعارات
+    <i class="fas fa-bell"></i>
+  </h2>
 
   <ul *ngIf="notifications.length > 0; else noNotifications">
     <li *ngFor="let notification of notifications">
-      <div class="notification-card">
+      <div class="notification-card" [class.unread]="!notification.IsRead">
         <p class="message">{{ notification.Message }}</p>
         <div class="meta">
           <small class="time">{{ notification.NotificationTime | date:'short' }}</small>

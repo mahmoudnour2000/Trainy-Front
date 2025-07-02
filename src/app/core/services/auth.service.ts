@@ -72,6 +72,7 @@ export class AuthService {
   }
 
   clearToken(): void {
+
     localStorage.removeItem('token');
     this.cookieService.delete('auth_token');   
     this.updateAuthState(); // Update reactive state

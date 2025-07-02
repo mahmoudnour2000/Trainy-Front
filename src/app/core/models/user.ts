@@ -10,13 +10,30 @@ export interface User {
   CreatedAt?: string; // أضفنا joinDate عشان تتطابق مع الـ HTML
   Balance?: number;
 }
+export enum PaymentMethod {
+  EtisalatCash = 0,
+  VodafoneCash = 1,
+  PayPal = 2,
+  Stripe = 3,
+  AccountNumber = 4
+}
+export enum OfferStatus {
+  Canceled = 'Canceled',
+  OnWay = 'OnWay',
+  Delivered = 'Delivered',
+  Pending = 'Pending',
+  InProgress = 'InProgress',
+  Completed = 'Completed'
+}
 
 export interface Offer {
-  Id: number;
-  Description: string;
-  PaymentMethod: string;
-  OfferStatus: string;
+  ID: number;
+  PaymentMethod: PaymentMethod;
+  OfferStatus: OfferStatus;
   OfferTime: string;
+  Description: string;
+  LastUpdate: string;
+  Picture?: string;
   Weight: number;
   Category: string;
   IsBreakable: boolean;
@@ -24,21 +41,38 @@ export interface Offer {
   CreatedAt: string;
   UpdatedAt: string;
   SenderId: string;
+  SenderName: string;
   CourierId?: string;
+  CourierName?: string;
   PickupStationId: number;
+  PickupStationName: string;
   DropoffStationId: number;
+  DropoffStationName: string;
+  RequestsCount: number;
+  AcceptedRequestsCount: number;
+  Requests: Request[];
 }
-
 
 export interface Request {
   Id: number;
-  Message: string;
-  Status: string;
-  ReqTime: string;
+  OfferId: number;
+  OfferDescription?: string;
   CourierId: string;
+  CourierName?: string;
+  Message: string;
   CreatedAt: string;
   UpdatedAt: string;
-  OfferId: number;
+  SenderId?: string;
+  FromStationId: number;
+  ReqTime: string;
+  RequestStatus: RequestStatus; 
+}
+
+export enum RequestStatus {
+  Pending = 0,
+  Accepted = 1,
+  Rejected = 2,
+  completed = 3
 }
 
 

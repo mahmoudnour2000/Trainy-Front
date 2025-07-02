@@ -19,8 +19,8 @@
   bottom: 0;
   right: 0;
   background: var(--primary-blue);
-  color: rgb(230, 230, 236);
-  border: 2px solid white;
+  color: #1e206b;
+  border: 2px solid #1e206b;
   width: 35px;
   height: 35px;
   border-radius: 50%;
@@ -34,6 +34,8 @@
 .edit-image-btn:hover {
   background: var(--dark-blue);
   transform: scale(1.1);
+  color: white;
+  border: 2px solid white;
 }
 
 @media (max-width: 768px) {

@@ -40,10 +40,8 @@ onFileChange(event: Event): void {
       return;
     }
 
-    // ارفع الصورة عبر السيرفيس
     this.userService.uploadProfileImage(file).subscribe({
       next: (res) => {
-        // حدث رابط الصورة
         this.profileImageFullUrl = `${environment.apiUrl}${res.imageUrl}`;
         alert('تم تحديث الصورة بنجاح!');
       },

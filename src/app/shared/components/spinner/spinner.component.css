@@ -19,8 +19,10 @@
 
 .train-spinner {
   font-size: 50px; /* حجم أيقونة القطار */
-  color: #428bca; /* لون القطار */
-  animation: trainMove 1.5s ease-in-out infinite; /* أنيميشن حركة القطار */
+ color: #1e206b;
+  /* font-weight: 800; */
+  /* background: linear-gradient(135deg, #ecf3ff 0%, #dde8ff 100%); */
+   animation: trainMove 1.5s ease-in-out infinite; /* أنيميشن حركة القطار */
 }
 
 @keyframes trainMove {

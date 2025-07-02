@@ -1,3 +1,89 @@
-<p>
-  about-us works!
-</p>
+<section class="container py-5">
+  <!-- Hero Section -->
+  <div class="hero-section">
+    <div class="text-center">
+      <h1 class="gradient-text">من نحن</h1>
+      <p class="lead">
+        إحنا مجموعة شباب مصريين من خريجي 
+        <strong class="iti-highlight">المعهد القومي لتكنولوجيا المعلومات ITI - فرع أسوان</strong>،
+        حبينا نساعد نفسنا ونساعد الناس اللي بتسافر بالقطر من خلال موقع بيقدم خدمات حقيقية ومفيدة.
+      </p>
+      <div class="heart-text">
+        والمعهد كان الداعم الأول لينا في انطلاق المشروع ده 
+        <span class="heart-emoji">❤️</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services Cards Section -->
+  <div class="services-section">
+    <h2 class="section-title text-center mb-5">خدماتنا</h2>
+    <div class="row g-4">
+      <div class="col-md-4" *ngFor="let service of services; let i = index">
+        <div class="service-card" [style.animation-delay]="(i * 0.1) + 's'">
+          <div class="card-icon">
+            <i [class]="service.icon"></i>
+          </div>
+          <h5 class="card-title">{{ service.title }}</h5>
+          <p class="card-description">{{ service.description }}</p>
+          <div class="card-glow"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gallery Section -->
+  <div class="gallery-section">
+    <h3 class="section-title text-center mb-4">لقطات من الرحلة</h3>
+    
+    <div class="gallery-slider-wrapper"
+         (mouseenter)="onMouseEnter()" (mouseleave)="onMouseLeave()"
+         (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+      <div class="gallery-slider-track" [style.transform]="'translateX(-' + currentPosition + 'px)'">
+        <div class="slider-item" *ngFor="let image of sliderImages; let i = index; trackBy: trackByIndex">
+          <img [src]="image"
+               [alt]="'صورة رحلة ' + (i + 1)"
+               class="gallery-slider-img"
+               (click)="openImageModal(i)" />
+          <div class="image-overlay">
+            <i class="bi bi-zoom-in"></i>
+          </div>
+        </div>
+      </div>
+      <div class="slider-dots">
+        <button *ngFor="let image of sliderImages; let i = index"
+                [class.active]="i === currentIndex"
+                (click)="goToSlide(i)"
+                class="dot"></button>
+      </div>
+      <button class="nav-arrow nav-prev" (click)="previousSlide()">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <button class="nav-arrow nav-next" (click)="nextSlide()">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Section
+  <div class="stats-section">
+    <div class="row text-center">
+      <div class="col-md-3" *ngFor="let stat of stats">
+        <div class="stat-item">
+          <div class="stat-number">{{ stat.number }}</div>
+          <div class="stat-label">{{ stat.label }}</div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</section>
+
+<!-- Image Modal -->
+<div class="image-modal" [class.active]="modalActive" (click)="closeModal()">
+  <div class="modal-content">
+    <button class="modal-close" (click)="closeModal()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+    <img [src]="sliderImages[currentIndex]" [alt]="'صورة رحلة ' + (currentIndex + 1)" />
+  </div>
+</div>
