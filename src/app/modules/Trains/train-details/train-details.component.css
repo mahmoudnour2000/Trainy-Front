@@ -1,16 +1,16 @@
 /* Train Details Component - Light Theme Enhanced Styling */
 .train-details {
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  color: #1e293b;
-  padding: 1.5rem;
+  background: linear-gradient(135deg, #ecf3ff 0%, #dde8ff 50%, #c2d4ff 100%);
+  color: #262b89;
+  padding: 2.5rem 2rem 2rem 2rem;
   border-radius: 24px;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 20px 40px rgba(38,43,137,0.08), 0 8px 16px rgba(157,183,255,0.1), inset 0 1px 0 rgba(255,255,255,0.6);
   max-width: 1200px;
   margin: 0 auto;
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(20px);
-  border: 2px solid rgba(25, 60, 177, 0.1);
+  border: 1.5px solid rgba(157,183,255,0.18);
 }
 
 .train-details::before {
@@ -42,18 +42,18 @@
 }
 
 .train-details h2 {
-  font-size: 2.8rem;
-  font-weight: 900;
+  font-size: 2.5rem;
+  font-weight: 800;
   margin-bottom: 1.2rem;
   text-align: center;
-  background: linear-gradient(135deg, #1d37df 0%, #193cb1 50%, #2c4cff 100%);
+  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #262b89 100%);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 4px 20px rgba(29, 55, 223, 0.2);
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+  text-shadow: 0 4px 8px rgba(38,43,137,0.1);
   position: relative;
   z-index: 1;
-  letter-spacing: -0.02em;
 }
 
 .train-details h2::after {
@@ -64,23 +64,21 @@
   transform: translateX(-50%);
   width: 80px;
   height: 4px;
-  background: linear-gradient(135deg, #1d37df 0%, #2c4cff 100%);
+  background: linear-gradient(90deg, #9db7ff 0%, #262b89 100%);
   border-radius: 2px;
 }
 
 .train-details > p {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   margin: 1rem 0;
-  padding: 1rem 1.5rem;
-  background: linear-gradient(135deg, rgba(25, 60, 177, 0.05) 0%, rgba(44, 76, 255, 0.03) 100%);
+  padding: 1.1rem 1.5rem;
+  background: linear-gradient(135deg, rgba(157,183,255,0.08) 0%, rgba(194,212,255,0.05) 100%);
   border-radius: 16px;
-  border: 2px solid rgba(25, 60, 177, 0.1);
+  border: 1.5px solid rgba(157,183,255,0.18);
   backdrop-filter: blur(10px);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  overflow: hidden;
-  font-weight: 500;
-  color: #334155;
+  color: #1e206b;
 }
 
 .train-details > p::before {
@@ -99,12 +97,11 @@
 }
 
 .train-details > p:hover {
-  background: linear-gradient(135deg, rgba(25, 60, 177, 0.1) 0%, rgba(44, 76, 255, 0.05) 100%);
+  background: linear-gradient(135deg, #dde8ff 0%, #c2d4ff 100%);
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 15px 35px rgba(25, 60, 177, 0.15);
-  border-color: rgba(25, 60, 177, 0.2);
+  box-shadow: 0 15px 35px rgba(157,183,255,0.13);
+  border-color: rgba(157,183,255,0.25);
 }
-
 /* Actions Section */
 .actions {
   display: flex;
@@ -117,19 +114,19 @@
 }
 
 .actions button {
-  background: linear-gradient(135deg, #193cb1 0%, #2c4cff 100%);
-  color: white;
+  background: linear-gradient(135deg, #262b89 0%, #1e206b 100%);
+  color: #fff;
   border: none;
-  padding: 1rem 2rem;
-  border-radius: 50px;
+  padding: 1rem 2.2rem;
+  border-radius: 16px;
   font-size: 1.1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
   position: relative;
   overflow: hidden;
   min-width: 180px;
-  box-shadow: 0 8px 25px rgba(25, 60, 177, 0.3);
+  box-shadow: 0 4px 12px rgba(38,43,137,0.08);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -168,11 +165,10 @@
 }
 
 .actions button:hover {
-  background: linear-gradient(135deg, #2c4cff 0%, #1d37df 100%);
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 15px 40px rgba(44, 76, 255, 0.4);
+  background: linear-gradient(135deg, #2529ae 0%, #262b89 100%);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(38,43,137,0.13);
 }
-
 .actions button:active {
   transform: translateY(-2px) scale(1.02);
 }
@@ -180,10 +176,10 @@
 /* Stations Section */
 .stations-section {
   margin-top: 2rem;
-  background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
+  background: linear-gradient(135deg, #f8faff 0%, #ecf3ff 100%);
   padding: 2rem;
   border-radius: 24px;
-  border: 2px solid rgba(25, 60, 177, 0.1);
+  border: 1.5px solid rgba(157,183,255,0.18);
   backdrop-filter: blur(20px);
   position: relative;
   overflow: hidden;
@@ -196,7 +192,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #1d37df 0%, #2c4cff 100%);
+  background: linear-gradient(90deg, #9db7ff 0%, #262b89 100%);
 }
 
 .stations-section h3 {

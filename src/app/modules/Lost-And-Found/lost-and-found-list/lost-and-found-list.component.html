@@ -1,38 +1,93 @@
-<div class="container mt-4">
-  <h2>المفقودات في القطار رقم {{ trainId }}</h2>
-  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-  <div class="mb-3">
-    <label for="searchDate" class="form-label">البحث بتاريخ الفقدان</label>
-    <input id="searchDate" type="date" class="form-control" [(ngModel)]="searchDate" (ngModelChange)="search()" />
-  </div>
-    <a class="btn btn-success mt-3" (click)="reportLost()">إبلاغ عن مفقود</a>
-
-  <div *ngIf="loading" class="text-center">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">جاري التحميل...</span>
+ <div class="container mt-4">
+        <h2 class="page-title">المفقودات في القطار رقم {{ trainId }}</h2>
+        
+        <!-- Success/Error Messages -->
+        <div *ngIf="successMessage" class="alert alert-success">
+            <i class="fas fa-check-circle me-2"></i>{{ successMessage }}
+        </div>
+        <div *ngIf="errorMessage" class="alert alert-danger">
+            <i class="fas fa-exclamation-circle me-2"></i>{{ errorMessage }}
+        </div>
+        
+        <!-- Search Card -->
+        <div class="search-card">
+            <div class="card-body">
+                <div class="row align-items-end">
+                    <div class="col-md-8">
+                        <label for="searchDate" class="form-label">
+                            <i class="fas fa-calendar-alt me-2"></i>البحث بتاريخ الفقدان
+                        </label>
+                        <input id="searchDate" type="date" class="form-control" [(ngModel)]="searchDate" (ngModelChange)="search()" />
+                    </div>
+                    <div class="col-md-4 mt-3 mt-md-0">
+                        <button class="report-btn w-100" (click)="reportLost()">
+                            <i class="fas fa-plus me-2"></i>إبلاغ عن مفقود
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Loading State -->
+        <div *ngIf="loading" class="loading-container">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">جاري التحميل...</span>
+            </div>
+            <div class="empty-message">جاري تحميل البيانات...</div>
+        </div>
+        
+        <!-- Empty State -->
+        <div *ngIf="!loading && posts.length === 0" class="empty-state">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <div class="empty-message">لا توجد بلاغات مفقودات لهذا القطار</div>
+        </div>
+        
+        <!-- Lost Items Grid -->
+        <div *ngIf="!loading && posts.length > 0" class="lost-items-grid">
+            <div *ngFor="let post of posts" class="lost-item-card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-receipt me-2"></i>بلاغ رقم {{ post.LfId }}
+                    </h5>
+                    
+                    <p class="card-text">
+                        <strong><i class="fas fa-info-circle me-2"></i>الوصف:</strong> {{ post.ItemDescription }}
+                    </p>
+                    
+                    <p class="card-text">
+                        <strong><i class="fas fa-phone me-2"></i>بيانات التواصل:</strong> {{ post.ContactDetails }}
+                    </p>
+                    
+                    <p class="card-text">
+                        <strong><i class="fas fa-calendar-day me-2"></i>تاريخ الفقدان:</strong> {{ post.DateLost }}
+                    </p>
+                    
+                    <img *ngIf="post.Photo" [src]="post.Photo" alt="صورة المفقود" class="lost-item-image" />
+                    
+                    <div *ngIf="isUserPost(post)" class="action-buttons">
+                        <button class="btn-edit" (click)="editPost(post.LfId)">
+                            <i class="fas fa-edit me-2"></i>تعديل
+                        </button>
+                        <button class="btn-delete" (click)="deletePost(post.LfId)">
+                            <i class="fas fa-trash me-2"></i>حذف
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pagination -->
+        <div *ngIf="!loading && posts.length > 0" class="pagination-container">
+            <button class="pagination-btn" [disabled]="pageNumber === 1" (click)="previousPage()">
+                <i class="fas fa-chevron-right me-2"></i>السابق
+            </button>
+            
+            <div class="pagination-info">
+                <i class="fas fa-file-alt me-2"></i>صفحة {{ pageNumber }} من {{ totalPages }}
+            </div>
+            
+            <button class="pagination-btn" [disabled]="pageNumber >= totalPages" (click)="nextPage()">
+                التالي<i class="fas fa-chevron-left ms-2"></i>
+            </button>
+        </div>
     </div>
-  </div>
-  <div *ngIf="!loading && posts.length === 0" class="alert alert-info">
-    لا توجد بلاغات مفقودات لهذا القطار
-  </div>
-  <div *ngFor="let post of posts" class="card mb-3">
-    <div class="card-body">
-      <!-- <pre>{{ post | json }}</pre> -->
-      <h5 class="card-title">بلاغ رقم {{ post.LfId }}</h5>
-      <p class="card-text">الوصف: {{ post.ItemDescription }}</p>
-      <p class="card-text">بيانات التواصل: {{ post.ContactDetails }}</p>
-      <p class="card-text">تاريخ الفقدان: {{ post.DateLost }}</p>
-      <img *ngIf="post.Photo" [src]="post.Photo" alt="صورة المفقود" class="img-thumbnail" style="max-width: 200px;" />
-      <div *ngIf="isUserPost(post)" class="mt-2">
-        <button class="btn btn-primary me-2" (click)="editPost(post.LfId)">تعديل</button>
-        <button class="btn btn-danger" (click)="deletePost(post.LfId)">حذف</button>
-      </div>
-    </div>
-  </div>
-  <div class="d-flex justify-content-between mt-3">
-    <button class="btn btn-primary" [disabled]="pageNumber === 1" (click)="previousPage()">السابق</button>
-    <span>صفحة {{ pageNumber }} من {{ totalPages }}</span>
-    <button class="btn btn-primary" [disabled]="pageNumber >= totalPages" (click)="nextPage()">التالي</button>
-  </div>
-</div>
