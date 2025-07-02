@@ -9,6 +9,7 @@ import { latLng, tileLayer, marker, icon, popup, divIcon } from 'leaflet';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { interval, Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-train-tracking',
@@ -25,7 +26,9 @@ export class TrainTrackingComponent implements OnInit, OnDestroy {
   manualArrival = '';
   errorMessage = '';
   isLoading = false;
-  isGuide = true; // TODO: Replace with real role check from auth service
+  isGuide = false;
+  guideRoleAtTop = false;
+  isRequestingGuide = false;
   options = {
     layers: [
       tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -37,16 +40,21 @@ export class TrainTrackingComponent implements OnInit, OnDestroy {
   };
   layers: any[] = [];
   private trackingSubscription: Subscription | null = null;
+  showSuccessPopup = false;
+  successPopupMessage = '';
 
   constructor(
     private trainTrackingService: TrainTrackingService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
     const trainIdParam = this.route.snapshot.paramMap.get('trainId');
     if (!trainIdParam) return;
     this.trainId = +trainIdParam;
+    this.isGuide = this.authService.hasRole('Guide');
+    this.guideRoleAtTop = this.isGuide;
     this.loadTrackingData();
     this.startTracking();
   }
@@ -148,7 +156,7 @@ export class TrainTrackingComponent implements OnInit, OnDestroy {
           .subscribe({
             next: () => {
               this.loadTrackingData();
-              this.errorMessage = 'تم تحديث GPS بنجاح';
+              this.showSuccessToast('تم تحديث موقع القطار بنجاح');
             },
             error: () => this.errorMessage = 'خطأ في تحديث GPS'
           });
@@ -177,7 +185,7 @@ export class TrainTrackingComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.loadTrackingData();
-          this.errorMessage = 'تم التحديث اليدوي بنجاح';
+          this.showSuccessToast('تم تحديث موقع القطار يدويًا بنجاح');
           this.resetForm();
         },
         error: () => this.errorMessage = 'خطأ في التحديث اليدوي'
@@ -196,5 +204,54 @@ export class TrainTrackingComponent implements OnInit, OnDestroy {
     this.manualLat = 0;
     this.manualLng = 0;
     this.manualArrival = '';
+  }
+
+  requestGuideRole() {
+    this.isRequestingGuide = true;
+    // TODO: Call the real service to request the guide role
+    setTimeout(() => {
+      this.isRequestingGuide = false;
+      alert('تم إرسال طلب الحصول على صلاحية المرشد. سيتم مراجعة طلبك قريبًا.');
+    }, 1500);
+  }
+
+  initFallbackMap() {
+    const lat = this.trainData?.Latitude ?? 30.0444;
+    const lng = this.trainData?.Longitude ?? 31.2357;
+    const fallbackDiv = document.getElementById('fallback-map');
+    if (!fallbackDiv) {
+      alert('Fallback map container not found!');
+      return;
+    }
+    fallbackDiv.style.display = 'block';
+    if ((window as any).fallbackMapInstance) {
+      (window as any).fallbackMapInstance.remove();
+    }
+    (window as any).fallbackMapInstance = (window as any).L.map('fallback-map').setView([lat, lng], 13);
+    (window as any).L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo((window as any).fallbackMapInstance);
+    (window as any).L.marker([lat, lng]).addTo((window as any).fallbackMapInstance)
+      .bindPopup('🚂 موقع القطار الحالي').openPopup();
+  }
+
+  // Add this method for dynamic status badge styling
+  getStatusClass(status: string): string {
+    if (!status) return '';
+    const s = status.toLowerCase();
+    if (s.includes('on') || s.includes('active') || s.includes('متحرك')) return 'status-on';
+    if (s.includes('delay') || s.includes('متأخر')) return 'status-delayed';
+    if (s.includes('stop') || s.includes('stationary') || s.includes('متوقف')) return 'status-stopped';
+    return 'status-other';
+  }
+
+  showSuccessToast(message: string) {
+    (window as any).lastSuccessToastTimeout && clearTimeout((window as any).lastSuccessToastTimeout);
+    this.successPopupMessage = message;
+    this.showSuccessPopup = true;
+    (window as any).lastSuccessToastTimeout = setTimeout(() => {
+      this.showSuccessPopup = false;
+    }, 3000);
   }
 } 
