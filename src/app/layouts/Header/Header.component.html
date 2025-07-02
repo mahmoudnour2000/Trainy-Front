@@ -58,8 +58,14 @@
           </div>
           <div class="dropdown user-dropdown" *ngIf="showUserDropdown">
             <ul>
-              <li (click)="goToProfile()">الصفحة الشخصية</li>
-              <li (click)="logout()">تسجيل الخروج</li>
+              <li (click)="goToProfile()">
+                <i class="fas fa-user-circle"></i>
+                الصفحة الشخصية
+              </li>
+              <li (click)="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                تسجيل الخروج
+              </li>
             </ul>
           </div>
         </div>

@@ -39,7 +39,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private eRef: ElementRef,
     private cdr: ChangeDetectorRef // لتحديث الـ UI
   ) {}
-
+  
+  
   ngOnInit(): void {
     
     this.isLoggedIn = this.authService.isAuthenticated();
@@ -138,6 +139,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   toggleDropdown(): void {
     this.showDropdown = !this.showDropdown;
     this.showUserDropdown = false; // نقفل دروب داون المستخدم
+    // عند فتح الدروب داون، اعتبر كل الإشعارات مقروءة (صفر العداد)
+    if (this.showDropdown && this.unreadCount > 0) {
+      this.unreadCount = 0;
+    }
     this.cdr.detectChanges();
   }
 

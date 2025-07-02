@@ -3,7 +3,7 @@ import { IUserLogin, IUserRegister } from '../models/auth';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, throwError, BehaviorSubject } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthResponse } from '../models/auth';
+import { AuthResponse, AUser } from '../models/auth';
 import { tap, map } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service'; 
 import { jwtDecode } from 'jwt-decode';
@@ -20,7 +20,7 @@ export class AuthService {
   
   // Reactive state management
   private authStateSubject = new BehaviorSubject<boolean>(false);
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private currentUserSubject = new BehaviorSubject<AUser | null>(null);
   
   public authStateChanged$ = this.authStateSubject.asObservable();
   public currentUser$ = this.currentUserSubject.asObservable();
@@ -72,6 +72,7 @@ export class AuthService {
   }
 
   clearToken(): void {
+
     localStorage.removeItem('token');
     this.cookieService.delete('auth_token');   
     this.updateAuthState(); // Update reactive state
@@ -118,7 +119,7 @@ export class AuthService {
     return this.getCurrentUserId();
   }
 
-  getCurrentUser(): User | null {
+  getCurrentUser(): AUser | null {
     const token = this.getToken();
     if (token) {
       try {

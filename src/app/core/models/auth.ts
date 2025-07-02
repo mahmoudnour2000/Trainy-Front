@@ -23,10 +23,10 @@ export interface IUserLogin {
 
 export interface AuthResponse {
   token: string;
-  user: User;
+  user: AUser;
 }
 
-export interface User {
+export interface AUser {
   id: string;
   email: string;
   name: string;

@@ -9,26 +9,28 @@ import { PersonalInfoComponent } from './personal-info/personal-info.component';
 import { WalletCardComponent } from './wallet-card/wallet-card.component';
 import { ProfileTabsComponent } from './profile-tabs/profile-tabs.component';
 import { OfferCardComponent } from './offer-card/offer-card.component';
-import { RequestCardComponent } from './request-card/request-card.component';
 import { AccountProfileRoutingModule } from './account-profile-routing.module'; // استيراد الـ routing module
 import { WithdrawButtonComponent } from './withdraw-button/withdraw-button.component';
 import { DepositButtonComponent } from './deposit-button/deposit-button.component';
+import { OfferDetailsComponent } from './offer-details/offer-details.component';
+import { RequestCardComponent } from './request-card/request-card.component';
 @NgModule({
   declarations: [
     UserProfileComponent,
     ProfileHeaderComponent,
     ProfileImageComponent,
+     WalletCardComponent,
     PersonalInfoComponent,
-    WalletCardComponent,
-    ProfileTabsComponent,
-    OfferCardComponent,
-    RequestCardComponent,
     WithdrawButtonComponent,
     DepositButtonComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
+    ProfileTabsComponent, // مستورد كـ standalone
+    OfferCardComponent,   // مستورد كـ standalone
+    OfferDetailsComponent,
+    RequestCardComponent,
     AccountProfileRoutingModule // إضافة الـ routing هنا
   ],
   bootstrap: [UserProfileComponent] // بما إن ده الـ root module

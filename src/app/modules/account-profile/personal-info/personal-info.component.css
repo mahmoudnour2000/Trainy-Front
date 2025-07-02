@@ -1,19 +1,19 @@
-/* Personal Info Component Enhanced Styles */
+/* Personal Info Component Enhanced Styles - Matching Design */
 .info-card {
   border: none;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(30, 60, 114, 0.08);
-  background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
+  border-radius: 24px;
+  box-shadow: 
+    0 20px 40px rgba(38, 43, 137, 0.08),
+    0 8px 16px rgba(157, 183, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
   overflow: hidden;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   margin-top: -40px;
   position: relative;
   z-index: 3;
-}
-
-.info-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(30, 60, 114, 0.12);
+  border: 1px solid rgba(157, 183, 255, 0.2);
 }
 
 .info-card::before {
@@ -22,144 +22,259 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, #1e3c72, #2a5298, #3f51b5);
+  height: 5px;
+  background: linear-gradient(90deg, #9db7ff 0%, #262b89 50%, #1e206b 100%);
+  border-radius: 24px 24px 0 0;
+}
+
+.info-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(157, 183, 255, 0.03) 0%, rgba(194, 212, 255, 0.02) 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 
+    0 32px 64px rgba(38, 43, 137, 0.12),
+    0 16px 32px rgba(157, 183, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.info-card:hover::after {
+  opacity: 1;
 }
 
 /* Card Header */
 .info-card .card-header {
-  background: linear-gradient(135deg, rgba(30, 60, 114, 0.05) 0%, rgba(42, 82, 152, 0.03) 100%) !important;
+  background: transparent !important;
   border: none !important;
-  padding: 1.5rem 2rem 1rem;
+  padding: 2rem 2.5rem 1rem;
   position: relative;
+  z-index: 2;
 }
 
 .info-card .card-title {
-  color: #1e3c72 !important;
-  font-size: 1.4rem;
-  font-weight: 700;
+  color: #262b89 !important;
+  font-size: 1.6rem;
+  font-weight: 800;
   margin: 0;
   display: flex;
   align-items: center;
   position: relative;
+  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #262b89 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+}
+
+.info-card .card-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50px;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #9db7ff 0%, #262b89 100%);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.info-card:hover .card-title::after {
+  width: 80px;
 }
 
 .info-card .card-title i {
-  background: linear-gradient(45deg, #1e3c72, #2a5298);
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  background: linear-gradient(135deg, #262b89 0%, #1e206b 100%);
+  color: #ecf3ff;
+  width: 45px;
+  height: 45px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-left: 1rem;
-  box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2);
-  transition: all 0.3s ease;
+  box-shadow: 
+    0 8px 24px rgba(38, 43, 137, 0.25),
+    0 4px 12px rgba(157, 183, 255, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 1.1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.info-card .card-title i::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
 }
 
 .info-card .card-title:hover i {
-  transform: rotate(5deg) scale(1.05);
-  box-shadow: 0 6px 20px rgba(30, 60, 114, 0.3);
+  transform: rotate(8deg) scale(1.1);
+  background: linear-gradient(135deg, #2529ae 0%, #262b89 100%);
+  box-shadow: 
+    0 12px 32px rgba(38, 43, 137, 0.35),
+    0 6px 16px rgba(157, 183, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.info-card .card-title:hover i::before {
+  left: 100%;
 }
 
 /* Card Body */
 .info-card .card-body {
-  padding: 2rem;
-  background: white;
+  padding: 2.5rem;
+  background: transparent;
+  position: relative;
+  z-index: 2;
 }
 
 /* Display Mode Styles */
 .info-card .col-md-6 {
   position: relative;
-  padding: 1rem;
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  padding: 1.2rem;
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 1rem;
 }
 
 .info-card .col-md-6:hover {
-  background: linear-gradient(135deg, rgba(30, 60, 114, 0.02) 0%, rgba(42, 82, 152, 0.01) 100%);
-  transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(157, 183, 255, 0.08) 0%, rgba(194, 212, 255, 0.05) 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(38, 43, 137, 0.06);
 }
 
 .info-card label.text-muted {
-  color: #6c757d !important;
-  font-size: 0.85rem;
-  font-weight: 600;
+  color: #1e206b !important;
+  font-size: 0.9rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 0.5rem;
+  letter-spacing: 0.8px;
+  margin-bottom: 0.8rem;
   display: block;
   position: relative;
+  opacity: 0.8;
 }
 
 .info-card label.text-muted::after {
   content: '';
   position: absolute;
-  bottom: -2px;
+  bottom: -4px;
   left: 0;
-  width: 20px;
-  height: 2px;
-  background: linear-gradient(90deg, #1e3c72, #2a5298);
-  border-radius: 1px;
+  width: 25px;
+  height: 3px;
+  background: linear-gradient(90deg, #9db7ff 0%, #262b89 100%);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.info-card .col-md-6:hover label.text-muted::after {
+  width: 40px;
 }
 
 .info-card p.fw-bold {
-  color: #2c3e50;
-  font-size: 1.1rem;
+  color: #262b89;
+  font-size: 1.2rem;
   font-weight: 600;
   margin: 0;
-  padding: 0.5rem 0;
-  border-radius: 6px;
+  padding: 0.8rem 0;
+  border-radius: 8px;
   transition: all 0.3s ease;
+  position: relative;
+}
+
+.info-card .col-md-6:hover p.fw-bold {
+  color: #1e206b;
+  transform: translateX(5px);
 }
 
 /* Edit Form Styles */
 .info-card .form-label {
-  color: #1e3c72;
-  font-weight: 600;
-  font-size: 0.95rem;
-  margin-bottom: 0.5rem;
+  color: #262b89;
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
 }
 
 .info-card .form-control,
 .info-card .form-select {
-  border: 2px solid #e8f4fd;
-  border-radius: 12px;
-  padding: 0.8rem 1rem;
-  font-size: 1rem;
-  background: linear-gradient(145deg, #ffffff 0%, #f8fbff 100%);
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 10px rgba(30, 60, 114, 0.05);
+  border: 2px solid rgba(157, 183, 255, 0.3);
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+  font-size: 1.1rem;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 16px rgba(38, 43, 137, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  color: #262b89;
+  font-weight: 500;
+}
+
+.info-card .form-control::placeholder {
+  color: rgba(38, 43, 137, 0.5);
 }
 
 .info-card .form-control:focus,
 .info-card .form-select:focus {
-  border-color: #2a5298;
-  box-shadow: 0 0 0 0.25rem rgba(42, 82, 152, 0.15);
-  background: white;
-  transform: translateY(-1px);
+  border-color: #262b89;
+  box-shadow: 
+    0 0 0 0.25rem rgba(157, 183, 255, 0.25),
+    0 8px 24px rgba(38, 43, 137, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-2px) scale(1.01);
+  outline: none;
 }
 
 .info-card .form-control:hover,
 .info-card .form-select:hover {
-  border-color: #5a9bd4;
+  border-color: #9db7ff;
   transform: translateY(-1px);
+  box-shadow: 
+    0 6px 20px rgba(38, 43, 137, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
 }
 
 /* Buttons */
 .info-card .edit-btn {
-  background: linear-gradient(45deg, #1e3c72, #2a5298);
-  color: white;
+  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%);
+  color: #ffffff;
   border: none;
-  border-radius: 12px;
-  padding: 0.8rem 2rem;
-  font-weight: 600;
-  font-size: 1rem;
-  box-shadow: 0 4px 15px rgba(30, 60, 114, 0.3);
-  transition: all 0.3s ease;
+  border-radius: 16px;
+  padding: 1rem 2.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  box-shadow: 
+    0 8px 24px rgba(38, 43, 137, 0.25),
+    0 4px 12px rgba(30, 32, 107, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
 }
 
 .info-card .edit-btn::before {
@@ -173,42 +288,142 @@
   transition: left 0.6s ease;
 }
 
+.info-card .edit-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 .info-card .edit-btn:hover::before {
   left: 100%;
 }
 
+.info-card .edit-btn:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
 .info-card .edit-btn:hover {
-  background: linear-gradient(45deg, #2a5298, #3f51b5);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(30, 60, 114, 0.4);
+  background: linear-gradient(135deg, #2529ae 0%, #262b89 50%, #1e206b 100%);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 16px 40px rgba(38, 43, 137, 0.35),
+    0 8px 24px rgba(30, 32, 107, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.info-card .edit-btn:active {
+  transform: translateY(-2px) scale(1.01);
+}
+
+.info-card .edit-btn:disabled {
+  background: linear-gradient(135deg, #c2d4ff 0%, #dde8ff 100%);
+  color: #9db7ff;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 12px rgba(194, 212, 255, 0.2);
 }
 
 .info-card .btn-secondary {
-  background: linear-gradient(45deg, #6c757d, #858c94);
-  color: white;
+  background: linear-gradient(135deg, #6c757d 0%, #858c94 100%);
+  color: #ffffff;
   border: none;
-  border-radius: 12px;
-  padding: 0.8rem 2rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
+  border-radius: 16px;
+  padding: 1rem 2.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 8px 24px rgba(108, 117, 125, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.info-card .btn-secondary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.info-card .btn-secondary:hover::before {
+  left: 100%;
 }
 
 .info-card .btn-secondary:hover {
-  background: linear-gradient(45deg, #858c94, #9ca3ab);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(108, 117, 125, 0.3);
+  background: linear-gradient(135deg, #858c94 0%, #9ca3ab 100%);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 16px 40px rgba(108, 117, 125, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .info-card {
     margin-top: -20px;
-    border-radius: 15px;
+    border-radius: 20px;
+  }
+  
+  .info-card .card-header {
+    padding: 1.5rem 2rem 1rem;
+  }
+  
+  .info-card .card-title {
+    font-size: 1.4rem;
+  }
+  
+  .info-card .card-title i {
+    width: 40px;
+    height: 40px;
+    margin-left: 0.8rem;
+    font-size: 1rem;
+  }
+  
+  .info-card .card-body {
+    padding: 2rem;
+  }
+  
+  .info-card .col-md-6 {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .info-card .edit-btn,
+  .info-card .btn-secondary {
+    width: 100%;
+    margin-bottom: 0.8rem;
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .info-card {
+    border-radius: 16px;
+    margin: -15px 0.5rem 0;
   }
   
   .info-card .card-header {
     padding: 1.2rem 1.5rem 0.8rem;
+  }
+  
+  .info-card .card-body {
+    padding: 1.5rem;
   }
   
   .info-card .card-title {
@@ -218,36 +433,21 @@
   .info-card .card-title i {
     width: 35px;
     height: 35px;
-    margin-left: 0.8rem;
-  }
-  
-  .info-card .card-body {
-    padding: 1.5rem;
+    font-size: 0.9rem;
   }
   
   .info-card .col-md-6 {
     padding: 0.8rem;
-    margin-bottom: 1rem;
   }
   
-  .info-card .edit-btn,
-  .info-card .btn-secondary {
-    width: 100%;
-    margin-bottom: 0.5rem;
-  }
-}
-
-@media (max-width: 576px) {
-  .info-card .card-header {
-    padding: 1rem;
-  }
-  
-  .info-card .card-body {
-    padding: 1rem;
-  }
-  
-  .info-card .card-title {
+  .info-card p.fw-bold {
     font-size: 1.1rem;
+  }
+  
+  .info-card .form-control,
+  .info-card .form-select {
+    padding: 0.9rem 1rem;
+    font-size: 1rem;
   }
 }
 
@@ -255,16 +455,30 @@
 @keyframes slideInUp {
   from {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translateY(60px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
   }
 }
 
 .info-card {
-  animation: slideInUp 0.8s ease-out 0.3s both;
+  animation: slideInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s both;
+}
+
+.info-card .card-title {
+  background-size: 200% auto;
+  animation: shimmer 4s linear infinite;
 }
 
 /* RTL Support */
@@ -276,4 +490,28 @@
 [dir="rtl"] .info-card label.text-muted::after {
   left: auto;
   right: 0;
+}
+
+[dir="rtl"] .info-card .col-md-6:hover p.fw-bold {
+  transform: translateX(-5px);
+}
+
+/* Loading state */
+.info-card.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.info-card.loading::before {
+  animation: shimmer 2s linear infinite;
+}
+
+/* Success state animation */
+.info-card.success {
+  border-color: rgba(157, 183, 255, 0.4);
+}
+
+.info-card.success::before {
+  background: linear-gradient(90deg, #9db7ff 0%, #c2d4ff 50%, #9db7ff 100%);
+  animation: shimmer 1s ease-in-out;
 }

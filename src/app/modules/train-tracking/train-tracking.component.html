@@ -1,102 +1,219 @@
 <div class="tracking-container">
-  <h2>🚂 تتبع القطار رقم {{ trainId }}</h2>
-  
-  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-  
-  <div *ngIf="trainData" class="train-info">
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-      <div>
-        <p><strong>🚂 رقم القطار:</strong> {{ trainData.TrainNo }}</p>
-        <p><strong>📍 المحطة الحالية:</strong> {{ trainData.CurrentStationName }}</p>
-        <p><strong>🎯 المحطة التالية:</strong> {{ trainData.NextStationName }}</p>
-      </div>
-      <div>
-        <p><strong>📍 الإحداثيات:</strong> {{ trainData.Latitude }}, {{ trainData.Longitude }}</p>
-        <p><strong>⏰ وقت الوصول المتوقع:</strong> {{ trainData.ExpectedArrival | date:'medium' }}</p>
-        <p><strong>🚀 السرعة:</strong> {{ trainData.Speed }} كم/س</p>
-      </div>
-      <div>
-        <p><strong>📏 المسافة إلى المحطة التالية:</strong> {{ trainData.DistanceToNextStation }} كم</p>
-        <p><strong>📊 الحالة:</strong> {{ trainData.Status }}</p>
-        <p><strong>🕒 آخر تحديث:</strong> {{ trainData.LastUpdated | date:'medium' }}</p>
+  <div *ngIf="trainData">
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="train-title">
+        <i class="fas fa-train"></i>
+        <span>تتبع القطار رقم {{ trainData.TrainNo }}</span>
       </div>
     </div>
-  </div>
 
-  <div *ngIf="!trainData && !isLoading" class="alert alert-info">
-    <div style="text-align: center; padding: 20px;">
-      <div style="font-size: 48px; margin-bottom: 10px;">🚂</div>
-      <p>جاري تحميل بيانات القطار...</p>
-    </div>
-  </div>
-
-  <ng-container *ngIf="isGuide">
-    <div class="map-container">
-      <div leaflet [leafletOptions]="options" [leafletLayers]="layers"></div>
-    </div>
-
-    <div class="controls">
-      <div class="buttons-container">
-        <button class="btn btn-primary" (click)="updateGps()" [disabled]="isLoading">
-          <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          📍 تحديث GPS
+    <!-- Guide Badge -->
+    <div class="guide-section">
+      <div *ngIf="isGuide" class="guide-badge active">
+        <i class="fas fa-shield-alt"></i>
+        <span>لديك صلاحية المرشد</span>
+      </div>
+      <div *ngIf="!isGuide" class="guide-badge inactive">
+        <i class="fas fa-exclamation-triangle"></i>
+        <span>ليس لديك صلاحية المرشد</span>
+        <button class="request-guide-btn" (click)="requestGuideRole()" [disabled]="isRequestingGuide">
+          <span *ngIf="isRequestingGuide" class="spinner"></span>
+          <i *ngIf="!isRequestingGuide" class="fas fa-user-plus"></i>
+          طلب صلاحية المرشد
         </button>
       </div>
+    </div>
 
-      <h3>✏️ تحديث يدوي</h3>
-      <form #manualForm="ngForm" (ngSubmit)="updateManual()">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-          <div class="form-group">
-            <label for="latitude">📍 خط العرض</label>
-            <input 
-              type="number" 
-              id="latitude"
-              class="form-control" 
-              [(ngModel)]="manualLat" 
-              name="manualLat" 
-              placeholder="مثال: 30.0444"
-              required
-              step="0.000001"
-              min="-90"
-              max="90"
-            >
-          </div>
-          <div class="form-group">
-            <label for="longitude">📍 خط الطول</label>
-            <input 
-              type="number" 
-              id="longitude"
-              class="form-control" 
-              [(ngModel)]="manualLng" 
-              name="manualLng" 
-              placeholder="مثال: 31.2357"
-              required
-              step="0.000001"
-              min="-180"
-              max="180"
-            >
-          </div>
-          <div class="form-group">
-            <label for="arrival">⏰ وقت الوصول</label>
-            <input 
-              type="datetime-local" 
-              id="arrival"
-              class="form-control" 
-              [(ngModel)]="manualArrival" 
-              name="manualArrival"
-              required
-            >
+    <!-- Train Journey Section -->
+    <div class="journey-container">
+      <div class="journey-header">
+        <h3><i class="fas fa-route"></i> رحلة القطار</h3>
+      </div>
+      <div class="journey-track">
+        <!-- Current Station -->
+        <div class="station-container current">
+          <div class="station-card">
+            <div class="station-indicator">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="station-content">
+              <div class="station-name">{{ trainData.CurrentStationName }}</div>
+              <div class="station-info">
+                <span class="info-item">
+                  <i class="fas fa-clock"></i>
+                  {{ trainData.LastUpdated | date:'shortTime' }}
+                </span>
+                
+              </div>
+              
+            </div>
+            
+            <span class="info-item">
+              متجه إلى
+              <i class="fas fa-arrow-left"></i>
+            </span>
           </div>
         </div>
-        <button 
-          type="submit" 
-          class="btn btn-success" 
-          [disabled]="manualForm.invalid || isLoading"
-        >
-          <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-          ✅ تحديث يدوي
-        </button>
-      </form>
+        <!-- Journey Line with Train Icon Above -->
+        <div class="journey-line">
+          <div class="train-icon-centered">
+            <i class="fas fa-subway"></i>
+          </div>
+          <div class="track-line"></div>
+        </div>
+        <!-- Next Station -->
+        <div class="station-container next">
+          <div class="station-card">
+            <div class="station-indicator">
+              <i class="fas fa-flag-checkered"></i>
+            </div>
+            <div class="station-content">
+              <div class="station-label">المحطة التالية</div>
+              <div class="station-name">{{ trainData.NextStationName }}</div>
+              <div class="station-info">
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Tracking Complete Message -->
+      <div *ngIf="trainData.Status && getStatusClass(trainData.Status) === 'status-completed'" class="tracking-complete-message">
+        <i class="fas fa-check-circle"></i>
+        تم اكتمال تتبع القطار بنجاح
+      </div>
     </div>
-  </ng-container>
+
+    <!-- Train Details -->
+    <div class="train-details">
+      <div class="detail-card">
+        <div class="detail-icon">
+          <i class="fas fa-tachometer-alt"></i>
+        </div>
+        <div class="detail-content">
+          <div class="detail-label">السرعة الحالية</div>
+          <div class="detail-value">{{ trainData.Speed }} كم/س</div>
+        </div>
+      </div>
+      
+      <div class="detail-card">
+        <div class="detail-icon">
+          <i class="fas fa-sync-alt"></i>
+        </div>
+        <div class="detail-content">
+          <div class="detail-label">آخر تحديث</div>
+          <div class="detail-value">{{ trainData.LastUpdated | date:'shortTime' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Guide Controls -->
+    <ng-container *ngIf="isGuide">
+      <div class="guide-controls">
+        <div class="controls-header">
+          <h3><i class="fas fa-cogs"></i> لوحة تحكم المرشد</h3>
+        </div>
+        <div class="control-buttons">
+          <button class="control-btn primary" (click)="updateGps()" [disabled]="isLoading">
+            <span *ngIf="isLoading" class="spinner"></span>
+            <i *ngIf="!isLoading" class="fas fa-location-arrow"></i>
+            تحديث الموقع
+          </button>
+        </div>
+        <div class="manual-update">
+          <h4><i class="fas fa-edit"></i> تحديث يدوي للموقع</h4>
+          <form #manualForm="ngForm" (ngSubmit)="updateManual()" class="update-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="latitude">
+                  <i class="fas fa-globe"></i>
+                  خط العرض
+                </label>
+                <input 
+                  type="number" 
+                  id="latitude"
+                  class="form-control" 
+                  [(ngModel)]="manualLat" 
+                  name="manualLat" 
+                  placeholder="30.0444"
+                  required
+                  step="0.000001"
+                  min="-90"
+                  max="90"
+                >
+              </div>
+              <div class="form-group">
+                <label for="longitude">
+                  <i class="fas fa-globe"></i>
+                  خط الطول
+                </label>
+                <input 
+                  type="number" 
+                  id="longitude"
+                  class="form-control" 
+                  [(ngModel)]="manualLng" 
+                  name="manualLng" 
+                  placeholder="31.2357"
+                  required
+                  step="0.000001"
+                  min="-180"
+                  max="180"
+                >
+              </div>
+              <div class="form-group">
+                <label for="arrival">
+                  <i class="fas fa-clock"></i>
+                  وقت الوصول المتوقع
+                </label>
+                <input 
+                  type="datetime-local" 
+                  id="arrival"
+                  class="form-control" 
+                  [(ngModel)]="manualArrival" 
+                  name="manualArrival"
+                  required
+                >
+              </div>
+            </div>
+            <button 
+              type="submit" 
+              class="submit-btn" 
+              [disabled]="manualForm.invalid || isLoading"
+            >
+              <span *ngIf="isLoading" class="spinner"></span>
+              <i *ngIf="!isLoading" class="fas fa-save"></i>
+              حفظ التحديث
+            </button>
+          </form>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="!trainData && !isLoading && !errorMessage" class="loading-state">
+    <div class="loading-content">
+      <div class="train-animation">
+        <i class="fas fa-train"></i>
+      </div>
+      <h3>جاري تحميل بيانات القطار...</h3>
+      <p>يرجى الانتظار لحظات</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="error-state">
+    <div class="error-content">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h3>حدث خطأ</h3>
+      <p>{{ errorMessage }}</p>
+    </div>
+  </div>
+
+  <!-- Success Popup Toast -->
+  <div *ngIf="showSuccessPopup" class="success-toast">
+    <i class="fas fa-check-circle"></i>
+    <span>{{ successPopupMessage }}</span>
+  </div>
 </div>
