@@ -1,4 +1,3 @@
-import { User } from './user';
 
 export enum Gender {
   Male = 0,
@@ -24,5 +23,13 @@ export interface IUserLogin {
 
 export interface AuthResponse {
   token: string;
-  user: User;
+  user: AUser;
 }
+
+export interface AUser {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+}
+
