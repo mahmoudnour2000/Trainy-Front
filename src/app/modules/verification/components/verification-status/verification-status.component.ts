@@ -79,6 +79,8 @@ export class VerificationStatusComponent implements OnInit {
 
   getStatusText(status: VerificationStatusType | undefined): string {
     switch(status) {
+      case 'NotSubmitted':
+        return 'لم يتم التقديم';
       case 'Pending':
         return 'قيد المراجعة';
       case 'Accepted':
@@ -92,6 +94,8 @@ export class VerificationStatusComponent implements OnInit {
   
   getStatusClass(status: VerificationStatusType | undefined): string {
     switch(status) {
+      case 'NotSubmitted':
+        return 'status-not-submitted';
       case 'Pending':
         return 'status-pending';
       case 'Accepted':
@@ -105,6 +109,8 @@ export class VerificationStatusComponent implements OnInit {
   
   getStatusIcon(status: VerificationStatusType | undefined): string {
     switch(status) {
+      case 'NotSubmitted':
+        return 'bi-dash-circle';
       case 'Pending':
         return 'bi-hourglass-split';
       case 'Accepted':
@@ -118,11 +124,16 @@ export class VerificationStatusComponent implements OnInit {
   
   goToVerificationForm(): void {
     // Check if user can submit verification
-    const canSubmitSender = this.verificationStatus.senderStatus === 'Rejected';
-    const canSubmitCourier = this.verificationStatus.courierStatus === 'Rejected';
+    const canSubmitSender = this.verificationStatus.senderStatus === 'NotSubmitted' || this.verificationStatus.senderStatus === 'Rejected';
+    const canSubmitCourier = this.verificationStatus.courierStatus === 'NotSubmitted' || this.verificationStatus.courierStatus === 'Rejected';
     
     if (canSubmitSender || canSubmitCourier) {
-      this.router.navigate(['/verification']);
+      this.router.navigate(['/verification'], {
+        queryParams: { 
+          returnUrl: '/verification/status',
+          roleType: canSubmitSender ? 'Sender' : 'Courier'
+        }
+      });
     } else {
       this.successMessage = 'لديك طلب تحقق قيد المراجعة بالفعل أو تم قبوله';
     }

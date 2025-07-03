@@ -36,6 +36,9 @@
             
             <div class="status-description">
               <ng-container [ngSwitch]="verificationStatus.senderStatus">
+                <p *ngSwitchCase="'NotSubmitted'">
+                  لم تقم بتقديم طلب التحقق بعد. يرجى تقديم المستندات المطلوبة للتحقق من حسابك.
+                </p>
                 <p *ngSwitchCase="'Accepted'">
                   تم قبول طلب التحقق الخاص بك. يمكنك الآن استخدام جميع ميزات المنصة.
                 </p>
@@ -67,6 +70,16 @@
         <!-- Action buttons -->
         <div class="navigation-section">
           <div class="navigation-buttons">
+            <!-- Start verification button for NotSubmitted status -->
+            <button 
+              *ngIf="verificationStatus.senderStatus === 'NotSubmitted'"
+              class="submit-btn start-verification-btn me-2"
+              (click)="goToVerificationForm()"
+            >
+              <i class="bi bi-upload me-2"></i>
+              بدء التحقق
+            </button>
+            
             <!-- Retry button for rejected status -->
             <button 
               *ngIf="verificationStatus.senderStatus === 'Rejected'"

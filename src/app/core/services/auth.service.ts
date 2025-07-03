@@ -102,7 +102,7 @@ export class AuthService {
     if (token) {
       try {
         const decoded: any = jwtDecode(token);
-        console.log('Decoded token:', decoded);
+        // console.log('Decoded token:', decoded);
 
         return decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || null;
       } catch (error) {
@@ -124,14 +124,14 @@ export class AuthService {
     if (token) {
       try {
         const decoded: any = jwtDecode(token);
-        console.log('🔑 Decoded token:', decoded);
+        // console.log('🔑 Decoded token:', decoded);
         const user = {
           id: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || '',
           email: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '',
           name: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || '',
           role: decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || ''
         };
-        console.log('👤 Current user:', user);
+        // console.log('👤 Current user:', user);
         return user;
       } catch (error) {
         console.error('❌ Error decoding token:', error);

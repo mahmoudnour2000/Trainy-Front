@@ -3,6 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { OfferService } from '../../../../core/services/offer.service';
+
+// Temporary interface for fixed stations - will be replaced with API model later
+interface Station {
+  id: number;
+  name: string;
+  location: string;
+}
 
 @Component({
   selector: 'app-add-offer',
@@ -25,8 +33,9 @@ export class AddOfferComponent implements OnInit {
   orderId: number | null = null;
   pageTitle = 'إضافة طلب جديد';
   imagePreview: string | null = null;
+  isLoading: boolean = false;
   
-  // These will be replaced with API data
+  // Categories for offers
   categories: { id: string, name: string }[] = [
     { id: 'documents', name: 'مستندات' },
     { id: 'electronics', name: 'إلكترونيات' },
@@ -36,81 +45,79 @@ export class AddOfferComponent implements OnInit {
     { id: 'other', name: 'أخرى' }
   ];
   
-  locations: { id: string, name: string }[] = [
-    { id: 'cairo', name: 'القاهرة' },
-    { id: 'alexandria', name: 'الإسكندرية' },
-    { id: 'giza', name: 'الجيزة' },
-    { id: 'sharm', name: 'شرم الشيخ' },
-    { id: 'luxor', name: 'الأقصر' },
-    { id: 'aswan', name: 'أسوان' }
+  // Fixed stations list (0-3) - will be replaced with API call later
+  stations: Station[] = [
+    { id: 0, name: 'محطة القاهرة', location: 'القاهرة' },
+    { id: 1, name: 'محطة الإسكندرية', location: 'الإسكندرية' },
+    { id: 2, name: 'محطة الجيزة', location: 'الجيزة' },
+    { id: 3, name: 'محطة الأقصر', location: 'الأقصر' }
   ];
 
   // Price matrix for calculating suggested prices
   priceMatrix: { [key: string]: { [key: string]: number } } = {
-    'cairo': {
-      'alexandria': 50,
-      'giza': 25,
-      'sharm': 120,
-      'luxor': 100,
-      'aswan': 150,
-      'cairo': 20
+    '0': {
+      '1': 50,
+      '2': 25,
+      '3': 100,
+      '0': 20
     },
-    'alexandria': {
-      'cairo': 50,
-      'giza': 60,
-      'sharm': 160,
-      'luxor': 140,
-      'aswan': 180,
-      'alexandria': 20
+    '1': {
+      '0': 50,
+      '2': 60,
+      '3': 140,
+      '1': 20
     },
-    'giza': {
-      'cairo': 25,
-      'alexandria': 60,
-      'sharm': 130,
-      'luxor': 110,
-      'aswan': 160,
-      'giza': 20
+    '2': {
+      '0': 25,
+      '1': 60,
+      '3': 110,
+      '2': 20
     },
-    'sharm': {
-      'cairo': 120,
-      'alexandria': 160,
-      'giza': 130,
-      'luxor': 200,
-      'aswan': 250,
-      'sharm': 20
-    },
-    'luxor': {
-      'cairo': 100,
-      'alexandria': 140,
-      'giza': 110,
-      'sharm': 200,
-      'aswan': 80,
-      'luxor': 20
-    },
-    'aswan': {
-      'cairo': 150,
-      'alexandria': 180,
-      'giza': 160,
-      'sharm': 250,
-      'luxor': 80,
-      'aswan': 20
+    '3': {
+      '0': 100,
+      '1': 140,
+      '2': 110,
+      '3': 20
     }
   };
 
   suggestedPrice: number = 0;
   
+  paymentMethods = [
+    { value: 'EtisalatCash', label: 'اتصالات كاش' },
+    { value: 'VodafoneCash', label: 'فودافون كاش' },
+    { value: 'PayPal', label: 'PayPal' },
+    { value: 'Stripe', label: 'Stripe' },
+    { value: 'AccountNumber', label: 'رقم حساب بنكي' }
+  ];
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private offerService: OfferService
   ) { }
 
   ngOnInit(): void {
     this.initForm();
     this.checkEditMode();
-    // this.checkAuthorization(); // Temporarily disable authorization check
+    // TODO: Replace with API call when station service is ready
+    // this.loadStationsFromAPI();
   }
+
+  // TODO: This method will be implemented when the station API service is ready
+  // private loadStationsFromAPI(): void {
+  //   // Example of future implementation:
+  //   // this.stationService.getStations().subscribe({
+  //   //   next: (response) => {
+  //   //     this.stations = response.data;
+  //   //   },
+  //   //   error: (error) => {
+  //   //     console.error('Error loading stations:', error);
+  //   //   }
+  //   // });
+  // }
 
   private checkAuthorization(): void {
     if (!this.authService.isAuthenticated()) {
@@ -132,7 +139,6 @@ export class AddOfferComponent implements OnInit {
 
   private initForm(): void {
     this.offerForm = this.fb.group({
-      title: ['', [Validators.required, Validators.minLength(3)]],
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(100)]],
       category: ['', Validators.required],
       from: ['', Validators.required],
@@ -140,6 +146,7 @@ export class AddOfferComponent implements OnInit {
       weight: [null, [Validators.required, Validators.min(0.1)]],
       price: [null, [Validators.required, Validators.min(1)]],
       isBreakable: [false],
+      paymentMethod: ['', Validators.required],
       image: [null]
     });
 
@@ -171,30 +178,39 @@ export class AddOfferComponent implements OnInit {
   }
 
   private loadOrderData(orderId: number): void {
-    // This would be replaced with an API call
-    // For now, we'll try to get the order from localStorage
-    const ordersJson = localStorage.getItem('orders');
-    if (ordersJson) {
-      const orders = JSON.parse(ordersJson);
-      const order = orders.find((o: any) => o.id === orderId);
-      
-      if (order) {
+    this.isLoading = true;
+    
+    // Load offer data from API
+    this.offerService.getOfferById(orderId).subscribe({
+      next: (offer) => {
+        console.log('Loaded offer for editing:', offer);
+        
+        // Map API data to form fields
         this.offerForm.patchValue({
-          title: order.title,
-          description: order.description,
-          category: order.category,
-          from: order.from,
-          to: order.to,
-          weight: order.weight,
-          price: order.price,
-          isBreakable: order.isBreakable || false
+          description: offer.description,
+          category: this.mapCategoryToId(offer.category),
+          from: offer.fromStationId?.toString() || offer.from?.toString(),
+          to: offer.toStationId?.toString() || offer.to?.toString(),
+          weight: offer.weight,
+          price: offer.price,
+          isBreakable: offer.isBreakable || false,
+          paymentMethod: offer.paymentMethod || ''
         });
         
-        if (order.image && order.image !== 'https://via.placeholder.com/150?text=طلب+جديد') {
-          this.uploadedPhoto = order.image;
+        // Set image if available
+        if (offer.image) {
+          this.uploadedPhoto = offer.image;
         }
+        
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading offer:', error);
+        alert('حدث خطأ أثناء تحميل بيانات العرض');
+        this.isLoading = false;
+        this.router.navigate(['/offers']);
       }
-    }
+    });
   }
 
   onSubmit(): void {
@@ -202,60 +218,48 @@ export class AddOfferComponent implements OnInit {
       this.markFormGroupTouched(this.offerForm);
       return;
     }
-    
+    this.isLoading = true;
     const formData = this.offerForm.value;
-    
-    // Create new order object
-    const order = {
-      id: this.editMode ? this.orderId : Date.now(),
-      title: formData.title,
-      description: formData.description,
-      from: formData.from,
-      fromDisplay: this.getLocationName(formData.from),
-      to: formData.to,
-      toDisplay: this.getLocationName(formData.to),
-      category: formData.category,
-      categoryDisplay: this.getCategoryName(formData.category),
-      weight: formData.weight,
-      price: formData.price,
-      isBreakable: formData.isBreakable,
-      image: this.uploadedPhoto || 'assets/defaultOrder.jpg',
-      date: this.editMode ? new Date() : new Date(),
-      userId: 'user123' // Placeholder user ID
-    };
-    
-    // Save order to localStorage
-    this.saveOrder(order);
-    
-    // Navigate back to offers page
-    this.router.navigate(['/offers']);
-  }
 
-  private saveOrder(order: any): void {
-    const ordersJson = localStorage.getItem('orders');
-    let orders = [];
-    
-    if (ordersJson) {
-      try {
-        orders = JSON.parse(ordersJson);
-      } catch (error) {
-        console.error('Error parsing orders from localStorage:', error);
-        orders = [];
-      }
+    // Build FormData for multipart/form-data
+    const payload = new FormData();
+    payload.append('Description', formData.description);
+    payload.append('Category', this.mapCategoryToApiCategory(formData.category));
+    payload.append('PaymentMethod', formData.paymentMethod);
+    payload.append('PickupStationId', formData.from);
+    payload.append('DropoffStationId', formData.to);
+    payload.append('Weight', formData.weight);
+    payload.append('Price', formData.price);
+    payload.append('IsBreakable', formData.isBreakable);
+
+    // Append the image file if present
+    if (formData.image) {
+      payload.append('ImageFile', formData.image); // must be a File object
     }
-    
-    if (this.editMode) {
-      // Update existing order
-      const index = orders.findIndex((o: any) => o.id === order.id);
-      if (index !== -1) {
-        orders[index] = order;
-      }
+
+    if (this.editMode && this.orderId) {
+      this.offerService.updateOffer(this.orderId, payload).subscribe({
+        next: () => {
+          alert('تم تحديث العرض بنجاح');
+          this.router.navigate(['/offers']);
+        },
+        error: (err) => {
+          alert('حدث خطأ أثناء تحديث العرض: ' + (err?.error?.message || ''));
+          this.isLoading = false;
+        }
+      });
     } else {
-      // Add new order
-      orders.unshift(order);
+      this.offerService.createOffer(payload).subscribe({
+        next: () => {
+          alert('تم إنشاء العرض بنجاح');
+          this.router.navigate(['/offers']);
+        },
+        error: (err) => {
+          alert('حدث خطأ أثناء إنشاء العرض: ' + (err?.error?.message || ''));
+          this.isLoading = false;
+        }
+      });
     }
-    
-    localStorage.setItem('orders', JSON.stringify(orders));
   }
 
   onCancel(): void {
@@ -293,6 +297,7 @@ export class AddOfferComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
+      this.offerForm.patchValue({ image: file });
       this.handleFileUpload(file);
     }
   }
@@ -351,13 +356,39 @@ export class AddOfferComponent implements OnInit {
   }
 
   getLocationName(locationId: string): string {
-    const location = this.locations.find(loc => loc.id === locationId);
+    const location = this.stations.find(loc => loc.id.toString() === locationId);
     return location ? location.name : '';
   }
 
   getCategoryName(categoryId: string): string {
     const category = this.categories.find(cat => cat.id === categoryId);
     return category ? category.name : '';
+  }
+
+  // Map frontend category ID to API category
+  private mapCategoryToApiCategory(categoryId: string): string {
+    const categoryMap: { [key: string]: string } = {
+      'electronics': 'Electronics',
+      'clothing': 'Clothing',
+      'food': 'Food',
+      'furniture': 'Furniture',
+      'documents': 'Documents',
+      'other': 'Other'
+    };
+    return categoryMap[categoryId] || 'Other';
+  }
+
+  // Map API category to frontend category ID
+  private mapCategoryToId(category: string): string {
+    const categoryMap: { [key: string]: string } = {
+      'Electronics': 'electronics',
+      'Clothing': 'clothing',
+      'Food': 'food',
+      'Furniture': 'furniture',
+      'Documents': 'documents',
+      'Other': 'other'
+    };
+    return categoryMap[category] || 'other';
   }
 
   // Calculate suggested price based on locations and weight

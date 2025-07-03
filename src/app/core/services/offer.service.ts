@@ -13,7 +13,6 @@ export interface PaginatedResponse<T> {
 
 export interface Offer {
   id: number;
-  title: string;
   description: string;
   price: number;
   weight: number;
@@ -21,6 +20,8 @@ export interface Offer {
   toStationId: number;
   fromStationName?: string;
   toStationName?: string;
+  from?: number;
+  to?: number;
   senderId: string;
   senderName?: string;
   senderImage?: string;
@@ -30,6 +31,7 @@ export interface Offer {
   createdAt: Date;
   status: OfferStatus;
   requestsCount?: number;
+  paymentMethod: string;
 }
 
 export enum OfferStatus {
@@ -76,39 +78,43 @@ export class OfferService {
   }
 
   // POST /api/Offer
-  createOffer(offerData: OfferCreateModel): Observable<Offer> {
+  createOffer(offerData: OfferCreateModel | FormData): Observable<Offer> {
+    if (offerData instanceof FormData) {
+      return this.http.post<Offer>(`${this.apiUrl}`, offerData);
+    }
     // Create a FormData object if there's an image file
-    if (offerData.image) {
+    if ((offerData as any).image) {
       const formData = new FormData();
       Object.keys(offerData).forEach(key => {
         if (key === 'image') {
-          formData.append('ImageFile', offerData[key] as File); // Backend expects 'ImageFile'
+          formData.append('ImageFile', (offerData as any)[key] as File); // Backend expects 'ImageFile'
         } else {
-          formData.append(key, offerData[key]?.toString() || '');
+          formData.append(key, (offerData as any)[key]?.toString() || '');
         }
       });
       return this.http.post<Offer>(`${this.apiUrl}`, formData);
     }
-    
     // Otherwise just send the JSON data
     return this.http.post<Offer>(`${this.apiUrl}`, offerData);
   }
 
   // PUT /api/Offer/{id}
-  updateOffer(id: number, offerData: Partial<OfferCreateModel>): Observable<Offer> {
+  updateOffer(id: number, offerData: Partial<OfferCreateModel> | FormData): Observable<Offer> {
+    if (offerData instanceof FormData) {
+      return this.http.put<Offer>(`${this.apiUrl}/${id}`, offerData);
+    }
     // Create a FormData object if there's an image file
-    if (offerData.image) {
+    if ((offerData as any).image) {
       const formData = new FormData();
       Object.keys(offerData).forEach(key => {
         if (key === 'image') {
-          formData.append('ImageFile', offerData[key] as File); // Backend expects 'ImageFile'
-        } else if (offerData[key] !== undefined) {
-          formData.append(key, offerData[key]?.toString() || '');
+          formData.append('ImageFile', (offerData as any)[key] as File); // Backend expects 'ImageFile'
+        } else if ((offerData as any)[key] !== undefined) {
+          formData.append(key, (offerData as any)[key]?.toString() || '');
         }
       });
       return this.http.put<Offer>(`${this.apiUrl}/${id}`, formData);
     }
-    
     // Otherwise just send the JSON data
     return this.http.put<Offer>(`${this.apiUrl}/${id}`, offerData);
   }
