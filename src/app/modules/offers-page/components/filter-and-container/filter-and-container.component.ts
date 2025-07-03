@@ -95,6 +95,40 @@ export class FilterAndContainerComponent implements OnInit {
     });
   }
 
+  // New method to handle verification check button click
+  checkVerification(): void {
+    this.verificationService.verificationStatus$.subscribe(status => {
+      console.log('🔍 Checking verification status for navigation:', status);
+      
+      // If user is already accepted, no action needed (button should be hidden)
+      if (status.senderStatus === 'Accepted') {
+        console.log('✅ User is already verified as sender');
+        return;
+      }
+      
+      // If status is NotSubmitted or Rejected, navigate to verification images
+      if (status.senderStatus === 'NotSubmitted' || status.senderStatus === 'Rejected') {
+        console.log('📝 Navigating to verification images for status:', status.senderStatus);
+        this.router.navigate(['/verification'], {
+          queryParams: { 
+            returnUrl: '/offers',
+            roleType: 'Sender'
+          }
+        });
+      }
+      
+      // If status is Pending, navigate to verification status
+      if (status.senderStatus === 'Pending') {
+        console.log('⏳ Navigating to verification status (pending)');
+        this.router.navigate(['/verification/status'], {
+          queryParams: { 
+            message: 'طلب التحقق الخاص بك قيد المراجعة من قبل فريقنا'
+          }
+        });
+      }
+    });
+  }
+
   loadOrders(): void {
     console.log('🔄 Loading orders...');
     console.log('🔑 Is authenticated:', this.isAuthenticated);
@@ -140,6 +174,7 @@ export class FilterAndContainerComponent implements OnInit {
       image: offer.Picture || 'assets/0001699_bags-handbags.jpeg',
       date: offer.CreatedAt || offer.OfferTime,
       userId: offer.SenderId,
+      senderId: offer.SenderId,
       senderName: offer.SenderName,
       senderImage: null,
       status: offer.OfferStatus,
@@ -285,25 +320,19 @@ export class FilterAndContainerComponent implements OnInit {
   }
 
   onDeleteOrder(orderId: number): void {
-    // Use the API to delete the offer
-    this.offerService.deleteOffer(orderId)
-      .pipe(
-        catchError(error => {
-          console.error('Error deleting offer:', error);
-          alert('حدث خطأ أثناء حذف العرض');
-          return of(null);
-        })
-      )
-      .subscribe(() => {
-        // Remove the order from the local array
-        this.orders = this.orders.filter(order => order.id !== orderId);
-        
-        // Update hasOrders flag if all orders are deleted
-        this.hasOrders = this.orders.length > 0;
-        
-        // Re-apply filters to update the displayed orders
-        this.applyFilters();
-      });
+    // The delete functionality is now handled directly in the order card component
+    // This method is kept for backward compatibility but the actual deletion
+    // happens in the order card component with proper API calls
+    console.log('Order deletion requested for ID:', orderId);
+    
+    // Remove the order from the local array
+    this.orders = this.orders.filter(order => order.id !== orderId);
+    
+    // Update hasOrders flag if all orders are deleted
+    this.hasOrders = this.orders.length > 0;
+    
+    // Re-apply filters to update the displayed orders
+    this.applyFilters();
   }
 
   addOrder(): void {

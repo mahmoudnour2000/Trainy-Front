@@ -5,7 +5,7 @@
         <div class="price-tag">ج.م {{order.price}}</div>
     </div>
     <div class="card-body">
-        <h5 class="card-title">{{order.title}}</h5>
+        <h5 class="card-title">{{order.description}}</h5>
         <div class="order-description">
             {{ order.description }}
         </div>
@@ -34,19 +34,27 @@
         </div>
         
         <div class="card-actions">
-            <div class="action-buttons">
-                <button class="btn btn-edit" (click)="onEdit()">
+            <!-- Edit and Delete buttons - Only for offer owner (sender) -->
+            <div class="action-buttons" *ngIf="canEditOrder() || canDeleteOrder()">
+                <button class="btn btn-edit" 
+                        *ngIf="canEditOrder()"
+                        (click)="onEdit()">
                     <i class="fas fa-edit"></i> تعديل
                 </button>
-                <button class="btn btn-delete" (click)="onDelete()">
+                <button class="btn btn-delete" 
+                        *ngIf="canDeleteOrder()"
+                        (click)="onDelete()">
                     <i class="fas fa-trash"></i> حذف
                 </button>
             </div>
+            
+            <!-- Send Request button - For all users except offer owner -->
             <button class="btn btn-send" 
+                    *ngIf="canSendRequest()"
                     [class.disabled]="!canSendRequest()"
                     [disabled]="!canSendRequest()"
                     (click)="onSendRequest()">
-                <i class="fas fa-paper-plane"></i> إرسال
+                <i class="fas fa-paper-plane"></i> إرسال طلب
             </button>
         </div>
     </div>
@@ -57,27 +65,29 @@
         </div>
         
         <ng-container *ngIf="authService.isAuthenticated()">
-            <button *ngIf="authService.isSender() && isOwner(order.senderId)" 
+            <!-- Show Details button for offer owner -->
+            <button *ngIf="isOrderOwner" 
                     class="btn btn-primary btn-sm" 
                     (click)="onShowDetails()">
                 <i class="fas fa-eye me-1"></i> عرض التفاصيل
             </button>
             
-            <button *ngIf="authService.isCourier() && !isOwner(order.senderId)" 
+            <!-- Send Request button for couriers (not offer owner) -->
+            <button *ngIf="authService.isCourier() && !isOrderOwner && canSendRequest()" 
                     class="btn btn-primary btn-sm" 
-                    [class.disabled]="!canSendRequest()"
-                    [disabled]="!canSendRequest()"
                     (click)="onSendRequest()">
                 <i class="fas fa-paper-plane me-1"></i> إرسال طلب
             </button>
             
-            <button *ngIf="authService.isSender() && !isOwner(order.senderId)" 
+            <!-- View button for other senders (not offer owner) -->
+            <button *ngIf="authService.isSender() && !isOrderOwner" 
                     class="btn btn-secondary btn-sm" 
                     (click)="onShowDetails()">
                 <i class="fas fa-eye me-1"></i> عرض
             </button>
         </ng-container>
         
+        <!-- Login prompt for unauthenticated users -->
         <button *ngIf="!authService.isAuthenticated()" 
                 class="btn btn-primary btn-sm" 
                 (click)="onLoginPrompt()">

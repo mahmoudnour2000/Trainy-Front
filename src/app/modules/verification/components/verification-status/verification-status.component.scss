@@ -87,7 +87,10 @@
   color: #842029;
 }
 
-// Removed status-not-submitted as it's no longer used
+.status-not-submitted {
+  background-color: #e9ecef;
+  color: #6c757d;
+}
 
 .status-description {
   margin-bottom: 1rem;
@@ -297,6 +300,16 @@
   &:hover {
     background-color: #e0a800;
     color: #212529;
+  }
+}
+
+.start-verification-btn {
+  background-color: #17a2b8;
+  color: white;
+  
+  &:hover {
+    background-color: #138496;
+    color: white;
   }
 }
 

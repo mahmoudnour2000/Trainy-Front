@@ -6,7 +6,7 @@ import { tap, catchError, map } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 // Keep existing status type if it matches backend
-export type VerificationStatusType = 'Accepted' | 'Pending' | 'Rejected'; // Updated to match new requirements
+export type VerificationStatusType = 'NotSubmitted' |'Accepted' | 'Pending' | 'Rejected'; // Updated to match new requirements
 
 // Interface for the data returned by GET /api/verification/my-status (for each item in the list)
 export interface VerificationRequest {
@@ -49,8 +49,8 @@ export class VerificationService {
 
   private verificationStatusSubject = new BehaviorSubject<CombinedVerificationStatus>({
     isVerified: false,
-    senderStatus: 'Pending',
-    courierStatus: 'Pending',
+    senderStatus: 'NotSubmitted',
+    courierStatus: 'NotSubmitted',
     verificationRequests: []
   });
   verificationStatus$ = this.verificationStatusSubject.asObservable();
@@ -67,8 +67,8 @@ export class VerificationService {
       } else {
         this.verificationStatusSubject.next({
           isVerified: false,
-          senderStatus: 'Pending',
-          courierStatus: 'Pending',
+          senderStatus: 'NotSubmitted',
+          courierStatus: 'NotSubmitted',
           verificationRequests: []
         });
       }
@@ -76,8 +76,8 @@ export class VerificationService {
   }
 
   private processVerificationRequests(requests: VerificationRequest[]): CombinedVerificationStatus {
-    let senderStatus: VerificationStatusType = 'Pending';
-    let courierStatus: VerificationStatusType = 'Pending';
+    let senderStatus: VerificationStatusType = 'NotSubmitted';
+    let courierStatus: VerificationStatusType = 'NotSubmitted';
     let lastSenderRejectionReason: string | undefined;
     let lastCourierRejectionReason: string | undefined;
 
@@ -130,7 +130,7 @@ export class VerificationService {
   refreshVerificationStatus(): void {
     if (!this.authService.isAuthenticated()) {
       console.log('❌ User not authenticated, skipping verification status refresh.');
-      this.verificationStatusSubject.next({ isVerified: false, senderStatus: 'Pending', courierStatus: 'Pending', verificationRequests: [] });
+      this.verificationStatusSubject.next({ isVerified: false, senderStatus: 'NotSubmitted', courierStatus: 'NotSubmitted', verificationRequests: [] });
       return;
     }
     console.log('🔄 Refreshing verification status...');
@@ -154,8 +154,8 @@ export class VerificationService {
         // Keep previous state or set to a default error state
          this.verificationStatusSubject.next({ 
             isVerified: false, 
-            senderStatus: 'Pending', 
-            courierStatus: 'Pending', 
+            senderStatus: 'NotSubmitted', 
+            courierStatus: 'NotSubmitted', 
             verificationRequests: [],
             lastSenderRejectionReason: 'Failed to load status',
             lastCourierRejectionReason: 'Failed to load status'
