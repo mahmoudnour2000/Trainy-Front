@@ -2,14 +2,13 @@
   <div class="profile-header-content">
     <!-- Product Image -->
     <div class="product-image-container">
-      <img [src]="offer.image || 'assets/defaultOrder.jpg'" [alt]="offer.title" 
+      <img [src]="offer.image || 'assets/defaultOrder.jpg'"  
           onerror="this.src='assets/defaultOrder.jpg'" class="product-image">
     </div>
     
     <!-- Product Details -->
     <div class="product-details">
       <!-- Title -->
-      <h3 class="product-title">{{offer.title}}</h3>
       
       <!-- Description -->
       <p class="profile-description">{{offer.description}}</p>
