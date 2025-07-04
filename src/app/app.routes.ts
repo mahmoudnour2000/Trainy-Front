@@ -108,6 +108,20 @@ export const routes: Routes = [
         loadChildren: () => import('./modules/offers-page/offers-page.module').then(m => m.OffersPageModule)
       },
       {
+        path: 'requests',
+        canActivate: [AuthGuard],
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./modules/request-page/request-page.component').then(m => m.RequestPageComponent)
+          },
+          {
+            path: 'offer/:id',
+            loadComponent: () => import('./modules/request-page/request-page.component').then(m => m.RequestPageComponent)
+          }
+        ]
+      },
+      {
         path: 'userProfile',
         canActivate: [AuthGuard],
         loadChildren: () => import('./modules/account-profile/account-profile.module').then(m => m.AccountProfileModule)

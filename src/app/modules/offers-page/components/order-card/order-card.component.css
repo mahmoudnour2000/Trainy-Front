@@ -195,6 +195,19 @@
     border: 1px solid #dee2e6 !important;
 }
 
+.btn-info {
+    background-color: #0dcaf0;
+    color: white;
+    padding: 6px 15px;
+    font-weight: 500;
+}
+
+.btn-info:hover:not(.disabled) {
+    background-color: #0bb3d4;
+    transform: translateY(-2px);
+    box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+}
+
 .btn.disabled,
 .btn:disabled {
     opacity: 0.6;

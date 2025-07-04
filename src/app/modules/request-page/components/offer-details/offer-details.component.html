@@ -2,15 +2,11 @@
   <div class="profile-header-content">
     <!-- Product Image -->
     <div class="product-image-container">
-      <img [src]="offer.image || 'assets/defaultOrder.jpg'" [alt]="offer.title" 
           onerror="this.src='assets/defaultOrder.jpg'" class="product-image">
     </div>
     
     <!-- Product Details -->
-    <div class="product-details">
-      <!-- Title -->
-      <h3 class="product-title">{{offer.title}}</h3>
-      
+    <div class="product-details">      
       <!-- Description -->
       <p class="profile-description">{{offer.description}}</p>
       
@@ -20,7 +16,7 @@
         <span class="tag tag-to">إلى: {{offer.toStationName}}</span>
         <span class="tag tag-category">{{offer.category}}</span>
         <span class="tag tag-weight">{{offer.weight}} كجم</span>
-        <span class="tag tag-price">{{offer.price}} ريال</span>
+        <span class="tag tag-price">{{offer.price}} جنيه</span>
         <span class="tag tag-breakable" *ngIf="offer.isBreakable">قابل للكسر</span>
       </div>
       
