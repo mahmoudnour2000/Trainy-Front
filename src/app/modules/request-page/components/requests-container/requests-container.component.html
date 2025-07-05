@@ -12,17 +12,19 @@
     <p class="error-message">{{ error }}</p>
   </div>
   
-  <div class="no-requests" *ngIf="!loading && !error && requests.length === 0">
+  <div class="no-requests" *ngIf="!loading && !error && requests && requests.length === 0">
     <p>لا توجد طلبات مقدمة حتى الآن</p>
   </div>
   
-  <div class="requests-list" *ngIf="!loading && !error && requests.length > 0">
-    <app-request-card 
-      *ngFor="let request of requests" 
-      [request]="request"
-      (accept)="acceptRequest($event)"
-      (reject)="rejectRequest($event)">
-    </app-request-card>
+  <div class="requests-list">
+    <div *ngFor="let request of requests">
+      
+      <app-request-card 
+        [request]="request"
+        (accept)="acceptRequest($event)"
+        (reject)="rejectRequest($event)">
+      </app-request-card>
+    </div>
     
     <!-- Pagination controls if needed -->
     <div class="pagination-controls" *ngIf="totalRequests > pageSize">

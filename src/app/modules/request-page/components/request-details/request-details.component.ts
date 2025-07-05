@@ -65,16 +65,14 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
     
     console.log('RequestDetailsComponent initialized with offerId:', this.offerId);
     
-    // Check if user is authenticated and is a courier
+    // Check if user is authenticated
     if (!this.authService.isAuthenticated()) {
       this.errorMessage = 'يجب تسجيل الدخول أولاً قبل إرسال الطلب';
       return;
     }
     
-    if (!this.authService.isCourier()) {
-      this.errorMessage = 'يجب أن تكون مسجل كـ موصل لإرسال طلب';
-      return;
-    }
+    // Allow all authenticated users to send requests, not just couriers
+    // The backend will handle role verification
     
     // If offerId is provided, load the offer details
     if (this.offerId) {
@@ -166,28 +164,46 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
   }
   
   submitRequest(): void {
-    if (!this.requestText) {
+    if (!this.requestText.trim()) {
       this.showError('يجب إدخال نص الطلب');
       return;
     }
     
+    if (!this.offerId) {
+      this.showError('معرف العرض غير موجود');
+      return;
+    }
+    
     this.isSubmitting = true;
+    this.errorMessage = null;
     
     const requestData: RequestCreateModel = {
       offerId: this.offerId,
-      message: this.requestText
+      message: this.requestText.trim()
     };
+    
+    console.log('Submitting request:', requestData);
     
     this.requestService.createRequest(requestData).subscribe({
       next: (createdRequest) => {
+        console.log('Request created successfully:', createdRequest);
         this.isSubmitting = false;
         this.requestCreated.emit(createdRequest);
         this.resetForm();
         this.showSuccess('تم إرسال الطلب بنجاح');
       },
       error: (error) => {
+        console.error('Error creating request:', error);
         this.isSubmitting = false;
-        this.showError(error.message || 'حدث خطأ أثناء إرسال الطلب');
+        let errorMessage = 'حدث خطأ أثناء إرسال الطلب';
+        
+        if (error.error?.message) {
+          errorMessage = error.error.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        this.showError(errorMessage);
       }
     });
   }

@@ -109,9 +109,19 @@ export class RequestPageComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.offerService.getOfferById(this.offerId).subscribe({
       next: (offerData) => {
+        console.log('API /api/Offer/{id} response:', offerData); // Debug log
         this.offer = offerData;
         this.isLoading = false;
         this.loadRequestsCount();
+        // Also fetch and log all requests for this offer
+        this.requestService.getRequestsForOffer(this.offerId).subscribe({
+          next: (response) => {
+            console.log('API /api/Request/offer/{offerId} response:', response); // Debug log
+          },
+          error: (error) => {
+            console.error('Error loading requests for debug log:', error);
+          }
+        });
       },
       error: (error) => {
         console.error('Error loading offer details:', error);
