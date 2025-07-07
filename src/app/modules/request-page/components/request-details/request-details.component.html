@@ -1,6 +1,6 @@
 <div class="card" id="requestForm">
   <div class="card-header d-flex align-items-center">
-    <img src="assets/default-user.jpg" class="rounded-circle me-2 profile-picture" id="userProfilePic" alt="الصورة الشخصية">
+    <img src="/assets/images/default-user.svg" class="rounded-circle me-2 profile-picture" id="userProfilePic" alt="الصورة الشخصية">
     <span class="fw-bold">المستخدم (صاحب الطلب)</span>
   </div>
   <div class="card-body">
@@ -13,8 +13,8 @@
       </button>
     </div>
 
-    <!-- Content only visible for authenticated couriers who aren't the offer owner -->
-    <ng-container *ngIf="authService.isAuthenticated() && authService.isCourier() && !isOfferOwner">
+    <!-- Content visible for all authenticated users who aren't the offer owner -->
+    <ng-container *ngIf="authService.isAuthenticated() && !isOfferOwner">
       <!-- Text area with character counter -->
       <textarea class="form-control" id="requestText" rows="6" 
                 placeholder="اكتب تفاصيل طلبك هنا" 

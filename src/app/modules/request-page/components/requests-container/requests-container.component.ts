@@ -34,6 +34,7 @@ export class RequestsContainerComponent implements OnInit {
   ) { }
   
   ngOnInit(): void {
+    console.log('RequestsContainerComponent initialized with offerId:', this.offerId);
     if (this.offerId) {
       this.loadRequests();
     } else {
@@ -45,17 +46,35 @@ export class RequestsContainerComponent implements OnInit {
   loadRequests(): void {
     this.loading = true;
     this.error = null;
+    this.requests = [];
+    
+    console.log('Loading requests for offer:', this.offerId);
     
     this.requestService.getRequestsForOffer(this.offerId, this.currentPage, this.pageSize).subscribe({
       next: (response) => {
-        this.requests = response.items;
-        this.totalRequests = response.totalCount;
+        this.requests = (response.requests || []).map((req: any) => {
+          const mapped = {
+            ...req,
+            courierName: req.courierName || req.CourierName,
+            courierImage: req.courierImage || req.CourierImage,
+            status: req.status ?? req.Status ?? 0,
+            message: req.message || req.Message,
+            createdAt: req.createdAt || req.CreatedAt,
+            offerId: req.offerId || req.OfferId,
+            id: req.id || req.Id
+            // add more fields as needed
+          } as Request;
+          return mapped;
+        });
+        console.log('Final mapped requests:', this.requests); // Debug log
+        this.totalRequests = response.totalCount || 0;
         this.loading = false;
       },
       error: (error) => {
         console.error('Error loading requests:', error);
         this.error = error.message || 'Failed to load requests';
         this.loading = false;
+        this.requests = [];
       }
     });
   }

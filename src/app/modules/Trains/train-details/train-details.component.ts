@@ -74,6 +74,7 @@ loadNotificationStatus(): void {
       next: (data) => {
         this.train = data;
         this.isLoading = false;
+        console.log('Train details loaded:', this.train);
       },
       error: (error) => {
         console.error('Error loading train details:', error);

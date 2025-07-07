@@ -50,13 +50,18 @@ export class RequestPageComponent implements OnInit, OnDestroy {
       })
     );
     
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.offerId = +id;
-      this.loadOfferDetails();
-    } else {
-      this.errorMessage = 'No offer ID provided';
-    }
+    // Always get offerId from route params
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id && !isNaN(+id)) {
+        this.offerId = +id;
+        this.loadOfferDetails();
+      } else {
+        this.offerId = 0;
+        this.errorMessage = 'No offer ID provided';
+        this.isLoading = false;
+      }
+    });
   }
   
   // Check if the current user is the owner of the offer
@@ -96,30 +101,46 @@ export class RequestPageComponent implements OnInit, OnDestroy {
   }
   
   loadOfferDetails(): void {
+    if (!this.offerId) {
+      this.errorMessage = 'No offer ID provided';
+      this.isLoading = false;
+      return;
+    }
+    this.isLoading = true;
     this.offerService.getOfferById(this.offerId).subscribe({
       next: (offerData) => {
+        console.log('API /api/Offer/{id} response:', offerData); // Debug log
         this.offer = offerData;
+        this.isLoading = false;
         this.loadRequestsCount();
+        // Also fetch and log all requests for this offer
+        this.requestService.getRequestsForOffer(this.offerId).subscribe({
+          next: (response) => {
+            console.log('API /api/Request/offer/{offerId} response:', response); // Debug log
+          },
+          error: (error) => {
+            console.error('Error loading requests for debug log:', error);
+          }
+        });
       },
       error: (error) => {
         console.error('Error loading offer details:', error);
-        this.errorMessage = 'Failed to load offer details';
+        this.errorMessage = 'فشل تحميل بيانات العرض. تأكد من أن العرض موجود أو لديك الصلاحية.';
+        this.isLoading = false;
       }
     });
   }
   
   loadRequestsCount(): void {
-    if (!this.offer) return;
-    
-    this.requestService.getRequestsForOffer(this.offer.id).subscribe({
+    if (!this.offer || !this.offerId) return;
+    this.requestService.getRequestsForOffer(this.offerId).subscribe({
       next: (response) => {
-        // Update the requestsCount property with the total number of requests
         if (this.offer) {
           this.offer.requestsCount = response.totalCount;
         }
       },
       error: (error) => {
-        console.error(`Error loading requests for offer ${this.offer?.id}:`, error);
+        console.error(`Error loading requests for offer ${this.offerId}:`, error);
       }
     });
   }

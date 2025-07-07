@@ -7,7 +7,6 @@ import { LostAndFoundListComponent } from './modules/Lost-And-Found/lost-and-fou
 import { AboutUsComponent } from '../app/modules/AboutUs/about-us/about-us.component'; 
 import{ AuthGuard } from './core/guards/auth.guard';
 import { NotFoundComponent } from './modules/NotFoundPage/not-found/not-found.component';
-import { OfferDetailsComponent } from './modules/account-profile/offer-details/offer-details.component';
 import { ActivatedRoute } from '@angular/router';
 import { TrainTrackingService } from './core/services/train-tracking.service';
 import { interval } from 'rxjs';
@@ -15,7 +14,7 @@ import { interval } from 'rxjs';
 export const routes: Routes = [
   // {
   //   path: '',
-  //   redirectTo: '/',
+  //   redirectTo: 'auth/login',
   //   pathMatch: 'full'
   // },
 
@@ -25,12 +24,11 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: TrainListComponent,
-        pathMatch: 'full'
+        component: TrainListComponent // الـ Homepage
       },
       {
         path: 'about-us',
-        component: AboutUsComponent 
+        component: AboutUsComponent // صفحة "من نحن" بدون guard
       },
       {
         path: 'auth',
@@ -110,18 +108,24 @@ export const routes: Routes = [
         loadChildren: () => import('./modules/offers-page/offers-page.module').then(m => m.OffersPageModule)
       },
       {
-        path: 'requests/:id',
+        path: 'requests',
         canActivate: [AuthGuard],
-        loadComponent: () => import('./modules/request-page/request-page.component').then(m => m.RequestPageComponent)
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./modules/request-page/request-page.component').then(m => m.RequestPageComponent)
+          },
+          {
+            path: 'offer/:id',
+            loadComponent: () => import('./modules/request-page/request-page.component').then(m => m.RequestPageComponent)
+          }
+        ]
       },
       {
         path: 'userProfile',
         canActivate: [AuthGuard],
         loadChildren: () => import('./modules/account-profile/account-profile.module').then(m => m.AccountProfileModule)
       },
-      { path: 'userProfile/offer-details/:id',
-         canActivate: [AuthGuard],
-         component: OfferDetailsComponent },
       {
         path: 'verification',
         loadComponent: () => import('./modules/verification/components/verification-images/verification-images.component').then(m => m.VerificationImagesComponent),
@@ -134,6 +138,7 @@ export const routes: Routes = [
       },
     ]
   },
+
   {
     path: '**',
     component: NotFoundComponent

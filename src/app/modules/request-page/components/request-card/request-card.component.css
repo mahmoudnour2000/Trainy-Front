@@ -67,6 +67,10 @@
   background-color: #6c757d;
 }
 
+.status-completed {
+  background-color: #28a745;
+}
+
 .request-user {
   display: flex;
   align-items: center;
@@ -137,4 +141,55 @@
   margin-top: 10px;
   border-top: 1px solid #eee;
   padding-top: 10px;
+}
+
+/* New styles for the request header and body */
+.request-header {
+  margin-bottom: 15px;
+}
+
+.courier-info {
+  display: flex;
+  align-items: center;
+}
+
+.courier-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-left: 10px;
+  border: 2px solid #0d6efd;
+}
+
+.courier-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+}
+
+.request-body {
+  flex-grow: 1;
+}
+
+.request-message {
+  color: #6c757d;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.request-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.request-status span {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: white;
 } 
