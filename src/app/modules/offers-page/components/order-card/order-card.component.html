@@ -5,14 +5,10 @@
         <div class="price-tag">ج.م {{order.price}}</div>
     </div>
     <div class="card-body">
-        <h5 class="card-title">{{order.description}}</h5>
-        <div class="order-description">
+        <div class="order-description" style="padding-bottom: 20px;">
             {{ order.description }}
         </div>
-        <div class="order-breakable-status">
-            <span *ngIf="order.isBreakable; else notBreakable">قابل للكسر</span>
-            <ng-template #notBreakable>غير قابل للكسر</ng-template>
-        </div>
+        
         
         <div class="card-info">
             <div class="info-item">
@@ -31,6 +27,10 @@
                 <i class="fas fa-calendar"></i>
                 <span>{{formatDate(order.date)}}</span>
             </div>
+        </div>
+        <div class="order-breakable-status">
+            <span *ngIf="order.isBreakable; else notBreakable">قابل للكسر</span>
+            <ng-template #notBreakable>غير قابل للكسر</ng-template>
         </div>
         
         <div class="card-actions">
