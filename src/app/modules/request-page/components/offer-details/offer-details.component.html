@@ -2,14 +2,14 @@
   <div class="profile-header-content">
     <!-- Product Image -->
     <div class="product-image-container">
-      <img [src]="offer.image || 'assets/defaultOrder.jpg'"  
-          onerror="this.src='assets/defaultOrder.jpg'" class="product-image">
+      <img [src]="offer.image || 'assets/images/default-order.svg'" 
+           onerror="this.src='assets/images/default-order.svg'" 
+           class="product-image"
+           alt="صورة المنتج">
     </div>
     
     <!-- Product Details -->
-    <div class="product-details">
-      <!-- Title -->
-      
+    <div class="product-details">      
       <!-- Description -->
       <p class="profile-description">{{offer.description}}</p>
       
@@ -19,7 +19,7 @@
         <span class="tag tag-to">إلى: {{offer.toStationName}}</span>
         <span class="tag tag-category">{{offer.category}}</span>
         <span class="tag tag-weight">{{offer.weight}} كجم</span>
-        <span class="tag tag-price">{{offer.price}} ريال</span>
+        <span class="tag tag-price">{{offer.price}} جنيه</span>
         <span class="tag tag-breakable" *ngIf="offer.isBreakable">قابل للكسر</span>
       </div>
       
@@ -32,8 +32,8 @@
       <!-- Profile meta -->
       <div class="profile-meta">
         <div class="d-flex align-items-center">
-          <img [src]="offer.senderImage || '/assets/images/default-user.png'" class="profile-avatar-lg me-2" alt="صورة شخصية">
-          <span class="fw-bold">{{offer.senderName || 'Unknown Sender'}} (صاحب العرض)</span>
+          <img [src]="offer.senderImage || 'assets/images/default-user.svg'" class="profile-avatar-lg me-2" alt="صورة شخصية">
+          <span class="fw-bold">{{offer.senderName || 'Unknown Sender'}} </span>
         </div>
         <span class="request-badge" id="requestCounter">عدد الطلبات: {{offer.requestsCount || 0}}</span>
       </div>

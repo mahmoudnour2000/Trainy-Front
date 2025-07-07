@@ -11,9 +11,14 @@ export interface Request {
   courierId: string;
   courierName?: string;
   courierImage?: string;
+  CourierName?: string;
+  CourierImage?: string;
   message: string;
   status: RequestStatus;
+  Status?: RequestStatus;
   createdAt: Date;
+  fromStationId?: number;
+  pickupStationName?: string;
 }
 
 export enum RequestStatus {
@@ -77,11 +82,18 @@ export class RequestService {
   }
   
   // GET /api/Request/offer/{offerId}
-  getRequestsForOffer(offerId: number, pageNumber = 1, pageSize = 10): Observable<PaginatedResponse<Request>> {
+  getRequestsForOffer(offerId: number, pageNumber = 1, pageSize = 10): Observable<{ requests: Request[], totalCount: number, pageSize: number, pageNumber: number }> {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());
-    return this.http.get<PaginatedResponse<Request>>(`${this.apiUrl}/offer/${offerId}`, { params });
+    return this.http.get<any>(`${this.apiUrl}/offer/${offerId}`, { params }).pipe(
+      map(response => ({
+        requests: response.Data || [],
+        totalCount: response.TotalCount,
+        pageSize: response.PageSize,
+        pageNumber: response.PageNumber
+      }))
+    );
   }
   
   // GET /api/Request/courier/{courierId}

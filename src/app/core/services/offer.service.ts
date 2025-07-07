@@ -25,6 +25,8 @@ export interface Offer {
   senderId: string;
   senderName?: string;
   senderImage?: string;
+  SenderName?: string;
+  SenderImage?: string;
   category: string;
   isBreakable: boolean;
   image?: string;

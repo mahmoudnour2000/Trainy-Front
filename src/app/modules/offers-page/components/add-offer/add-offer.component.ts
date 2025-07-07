@@ -47,10 +47,11 @@ export class AddOfferComponent implements OnInit {
   
   // Fixed stations list (0-3) - will be replaced with API call later
   stations: Station[] = [
-    { id: 0, name: 'محطة القاهرة', location: 'القاهرة' },
-    { id: 1, name: 'محطة الإسكندرية', location: 'الإسكندرية' },
-    { id: 2, name: 'محطة الجيزة', location: 'الجيزة' },
-    { id: 3, name: 'محطة الأقصر', location: 'الأقصر' }
+    { id: 1, name: 'محطة أسوان', location: 'أسوان' },
+    { id: 3, name: 'محطة الأقصر', location: 'الأقصر' },
+    { id: 4, name: 'محطة قنا', location: 'قنا' },
+    { id: 5, name: 'محطة سوهاج', location: 'سوهاج' },
+    { id: 5, name: 'محطة القاهرة', location: 'القاهرة' }
   ];
 
   // Price matrix for calculating suggested prices
@@ -84,11 +85,11 @@ export class AddOfferComponent implements OnInit {
   suggestedPrice: number = 0;
   
   paymentMethods = [
-    { value: 'EtisalatCash', label: 'اتصالات كاش' },
-    { value: 'VodafoneCash', label: 'فودافون كاش' },
-    { value: 'PayPal', label: 'PayPal' },
-    { value: 'Stripe', label: 'Stripe' },
-    { value: 'AccountNumber', label: 'رقم حساب بنكي' }
+    { value: 0, label: 'اتصالات كاش' },
+    { value: 1, label: 'فودافون كاش' },
+    { value: 2, label: 'PayPal' },
+    { value: 3, label: 'Stripe' },
+    { value: 4, label: 'رقم حساب بنكي' }
   ];
 
   constructor(
@@ -102,6 +103,10 @@ export class AddOfferComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.checkEditMode();
+    // Disable controls if loading
+    if (this.isLoading) {
+      this.disableFormControls();
+    }
     // TODO: Replace with API call when station service is ready
     // this.loadStationsFromAPI();
   }
@@ -146,7 +151,7 @@ export class AddOfferComponent implements OnInit {
       weight: [null, [Validators.required, Validators.min(0.1)]],
       price: [null, [Validators.required, Validators.min(1)]],
       isBreakable: [false],
-      paymentMethod: ['', Validators.required],
+      paymentMethod: [0, Validators.required],
       image: [null]
     });
 
@@ -203,6 +208,7 @@ export class AddOfferComponent implements OnInit {
         }
         
         this.isLoading = false;
+        this.enableFormControls();
       },
       error: (error) => {
         console.error('Error loading offer:', error);
@@ -218,24 +224,26 @@ export class AddOfferComponent implements OnInit {
       this.markFormGroupTouched(this.offerForm);
       return;
     }
+    // Get all form values including disabled controls
+    const formData = this.offerForm.getRawValue();
     this.isLoading = true;
-    const formData = this.offerForm.value;
-
-    // Build FormData for multipart/form-data
+    this.disableFormControls();
     const payload = new FormData();
+    payload.append('PaymentMethod', this.mapPaymentMethodToValue(formData.paymentMethod).toString());
     payload.append('Description', formData.description);
+    payload.append('Weight', Number(formData.weight).toString());
     payload.append('Category', this.mapCategoryToApiCategory(formData.category));
-    payload.append('PaymentMethod', formData.paymentMethod);
-    payload.append('PickupStationId', formData.from);
-    payload.append('DropoffStationId', formData.to);
-    payload.append('Weight', formData.weight);
-    payload.append('Price', formData.price);
-    payload.append('IsBreakable', formData.isBreakable);
-
+    payload.append('IsBreakable', (formData.isBreakable === true || formData.isBreakable === 'true') ? 'true' : 'false');
+    payload.append('Price', Number(formData.price).toString());
+    payload.append('PickupStationId', Number(formData.from).toString());
+    payload.append('DropoffStationId', Number(formData.to).toString());
     // Append the image file if present
     if (formData.image) {
       payload.append('ImageFile', formData.image); // must be a File object
     }
+
+    // Log all FormData entries for debugging
+    console.log([...payload.entries()]);
 
     if (this.editMode && this.orderId) {
       this.offerService.updateOffer(this.orderId, payload).subscribe({
@@ -246,6 +254,7 @@ export class AddOfferComponent implements OnInit {
         error: (err) => {
           alert('حدث خطأ أثناء تحديث العرض: ' + (err?.error?.message || ''));
           this.isLoading = false;
+          this.enableFormControls();
         }
       });
     } else {
@@ -255,8 +264,22 @@ export class AddOfferComponent implements OnInit {
           this.router.navigate(['/offers']);
         },
         error: (err) => {
-          alert('حدث خطأ أثناء إنشاء العرض: ' + (err?.error?.message || ''));
+          console.error('Error creating offer:', err);
+          let errorMessage = 'حدث خطأ أثناء إنشاء العرض';
+          
+          if (err?.error?.message) {
+            errorMessage += ': ' + err.error.message;
+          } else if (err?.error?.errors) {
+            // Handle validation errors
+            const validationErrors = Object.values(err.error.errors).flat();
+            errorMessage += ': ' + validationErrors.join(', ');
+          } else if (err?.message) {
+            errorMessage += ': ' + err.message;
+          }
+          
+          alert(errorMessage);
           this.isLoading = false;
+          this.enableFormControls();
         }
       });
     }
@@ -425,5 +448,56 @@ export class AddOfferComponent implements OnInit {
       return false;
     }
     return true;
+  }
+
+  private disableFormControls(): void {
+    this.offerForm.get('description')?.disable();
+    this.offerForm.get('from')?.disable();
+    this.offerForm.get('to')?.disable();
+    this.offerForm.get('category')?.disable();
+    this.offerForm.get('weight')?.disable();
+    this.offerForm.get('isBreakable')?.disable();
+    this.offerForm.get('price')?.disable();
+    this.offerForm.get('paymentMethod')?.disable();
+  }
+
+  private enableFormControls(): void {
+    this.offerForm.get('description')?.enable();
+    this.offerForm.get('from')?.enable();
+    this.offerForm.get('to')?.enable();
+    this.offerForm.get('category')?.enable();
+    this.offerForm.get('weight')?.enable();
+    this.offerForm.get('isBreakable')?.enable();
+    this.offerForm.get('price')?.enable();
+    this.offerForm.get('paymentMethod')?.enable();
+  }
+
+  private mapPaymentMethodToValue(paymentMethod: any): number {
+    // If it's already a number, return it
+    if (typeof paymentMethod === 'number' && !isNaN(paymentMethod)) {
+      return paymentMethod;
+    }
+    
+    // If it's a string, map it to the corresponding enum value
+    const paymentMethodMap: { [key: string]: number } = {
+      'EtisalatCash': 0,
+      'VodafoneCash': 1,
+      'PayPal': 2,
+      'Stripe': 3,
+      'AccountNumber': 4
+    };
+    
+    // Try to convert string to number first
+    if (typeof paymentMethod === 'string') {
+      const numValue = parseInt(paymentMethod, 10);
+      if (!isNaN(numValue) && numValue >= 0 && numValue <= 4) {
+        return numValue;
+      }
+      // If not a valid number, try string mapping
+      return paymentMethodMap[paymentMethod] !== undefined ? paymentMethodMap[paymentMethod] : 0;
+    }
+    
+    // Default to 0 (EtisalatCash) if all else fails
+    return 0;
   }
 }

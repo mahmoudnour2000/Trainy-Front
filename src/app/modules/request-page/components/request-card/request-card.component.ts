@@ -30,6 +30,7 @@ export class RequestCardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log('RequestCardComponent received request:', this.request);
     this.truncateMessageIfNeeded();
     
     // Check if the current user is the offer owner
@@ -173,7 +174,7 @@ export class RequestCardComponent implements OnInit {
       case RequestStatus.Rejected:
         return 'مرفوض';
       case RequestStatus.Completed:
-        return 'منتهي';
+        return 'مكتمل';
       default:
         return 'غير معروف';
     }

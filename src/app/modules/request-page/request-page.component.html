@@ -1,27 +1,21 @@
 <div class="request-page">
-  <div class="loading-container" *ngIf="isLoading">
+  <div *ngIf="isLoading && !errorMessage" class="loading-container">
     <div class="spinner"></div>
     <p>جاري تحميل العرض...</p>
   </div>
-  
-  <div class="error-container" *ngIf="errorMessage && !isLoading">
+  <div *ngIf="errorMessage && !isLoading" class="error-container">
     <div class="alert alert-danger">
       {{ errorMessage }}
     </div>
   </div>
-  
-  <div class="offer-container" *ngIf="offer && !isLoading">
-    <app-offer-details [offer]="offer"></app-offer-details>
-    
-    <div class="requests-section" *ngIf="offerId">
-      <app-requests-container [offerId]="offerId"></app-requests-container>
-    </div>
-    
-    <div class="request-form-section" *ngIf="offerId">
-      <app-request-details 
-        [offerId]="offerId"
-        (requestCreated)="loadRequestsCount()">
-      </app-request-details>
-    </div>
+  <app-offer-details [offer]="offer"></app-offer-details>
+  <div class="requests-section">
+    <app-requests-container [offerId]="offerId"></app-requests-container>
+  </div>
+  <div class="request-form-section">
+    <app-request-details 
+      [offerId]="offerId"
+      (requestCreated)="loadRequestsCount()">
+    </app-request-details>
   </div>
 </div> 

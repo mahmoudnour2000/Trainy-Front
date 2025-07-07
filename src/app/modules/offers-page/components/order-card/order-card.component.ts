@@ -33,12 +33,26 @@ export class OrderCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUserId = this.authService.getUserId();
+    console.log('OrderCard ngOnInit debug:', {
+      currentUserId: this.currentUserId,
+      order: this.order,
+      orderSenderId: this.order?.senderId,
+      orderUserId: this.order?.userId
+    });
+    
     this.checkOrderOwnership();
     
     // Check verification status
     this.verificationService.verificationStatus$.subscribe((status: CombinedVerificationStatus) => {
       this.isCourierVerified = status.courierStatus === 'Accepted';
       this.isSenderVerified = status.senderStatus === 'Accepted';
+      
+      console.log('OrderCard verification status updated:', {
+        courierStatus: status.courierStatus,
+        senderStatus: status.senderStatus,
+        isCourierVerified: this.isCourierVerified,
+        isSenderVerified: this.isSenderVerified
+      });
     });
   }
 
@@ -47,6 +61,15 @@ export class OrderCardComponent implements OnInit {
     // Handle both senderId and userId properties for compatibility
     this.isOrderOwner = this.currentUserId === this.order.senderId || 
                        this.currentUserId === this.order.userId;
+    
+    console.log('checkOrderOwnership debug:', {
+      currentUserId: this.currentUserId,
+      orderSenderId: this.order?.senderId,
+      orderUserId: this.order?.userId,
+      isOrderOwner: this.isOrderOwner,
+      userIdMatch: this.currentUserId === this.order?.senderId,
+      senderIdMatch: this.currentUserId === this.order?.userId
+    });
   }
 
   isOwner(senderId: string): boolean {
@@ -64,6 +87,64 @@ export class OrderCardComponent implements OnInit {
     
     // Navigate to the request page with the offer ID
     this.router.navigate(['/requests/offer', this.order.id]);
+  }
+
+  onViewRequests(): void {
+    // Check if user is authenticated
+    if (!this.authService.isAuthenticated()) {
+      this.onLoginPrompt();
+      return;
+    }
+    
+    if (!this.order.id) {
+      console.error('Order is missing ID');
+      return;
+    }
+    
+    console.log('View requests clicked for order:', this.order.id);
+    
+    // Navigate to the request page to view offer details and requests
+    // Available for all authenticated users
+    this.router.navigate(['/requests/offer', this.order.id]);
+  }
+
+  canViewRequests(): boolean {
+    // Must be authenticated
+    if (!this.authService.isAuthenticated()) {
+      return false;
+    }
+    
+    // Must be either a sender or courier
+    const isSender = this.authService.isSender();
+    const isCourier = this.authService.isCourier();
+    
+    if (!isSender && !isCourier) {
+      return false;
+    }
+    
+    // Check verification status based on role
+    let isVerified = false;
+    if (isSender) {
+      isVerified = this.isSenderVerified;
+    }
+    if (isCourier) {
+      isVerified = this.isCourierVerified;
+    }
+    
+    // For debugging - let's log the current state
+    console.log('canViewRequests debug:', {
+      isAuthenticated: this.authService.isAuthenticated(),
+      isSender: isSender,
+      isCourier: isCourier,
+      isSenderVerified: this.isSenderVerified,
+      isCourierVerified: this.isCourierVerified,
+      isVerified: isVerified,
+      isOrderOwner: this.isOrderOwner
+    });
+    
+    // Show button for all authenticated senders and couriers (including offer owners)
+    // Offer owners should also be able to view requests for their own offers
+    return true; // Temporarily return true for debugging
   }
 
   onSendRequest(): void {
@@ -247,21 +328,18 @@ export class OrderCardComponent implements OnInit {
   canEditOrder(): boolean {
     return this.authService.isAuthenticated() && 
            this.authService.isSender() && 
-           this.isOrderOwner &&
-           this.isSenderVerified;
+           this.isOrderOwner;
   }
 
   canDeleteOrder(): boolean {
     return this.authService.isAuthenticated() && 
            this.authService.isSender() && 
-           this.isOrderOwner &&
-           this.isSenderVerified;
+           this.isOrderOwner;
   }
 
   canSendRequest(): boolean {
     return this.authService.isAuthenticated() && 
            this.authService.isCourier() && 
-           this.isCourierVerified &&
            !this.isOrderOwner;
   }
 

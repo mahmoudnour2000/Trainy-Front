@@ -34,7 +34,7 @@
             <!-- Description field -->
             <div class="mb-3">
                 <label for="orderDescription" class="form-label">وصف الطلب</label>
-                <textarea class="form-control" id="orderDescription" rows="3" formControlName="description" required [disabled]="isLoading"></textarea>
+                <textarea class="form-control" id="orderDescription" rows="3" formControlName="description" required></textarea>
                 <div class="d-flex justify-content-between">
                     <div class="form-text text-danger"
                          *ngIf="offerForm.get('description')?.errors?.['minlength'] && offerForm.get('description')?.touched">
@@ -57,7 +57,7 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="orderFrom" class="form-label">من</label>
-                    <select class="form-select" id="orderFrom" formControlName="from" required [disabled]="isLoading">
+                    <select class="form-select" id="orderFrom" formControlName="from" required>
                         <option value="" disabled selected>اختر الموقع</option>
                         <option *ngFor="let station of stations" [value]="station.id">{{ station.name }}</option>
                     </select>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="orderTo" class="form-label">إلى</label>
-                    <select class="form-select" id="orderTo" formControlName="to" required [disabled]="isLoading">
+                    <select class="form-select" id="orderTo" formControlName="to" required>
                         <option value="" disabled selected>اختر الموقع</option>
                         <option *ngFor="let station of stations" [value]="station.id">{{ station.name }}</option>
                     </select>
@@ -80,7 +80,7 @@
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="orderCategory" class="form-label">الفئة</label>
-                    <select class="form-select" id="orderCategory" formControlName="category" required [disabled]="isLoading">
+                    <select class="form-select" id="orderCategory" formControlName="category" required>
                         <option value="" selected disabled>اختر الفئة</option>
                         <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
                     </select>
@@ -90,7 +90,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="orderWeight" class="form-label">الوزن (كجم)</label>
-                    <input type="number" class="form-control" id="orderWeight" formControlName="weight" min="0.1" step="0.1" required [disabled]="isLoading">
+                    <input type="number" class="form-control" id="orderWeight" formControlName="weight" min="0.1" step="0.1" required>
                     <div class="form-text text-danger" *ngIf="offerForm.get('weight')?.invalid && offerForm.get('weight')?.touched">
                         يرجى إدخال وزن صحيح (0.1 كجم على الأقل)
                     </div>
@@ -100,7 +100,7 @@
             <div class="row">
                 <div class="col-md-12 mb-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="isBreakable" formControlName="isBreakable" [disabled]="isLoading">
+                        <input class="form-check-input" type="checkbox" id="isBreakable" formControlName="isBreakable">
                         <label class="form-check-label" for="isBreakable">
                             قابل للكسر <i class="fas fa-wine-glass-alt text-danger ms-1"></i>
                         </label>
@@ -112,7 +112,7 @@
                 <div class="col-md-12 mb-3">
                     <label for="orderPrice" class="form-label">السعر (ج.م)</label>
                     <div class="input-group">
-                        <input type="number" class="form-control" id="orderPrice" formControlName="price" min="0" step="1" required [disabled]="isLoading">
+                        <input type="number" class="form-control" id="orderPrice" formControlName="price" min="0" step="1" required>
                         <span class="input-group-text">ج.م</span>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mt-2">
@@ -126,7 +126,7 @@
             
             <div class="mb-3">
                 <label for="paymentMethod" class="form-label">طريقة الدفع</label>
-                <select class="form-select" id="paymentMethod" formControlName="paymentMethod" required [disabled]="isLoading">
+                <select class="form-select" id="paymentMethod" formControlName="paymentMethod" required>
                     <option value="" disabled selected>اختر طريقة الدفع</option>
                     <option *ngFor="let method of paymentMethods" [value]="method.value">{{ method.label }}</option>
                 </select>

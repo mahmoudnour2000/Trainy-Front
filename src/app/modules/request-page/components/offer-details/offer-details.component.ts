@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { RequestService } from '../../../../core/services/request.service';
@@ -12,7 +12,7 @@ import { Subscription, take, switchMap, of } from 'rxjs';
   templateUrl: './offer-details.component.html',
   styleUrls: ['./offer-details.component.css']
 })
-export class OfferDetailsComponent implements OnInit, OnDestroy {
+export class OfferDetailsComponent implements OnInit, OnDestroy, OnChanges {
   @Input() offer: Offer | null = null;
   isLoading: boolean = false;
   error: string | null = null;
@@ -25,20 +25,16 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    // First check if offer was provided via Input
+    // Only fetch from API if offer is not provided by parent
     if (this.offer) {
-      console.log('Offer provided via Input:', this.offer);
-      // Store offer in the service for other components
       this.requestService.setOfferDetails(this.offer);
     } else {
-      // Otherwise, get from API based on route parameters
       this.isLoading = true;
       this.subscription.add(
         this.route.params.pipe(
           switchMap(params => {
             const offerId = params['id'];
             if (!offerId) {
-              console.error('No offer ID provided in route params');
               return of(null);
             }
             return this.offerService.getOfferById(+offerId);
@@ -47,20 +43,54 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
           next: (offer) => {
             this.isLoading = false;
             if (offer) {
-              this.offer = offer;
-              // Store offer in the service for other components
-              this.requestService.setOfferDetails(offer);
+              const offerAny = offer as any;
+              this.offer = {
+                ...offer,
+                senderName: offer.senderName || offerAny.SenderName,
+                senderImage: offer.senderImage || offerAny.SenderImage,
+                fromStationName: offer.fromStationName || offerAny.PickupStationName,
+                toStationName: offer.toStationName || offerAny.DropoffStationName,
+                weight: offer.weight || offerAny.Weight,
+                price: offer.price || offerAny.Price,
+                createdAt: offer.createdAt || offerAny.CreatedAt,
+                isBreakable: offer.isBreakable ?? offerAny.IsBreakable,
+                requestsCount: offer.requestsCount ?? offerAny.RequestsCount,
+                image: offer.image || offerAny.Picture
+              };
+              this.requestService.setOfferDetails(this.offer);
             } else {
               this.error = 'لم يتم العثور على تفاصيل العرض';
             }
           },
           error: (err) => {
-            console.error('Error loading offer details:', err);
             this.isLoading = false;
             this.error = 'حدث خطأ أثناء تحميل تفاصيل العرض';
           }
         })
       );
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['offer'] && changes['offer'].currentValue) {
+      const offer = changes['offer'].currentValue;
+      const offerAny = offer as any;
+      this.offer = {
+        ...offer,
+        senderName: offer.senderName || offerAny.SenderName,
+        senderImage: offer.senderImage || offerAny.SenderImage,
+        fromStationName: offer.fromStationName || offerAny.PickupStationName,
+        toStationName: offer.toStationName || offerAny.DropoffStationName,
+        weight: offer.weight || offerAny.Weight,
+        price: offer.price || offerAny.Price,
+        createdAt: offer.createdAt || offerAny.CreatedAt,
+        isBreakable: offer.isBreakable ?? offerAny.IsBreakable,
+        requestsCount: offer.requestsCount ?? offerAny.RequestsCount,
+        image: offer.image || offerAny.Picture
+      };
+      this.isLoading = false;
+      this.error = null;
+      this.requestService.setOfferDetails(this.offer);
     }
   }
   
