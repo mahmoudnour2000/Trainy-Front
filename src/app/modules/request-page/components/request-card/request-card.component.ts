@@ -155,8 +155,8 @@ export class RequestCardComponent implements OnInit {
         return 'status-accepted';
       case RequestStatus.Rejected:
         return 'status-rejected';
-      case RequestStatus.Cancelled:
-        return 'status-cancelled';
+      case RequestStatus.Completed:
+        return 'status-completed';
       default:
         return '';
     }
@@ -172,8 +172,8 @@ export class RequestCardComponent implements OnInit {
         return 'مقبول';
       case RequestStatus.Rejected:
         return 'مرفوض';
-      case RequestStatus.Cancelled:
-        return 'ملغي';
+      case RequestStatus.Completed:
+        return 'منتهي';
       default:
         return 'غير معروف';
     }

@@ -67,9 +67,9 @@ export class VerificationImagesComponent implements OnInit {
       this.currentSenderStatus = status.senderStatus;
       this.currentCourierStatus = status.courierStatus;
 
-      // Update submission availability - users can only submit if status is Rejected
-      this.canSubmitSender = status.senderStatus === 'Rejected';
-      this.canSubmitCourier = status.courierStatus === 'Rejected';
+      // Update submission availability - users can submit if status is NotSubmitted or Rejected
+      this.canSubmitSender = status.senderStatus === 'NotSubmitted' || status.senderStatus === 'Rejected';
+      this.canSubmitCourier = status.courierStatus === 'NotSubmitted' || status.courierStatus === 'Rejected';
 
       const queryRole = this.route.snapshot.queryParams['roleType'] as 'Sender' | 'Courier';
       if (queryRole) {
@@ -102,6 +102,15 @@ export class VerificationImagesComponent implements OnInit {
              message: 'يرجى مراجعة حالة التحقق الخاصة بك' 
            } 
          });
+      }
+      
+      // If user has NotSubmitted status and no specific role is selected, auto-select the first available role
+      if (!this.verificationForm.get('requestedRole')?.value) {
+        if (this.canSubmitSender) {
+          this.verificationForm.patchValue({ requestedRole: 'Sender' });
+        } else if (this.canSubmitCourier) {
+          this.verificationForm.patchValue({ requestedRole: 'Courier' });
+        }
       }
     });
   }

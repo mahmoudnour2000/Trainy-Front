@@ -77,7 +77,7 @@
                     <div class="notice-content">
                         <i class="fas fa-exclamation-triangle"></i>
                         <span>يجب التحقق من حسابك كمرسل قبل إضافة طلب.</span>
-                        <a [routerLink]="['/verification/status']">التحقق الآن</a>
+                        <button class="verification-check-btn" (click)="checkVerification()">التحقق الآن</button>
                     </div>
                 </div>
                 
@@ -157,7 +157,7 @@
                         </div>
                         
                         <div class="verification-instructions" *ngIf="isAuthenticated && !isSenderVerified">
-                            <p>يجب عليك <a [routerLink]="['/verification/status']">التحقق من حسابك كمرسل</a> قبل إضافة طلب جديد.</p>
+                            <p>يجب عليك <button class="verification-check-btn" (click)="checkVerification()">التحقق من حسابك كمرسل</button> قبل إضافة طلب جديد.</p>
                         </div>
                     </div>
                 </ng-template>

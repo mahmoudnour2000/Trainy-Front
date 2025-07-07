@@ -46,7 +46,7 @@ export class RequestPageComponent implements OnInit, OnDestroy {
     // Get verification status
     this.subscription.add(
       this.verificationService.verificationStatus$.subscribe((status: CombinedVerificationStatus) => {
-        this.isCourierVerified = status.courierStatus === 'Approved';
+        this.isCourierVerified = status.courierStatus === 'Accepted';
       })
     );
     
