@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RequestService, RequestCreateModel } from '../../../../core/services/request.service';
 import { OfferService, Offer } from '../../../../core/services/offer.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { UserService } from '../../../../core/services/user.service';
 import { Subscription, take, finalize } from 'rxjs';
 import { Router } from '@angular/router';
 
@@ -20,8 +21,8 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
   
   requestText: string = '';
   charCount: number = 0;
-  selectedFromCity: string = '';
-  selectedFromCityId: number | null = null;
+  selectedFromStation: string = '';
+  selectedFromStationId: number | null = null;
   age: number = 18;
   maxLength: number = 250;
   
@@ -31,37 +32,37 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
   isOfferOwner: boolean = false;
   successMessage: string | null = null;
   
+  // Current user information
+  currentUserName: string = '';
+  currentUserImage: string = '/assets/images/default-user.svg';
+  
   private subscription: Subscription = new Subscription();
   
-  // Data for dropdown options
-  cities: Array<{id: number, name: string}> = [
-    {id: 1, name: 'القاهرة'},
-    {id: 2, name: 'الإسكندرية'},
-    {id: 3, name: 'الجيزه'},
-    {id: 4, name: 'أسيوط'},
-    {id: 5, name: 'سوهاج'},
-    {id: 6, name: 'قنا'},
-    {id: 7, name: 'الأقصر'},
-    {id: 8, name: 'إسنا'},
-    {id: 9, name: 'كوم امبو'},
-    {id: 10, name: 'أسوان'}
+  // Data for dropdown options - Updated to match stations from add-offer component
+  stations: Array<{id: number, name: string}> = [
+    { id: 1, name: 'محطة أسوان' },
+    { id: 3, name: 'محطة الأقصر' },
+    { id: 4, name: 'محطة قنا' },
+    { id: 5, name: 'محطة سوهاج' },
+    { id: 5, name: 'محطة القاهرة' }
   ];
   
-  // Filtered cities based on search
-  filteredFromCities: Array<{id: number, name: string}> = [];
+  // Filtered stations based on search
+  filteredFromStations: Array<{id: number, name: string}> = [];
   
   // Search terms
-  fromCitySearch: string = '';
+  fromStationSearch: string = '';
   
   constructor(
     private requestService: RequestService,
     private offerService: OfferService,
     public authService: AuthService,
+    private userService: UserService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.filteredFromCities = [...this.cities];
+    this.filteredFromStations = [...this.stations];
     
     console.log('RequestDetailsComponent initialized with offerId:', this.offerId);
     
@@ -70,6 +71,9 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
       this.errorMessage = 'يجب تسجيل الدخول أولاً قبل إرسال الطلب';
       return;
     }
+    
+    // Load current user information
+    this.loadCurrentUserInfo();
     
     // Allow all authenticated users to send requests, not just couriers
     // The backend will handle role verification
@@ -94,6 +98,29 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
     }
   }
   
+  private loadCurrentUserInfo(): void {
+    // Get user name from token
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.currentUserName = currentUser.name || 'المستخدم';
+    }
+    
+    // Load user profile image
+    this.subscription.add(
+      this.userService.getProfileImage().subscribe({
+        next: (response) => {
+          if (response.imageUrl) {
+            this.currentUserImage = response.imageUrl;
+          }
+        },
+        error: (error) => {
+          console.log('No profile image found, using default');
+          // Keep default image
+        }
+      })
+    );
+  }
+  
   loadOfferDetails(offerId: number): void {
     this.subscription.add(
       this.offerService.getOfferById(offerId)
@@ -115,7 +142,26 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
     if (!this.currentOffer) return;
     
     const currentUserId = this.authService.getUserId();
-    this.isOfferOwner = currentUserId === this.currentOffer.senderId;
+    const offerAny = this.currentOffer as any;
+    
+    // Check multiple possible property names for sender ID
+    const possibleSenderIds = [
+      this.currentOffer.senderId,
+      offerAny.userId,
+      offerAny.SenderId,
+      offerAny.UserId,
+      offerAny.SenderID,
+      offerAny.UserID
+    ].filter(id => id != null);
+    
+    this.isOfferOwner = possibleSenderIds.some(id => currentUserId === String(id));
+    
+    console.log('checkIfOfferOwner debug:', {
+      currentUserId: currentUserId,
+      possibleSenderIds: possibleSenderIds,
+      isOfferOwner: this.isOfferOwner,
+      currentOffer: this.currentOffer
+    });
     
     // If user is the owner of the offer, they can't send a request to themselves
     if (this.isOfferOwner) {
@@ -141,18 +187,18 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
     }
   }
   
-  filterFromCities(): void {
-    const searchTerm = this.fromCitySearch.toLowerCase();
-    this.filteredFromCities = this.cities.filter(city => 
-      city.name.toLowerCase().includes(searchTerm)
+  filterFromStations(): void {
+    const searchTerm = this.fromStationSearch.toLowerCase();
+    this.filteredFromStations = this.stations.filter(station => 
+      station.name.toLowerCase().includes(searchTerm)
     );
   }
   
-  selectFromCity(city: {id: number, name: string}): void {
-    this.selectedFromCity = city.name;
-    this.selectedFromCityId = city.id;
-    this.fromCitySearch = '';
-    this.filteredFromCities = [...this.cities];
+  selectFromStation(station: {id: number, name: string}): void {
+    this.selectedFromStation = station.name;
+    this.selectedFromStationId = station.id;
+    this.fromStationSearch = '';
+    this.filteredFromStations = [...this.stations];
   }
   
   navigateToLogin(): void {
@@ -227,8 +273,8 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
   
   resetForm(): void {
     this.requestText = '';
-    this.selectedFromCity = '';
-    this.selectedFromCityId = null;
+    this.selectedFromStation = '';
+    this.selectedFromStationId = null;
     this.age = 18;
     this.charCount = 0;
     this.errorMessage = null;

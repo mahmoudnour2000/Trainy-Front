@@ -46,6 +46,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy, OnChanges {
               const offerAny = offer as any;
               this.offer = {
                 ...offer,
+                description: offer.description || offerAny.Description,
                 senderName: offer.senderName || offerAny.SenderName,
                 senderImage: offer.senderImage || offerAny.SenderImage,
                 fromStationName: offer.fromStationName || offerAny.PickupStationName,

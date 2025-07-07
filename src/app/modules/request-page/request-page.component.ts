@@ -71,7 +71,19 @@ export class RequestPageComponent implements OnInit, OnDestroy {
     }
     
     const currentUserId = this.authService.getUserId();
-    return currentUserId === this.offer.senderId;
+    const offerAny = this.offer as any;
+    
+    // Check multiple possible property names for sender ID
+    const possibleSenderIds = [
+      this.offer.senderId,
+      offerAny.userId,
+      offerAny.SenderId,
+      offerAny.UserId,
+      offerAny.SenderID,
+      offerAny.UserID
+    ].filter(id => id != null);
+    
+    return possibleSenderIds.some(id => currentUserId === String(id));
   }
   
   // Check if the user is a verified courier
