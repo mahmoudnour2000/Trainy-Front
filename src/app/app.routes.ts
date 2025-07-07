@@ -10,7 +10,6 @@ import { NotFoundComponent } from './modules/NotFoundPage/not-found/not-found.co
 import { ActivatedRoute } from '@angular/router';
 import { TrainTrackingService } from './core/services/train-tracking.service';
 import { interval } from 'rxjs';
-import { OfferDetailsComponent } from './modules/account-profile/offer-details/offer-details.component';
 
 export const routes: Routes = [
   // {
