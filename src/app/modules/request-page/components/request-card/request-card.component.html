@@ -25,6 +25,32 @@
     </div>
   </div>
   <div class="request-actions">
+    <!-- Contact button - Only visible for offer owner -->
+    <button 
+      class="btn btn-primary btn-sm" 
+      *ngIf="canContact()"
+      (click)="onContact()"
+      [disabled]="isActionInProgress">
+      <i class="fas fa-comments"></i> تواصل
+    </button>
+    
+    <!-- Accept/Reject buttons for offer owner -->
+    <button 
+      class="btn btn-success btn-sm" 
+      *ngIf="canAcceptOrReject()"
+      (click)="acceptRequest()"
+      [disabled]="isActionInProgress">
+      <i class="fas fa-check"></i> قبول
+    </button>
+    
+    <button 
+      class="btn btn-danger btn-sm" 
+      *ngIf="canAcceptOrReject()"
+      (click)="rejectRequest()"
+      [disabled]="isActionInProgress">
+      <i class="fas fa-times"></i> رفض
+    </button>
+    
     <ng-content></ng-content>
   </div>
 </div> 

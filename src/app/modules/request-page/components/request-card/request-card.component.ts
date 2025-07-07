@@ -67,9 +67,19 @@ export class RequestCardComponent implements OnInit {
     }
     
     console.log('Contact button clicked for request:', this.request.id, 'for offer:', this.request.offerId);
+    // console.log('Contact details:', {
+    //   requestId: this.request.id,
+    //   offerId: this.request.offerId,
+    //   courierId: this.request.courierId,
+    //   courierName: this.request.courierName,
+    //   currentUserId: this.authService.getUserId()
+    // });
     
-    // Show a message to the user
-    alert('سيتم تفعيل خاصية التواصل قريباً');
+    // Emit contact event for parent component to handle
+    this.contact.emit(this.request.id);
+    
+    // Show a message to the user until chat component is ready
+    alert('سيتم فتح نافذة الدردشة قريباً للتواصل مع ' + (this.request.courierName || 'الموصل'));
   }
   
   acceptRequest(): void {
@@ -140,10 +150,34 @@ export class RequestCardComponent implements OnInit {
   }
   
   canContact(): boolean {
-    // Only the offer owner can contact the courier if the request is accepted
-    return this.authService.isAuthenticated() &&
-           this.isOfferOwner && 
-           this.request.status === RequestStatus.Accepted;
+    // Must be authenticated
+    if (!this.authService.isAuthenticated()) {
+      return false;
+    }
+    
+    // Must be the offer owner (sender)
+    if (!this.authService.isSender() || !this.isOfferOwner) {
+      return false;
+    }
+    
+    // Request must be accepted to enable contact
+    if (this.request.status !== RequestStatus.Accepted) {
+      return false;
+    }
+    
+    console.log('canContact debug:', {
+      isAuthenticated: this.authService.isAuthenticated(),
+      isSender: this.authService.isSender(),
+      isOfferOwner: this.isOfferOwner,
+      requestStatus: this.request.status,
+      requestStatusAccepted: RequestStatus.Accepted,
+      canContact: this.authService.isAuthenticated() && 
+                  this.authService.isSender() && 
+                  this.isOfferOwner && 
+                  this.request.status === RequestStatus.Accepted
+    });
+    
+    return true;
   }
   
   getStatusClass(): string {

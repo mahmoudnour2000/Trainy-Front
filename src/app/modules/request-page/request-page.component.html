@@ -12,7 +12,7 @@
   <div class="requests-section">
     <app-requests-container [offerId]="offerId"></app-requests-container>
   </div>
-  <div class="request-form-section">
+  <div class="request-form-section" *ngIf="!isOfferOwner()">
     <app-request-details 
       [offerId]="offerId"
       (requestCreated)="loadRequestsCount()">

@@ -1,7 +1,7 @@
 <div class="card" id="requestForm">
   <div class="card-header d-flex align-items-center">
-    <img src="/assets/images/default-user.svg" class="rounded-circle me-2 profile-picture" id="userProfilePic" alt="الصورة الشخصية">
-    <span class="fw-bold">المستخدم (صاحب الطلب)</span>
+    <img [src]="currentUserImage" class="rounded-circle me-2 profile-picture" id="userProfilePic" alt="الصورة الشخصية">
+    <span class="fw-bold">{{currentUserName}} (صاحب الطلب)</span>
   </div>
   <div class="card-body">
     <!-- Error message -->
@@ -14,7 +14,7 @@
     </div>
 
     <!-- Content visible for all authenticated users who aren't the offer owner -->
-    <ng-container *ngIf="authService.isAuthenticated() && !isOfferOwner">
+    <ng-container *ngIf="authService.isAuthenticated() && !isOfferOwner && !errorMessage">
       <!-- Text area with character counter -->
       <textarea class="form-control" id="requestText" rows="6" 
                 placeholder="اكتب تفاصيل طلبك هنا" 
@@ -24,22 +24,22 @@
       <div [class]="getCounterClass()">{{charCount}} / {{maxLength}} حرف</div>
       
       <div class="buttons-container">
-        <!-- From City Dropdown with Search -->
+        <!-- From Station Dropdown with Search -->
         <div class="dropdown form-button">
           <button class="btn btn-primary dropdown-toggle w-100" type="button" id="fromDropdown" 
                   data-bs-toggle="dropdown" aria-expanded="false">
-            {{selectedFromCity || 'من'}}
+            {{selectedFromStation || 'من محطة'}}
           </button>
           <div class="dropdown-menu p-2" style="width: 220px;">
             <input type="text" class="form-control mb-2 city-search" 
-                  placeholder="ابحث عن المدن..." 
-                  [(ngModel)]="fromCitySearch" 
-                  (input)="filterFromCities()">
+                  placeholder="ابحث عن المحطات..." 
+                  [(ngModel)]="fromStationSearch" 
+                  (input)="filterFromStations()">
             <div class="city-list">
               <a class="dropdown-item from-city" href="#" 
-                *ngFor="let city of filteredFromCities" 
-                (click)="$event.preventDefault(); selectFromCity(city)">
-                {{city.name}}
+                *ngFor="let station of filteredFromStations" 
+                (click)="$event.preventDefault(); selectFromStation(station)">
+                {{station.name}}
               </a>
             </div>
           </div>
