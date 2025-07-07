@@ -1,20 +1,76 @@
-<div class="container mt-4">
-  <h2>الإبلاغ عن مفقودات</h2>
-  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-  <form (ngSubmit)="submit()" *ngIf="train">
-    <div class="form-group">
-      <label for="itemDescription">وصف المفقود</label>
-      <textarea id="itemDescription" class="form-control" [(ngModel)]="post.ItemDescription" name="itemDescription" required></textarea>
+<div class="container">
+  <div class="form-container">
+    <h2 class="form-title">الإبلاغ عن مفقودات</h2>
+    
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
     </div>
-    <div class="form-group">
-      <label for="contactDetails">بيانات التواصل</label>
-      <input id="contactDetails" class="form-control" [(ngModel)]="post.ContactDetails" name="contactDetails" required />
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
     </div>
-    <div class="form-group">
-      <label for="photo">صورة المفقود</label>
-      <input id="photo" type="file" class="form-control-file" (change)="onFileSelected($event)" accept="image/*" required />
-    </div>
-    <button type="submit" class="btn btn-primary mt-3">إرسال البلاغ</button>
-  </form>
+    
+    <form #reportForm="ngForm" (ngSubmit)="submit()">
+      <div class="form-group">
+        <label for="itemDescription" class="form-label">وصف المفقود</label>
+        <textarea 
+          id="itemDescription" 
+          class="form-control" 
+          name="itemDescription" 
+          [(ngModel)]="post.ItemDescription"
+          required 
+          maxlength="100"
+          placeholder="اكتب وصفاً مختصراً للمفقود..."
+          rows="4"
+          #itemDescriptionInput="ngModel"
+          (input)="updateCharCounter($event)"
+        ></textarea>
+        <div id="charCounter" class="char-counter" [class.warning]="isCharCountWarning">
+          {{ charCount }} / 100 حرف
+        </div>
+        <div *ngIf="itemDescriptionInput.invalid && itemDescriptionInput.touched" class="form-error">
+          وصف المفقود مطلوب
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="contactDetails" class="form-label">بيانات التواصل</label>
+        <input 
+          id="contactDetails" 
+          class="form-control" 
+          name="contactDetails" 
+          [(ngModel)]="post.ContactDetails"
+          required 
+          placeholder="رقم الهاتف أو البريد الإلكتروني..."
+          #contactDetailsInput="ngModel"
+        />
+        <div *ngIf="contactDetailsInput.invalid && contactDetailsInput.touched" class="form-error">
+          بيانات التواصل مطلوبة
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="photo" class="form-label">صورة المفقود</label>
+        <input 
+          id="photo" 
+          type="file" 
+          class="form-control" 
+          accept="image/*" 
+          required
+          (change)="onFileSelected($event)"
+          #photoInput
+        />
+        <div *ngIf="selectedFile" class="image-preview-container">
+          <img [src]="imagePreviewUrl" class="image-preview" alt="معاينة الصورة">
+        </div>
+        <div *ngIf="!selectedFile && reportForm.submitted" class="form-error">
+          صورة المفقود مطلوبة
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button type="submit" class="btn-submit" [disabled]="reportForm.invalid">إرسال البلاغ</button>
+        <a class="btn-cancel" [routerLink]="['/traindetails', trainId, 'lost-and-found']">رجوع</a>
+      </div>
+    </form>
+  </div>
 </div>

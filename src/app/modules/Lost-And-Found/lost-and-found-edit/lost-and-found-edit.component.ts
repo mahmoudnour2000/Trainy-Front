@@ -21,6 +21,12 @@ export class LostAndFoundEditComponent implements OnInit {
   successMessage: string = '';
   loading: boolean = false;
 
+  // الخصائص الجديدة المضافة
+  charCount: number = 0;
+  isCharCountWarning: boolean = false;
+  imagePreviewUrl: string | null = null;
+  trainId: number = 0; // إضافة trainId للاستخدام في goBack()
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -48,7 +54,13 @@ export class LostAndFoundEditComponent implements OnInit {
         const post = posts.Data.find(p => p.LfId === this.postId && p.UserId === this.authService.getCurrentUserId());
         if (post ) {
           this.post = { ...post };
-       // التأكد من أن TrainId موجود
+          this.trainId = post.TrainId; // حفظ trainId للاستخدام في goBack()
+          
+          // تحديث character count عند تحميل البيانات
+          this.charCount = this.post.ItemDescription.length;
+          this.isCharCountWarning = this.charCount > 100 * 0.8;
+          
+          // التأكد من أن TrainId موجود
           if (!this.post.TrainId) {
             this.errorMessage = 'معرف القطار غير موجود في البلاغ';
             this.loading = false;
@@ -70,6 +82,15 @@ export class LostAndFoundEditComponent implements OnInit {
     });
   }
 
+  // الدالة الجديدة لتحديث عداد الأحرف
+  updateCharCounter(event: Event): void {
+    const input = event.target as HTMLTextAreaElement;
+    const maxLength = 100;
+    this.charCount = input.value.length;
+    this.isCharCountWarning = this.charCount > maxLength * 0.8;
+  }
+
+  // الدالة المحدثة لاختيار الملف
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
@@ -77,11 +98,26 @@ export class LostAndFoundEditComponent implements OnInit {
       if (file.size > 5 * 1024 * 1024) {
         this.errorMessage = 'حجم الصورة يجب ألا يتجاوز 5 ميجابايت';
         this.selectedFile = null;
+        this.imagePreviewUrl = null;
         return;
       }
       this.selectedFile = file;
-      this.post.Photo = URL.createObjectURL(file); // معاينة الصورة فورًا
+      
+      // إنشاء معاينة للصورة الجديدة
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imagePreviewUrl = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      this.imagePreviewUrl = null;
     }
+  }
+
+  // الدالة الجديدة للعودة للخلف
+  goBack(): void {
+    // اضبط الـ route حسب احتياجك
+    this.router.navigate(['/traindetails', this.trainId, 'lost-and-found']);
   }
 
   submit(): void {

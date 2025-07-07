@@ -1,26 +1,94 @@
-<div class="container mt-4">
-  <h2>تعديل بلاغ المفقود</h2>
-  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-  <div *ngIf="loading" class="text-center">
-    <div class="spinner-border" role="status">
-      <span class="visually-hidden">جاري التحميل...</span>
+<div class="container">
+  <div class="form-container">
+    <h2 class="form-title">تعديل بلاغ المفقود</h2>
+    
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
     </div>
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
+    
+    <div *ngIf="loading" class="text-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">جاري التحميل...</span>
+      </div>
+    </div>
+    
+    <form *ngIf="!loading && !successMessage" novalidate>
+      <div class="form-group">
+        <label for="itemDescription" class="form-label">وصف المفقود</label>
+        <textarea 
+          id="itemDescription" 
+          class="form-control" 
+          [(ngModel)]="post.ItemDescription" 
+          name="itemDescription" 
+          required
+          maxlength="100"
+          placeholder="اكتب وصفاً مختصراً للمفقود..."
+          rows="4"
+          (input)="updateCharCounter($event)"
+        ></textarea>
+        <div id="charCounter" class="char-counter" [class.warning]="isCharCountWarning">
+          {{ charCount }} / 100 حرف
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="contactDetails" class="form-label">بيانات التواصل</label>
+        <input 
+          id="contactDetails" 
+          type="text" 
+          class="form-control" 
+          [(ngModel)]="post.ContactDetails" 
+          name="contactDetails" 
+          required
+          placeholder="رقم الهاتف أو البريد الإلكتروني..."
+        />
+      </div>
+      
+      <div class="form-group">
+        <label for="photo" class="form-label">صورة المفقود (اختياري)</label>
+        <input 
+          id="photo" 
+          type="file" 
+          class="form-control" 
+          (change)="onFileSelected($event)" 
+          accept="image/*"
+        />
+        <div class="image-preview-container">
+          <img 
+            *ngIf="imagePreviewUrl" 
+            [src]="imagePreviewUrl" 
+            class="image-preview" 
+            alt="معاينة الصورة الجديدة"
+          />
+          <img 
+            *ngIf="!imagePreviewUrl && post.Photo" 
+            [src]="post.Photo" 
+            class="image-preview" 
+            alt="صورة المفقود الحالية"
+          />
+        </div>
+      </div>
+      
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn-submit" 
+          [disabled]="loading" 
+          (click)="submit()"
+        >
+          حفظ التعديلات
+        </button>
+        <button 
+          type="button" 
+          class="btn-cancel" 
+          (click)="goBack()"
+        >
+          رجوع
+        </button>
+      </div>
+    </form>
   </div>
-  <form *ngIf="!loading && !successMessage" novalidate>
-    <div class="mb-3">
-      <label for="itemDescription" class="form-label">وصف المفقود</label>
-      <textarea id="itemDescription" class="form-control" [(ngModel)]="post.ItemDescription" name="itemDescription" required></textarea>
-    </div>
-    <div class="mb-3">
-      <label for="contactDetails" class="form-label">بيانات التواصل</label>
-      <input id="contactDetails" type="text" class="form-control" [(ngModel)]="post.ContactDetails" name="contactDetails" required />
-    </div>
-    <div class="mb-3">
-      <label for="photo" class="form-label">صورة المفقود (اختياري)</label>
-      <input id="photo" type="file" class="form-control" (change)="onFileSelected($event)" accept="image/*" />
-      <img *ngIf="post.Photo" [src]="post.Photo" alt="صورة المفقود" class="img-thumbnail mt-2" style="max-width: 200px;" />
-    </div>
-    <button type="button" class="btn btn-primary" [disabled]="loading" (click)="submit()">حفظ التعديلات</button>
-  </form>
 </div>
