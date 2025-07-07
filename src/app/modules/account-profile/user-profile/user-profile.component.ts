@@ -1,6 +1,7 @@
+// src/app/modules/account-profile/user-profile/user-profile.component.ts
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../../../core/services/user.service';
-import { User, Offer, Request} from '../../../core/models/user';
+import { User, Offer, Request } from '../../../core/models/user';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -16,12 +17,10 @@ export class UserProfileComponent implements OnInit {
   personalInfoEditMode: boolean = false;
   isLoadingProfile: boolean = false;
   isLoadingOffers: boolean = false;
-isLoadingRequests: boolean = false;
- errorMessage: string | null = null;
+  isLoadingRequests: boolean = false;
+  errorMessage: string | null = null;
 
-  constructor(
-    private userService: UserService
-  ) {}
+  constructor(private userService: UserService) {}
 
   ngOnInit(): void {
     this.loadAllUserData();
@@ -30,7 +29,7 @@ isLoadingRequests: boolean = false;
   loadAllUserData(): void {
     this.isLoadingProfile = true;
     this.isLoadingOffers = true;
-this.isLoadingRequests = true;
+    this.isLoadingRequests = true;
 
     forkJoin({
       user: this.userService.getUserProfile(),
@@ -41,7 +40,6 @@ this.isLoadingRequests = true;
         console.log('User data loaded successfully:', result);
         this.user = result.user;
 
-        // التعامل مع offers
         if ('message' in result.offers) {
           this.offers = [];
           this.errorMessage = result.offers.message || 'لا توجد عروض متاحة';
@@ -50,7 +48,6 @@ this.isLoadingRequests = true;
           this.errorMessage = null;
         }
 
-        // التعامل مع requests
         if ('message' in result.requests) {
           this.requests = [];
           this.errorMessage = this.errorMessage || result.requests.message || 'لا توجد طلبات متاحة';
@@ -104,12 +101,9 @@ this.isLoadingRequests = true;
         console.error('Error fetching offers:', err);
         this.errorMessage = err.error?.message || 'حدث خطأ أثناء جلب العروض';
         this.offers = [];
-        this.requests = [];
       },
       complete: () => {
-      this.isLoadingProfile = false;
         this.isLoadingOffers = false;
-        this.isLoadingRequests = false;
       }
     });
   }
@@ -140,7 +134,7 @@ this.isLoadingRequests = true;
       this.userService.uploadProfileImage(file).subscribe({
         next: (response) => {
           if (this.user) {
-            this.user.Image = response.imageUrl; // ملاحظة: تأكدي إن الحقل في User هو 'image' وليس 'Image'
+            this.user.Image = response.imageUrl;
             console.log('تم تحديث صورة الملف الشخصي بنجاح');
           }
         },

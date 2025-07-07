@@ -4,5 +4,5 @@ export interface Notification {
   Message: string;
   NotificationTime: string;
   UserName: string;
-  IsRead?: boolean;
+  IsRead: boolean;
 }

@@ -5,7 +5,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 import { Router } from '@angular/router';
 import { NotificationService } from '../../core/services/notification.service';
-import { LoaderService } from '../../core/services/loader.service'; // إضافة LoaderService
+import { LoaderService } from '../../core/services/loader.service';
 import { Subscription } from 'rxjs';
 import { User } from '../../core/models/user';
 import { Notification } from '../../core/models/notification';
@@ -22,10 +22,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
   unreadCount: number = 0;
   notifications: Notification[] = [];
-  showDropdown: boolean = false; // للإشعارات
-  showUserDropdown: boolean = false; // لدروب داون المستخدم
-  user: User | null = null; // بيانات المستخدم
-  profileImage: string | undefined = undefined; // صورة المستخدم
+  showDropdown: boolean = false;
+  showUserDropdown: boolean = false;
+  user: User | null = null;
+  profileImage: string | undefined = undefined;
   private notificationSub!: Subscription;
   private userProfileSub!: Subscription;
   private profileImageSub!: Subscription;
@@ -35,46 +35,39 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private router: Router,
     private notificationService: NotificationService,
-    private loaderService: LoaderService, // إضافة LoaderService
+    private loaderService: LoaderService,
     private eRef: ElementRef,
-    private cdr: ChangeDetectorRef // لتحديث الـ UI
+    private cdr: ChangeDetectorRef
   ) {}
-  
-  
+
   ngOnInit(): void {
-    
     this.isLoggedIn = this.authService.isAuthenticated();
     if (this.isLoggedIn) {
       this.userService.getUserProfile().subscribe({
-         next: (user: User) => {
-           this.authService.LoggedUser.next(user);
-   
-           console.log('User profile fetched successfully', user);
-         },
-         error: (error) => {
-           this.authService.LoggedUser.next(null);
-           console.error('Error fetching user profile:', error);
-         }
-       });
-      // جلب بيانات المستخدم
+        next: (user: User) => {
+          this.authService.LoggedUser.next(user);
+          console.log('User profile fetched successfully', user);
+        },
+        error: (error) => {
+          this.authService.LoggedUser.next(null);
+          console.error('Error fetching user profile:', error);
+        }
+      });
+
       this.authService.LoggedUser.subscribe({
         next: (user) => {
-          
           this.user = user;
           console.log('User in header:', this.user);
           if (this.user) {
-            this.isLoggedIn = true
+            this.isLoggedIn = true;
             this.profileImage = this.user.Image;
-          }
-          else {
+          } else {
             this.isLoggedIn = false;
-            this.profileImage = undefined; // إعادة تعيين صورة المستخدم
+            this.profileImage = undefined;
           }
         }
-      })
-   
+      });
 
-      // جلب الإشعارات
       this.notificationSub = this.notificationService.getAllNotifications().subscribe({
         next: (notifications) => {
           this.notifications = notifications;
@@ -105,15 +98,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.notificationSub) {
-      this.notificationSub.unsubscribe();
-    }
-    if (this.userProfileSub) {
-      this.userProfileSub.unsubscribe();
-    }
-    if (this.profileImageSub) {
-      this.profileImageSub.unsubscribe();
-    }
+    if (this.notificationSub) this.notificationSub.unsubscribe();
+    if (this.userProfileSub) this.userProfileSub.unsubscribe();
+    if (this.profileImageSub) this.profileImageSub.unsubscribe();
   }
 
   logout(): void {
@@ -121,11 +108,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
       next: () => {
         this.isLoggedIn = false;
         this.user = null;
-        this.profileImage = undefined; // إعادة تعيين صورة المستخدم
+        this.profileImage = undefined;
         this.authService.clearToken();
-        this.authService.LoggedUser.next(null); // تحديث الـ BehaviorSubject
-        console.log("jkljjjjjjjjjjjjjjjjjjjjjjjjjj", this.isLoggedIn);
-        
+        this.authService.LoggedUser.next(null);
         this.router.navigate(['auth/login']);
       },
       error: () => {
@@ -138,17 +123,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   toggleDropdown(): void {
     this.showDropdown = !this.showDropdown;
-    this.showUserDropdown = false; // نقفل دروب داون المستخدم
-    // عند فتح الدروب داون، اعتبر كل الإشعارات مقروءة (صفر العداد)
+    this.showUserDropdown = false;
     if (this.showDropdown && this.unreadCount > 0) {
-      this.unreadCount = 0;
+      this.notifications.forEach(n => {
+        if (!n.IsRead) {
+          this.notificationService.markAsRead(n.Id).subscribe();
+        }
+      });
     }
     this.cdr.detectChanges();
   }
 
   toggleUserDropdown(): void {
     this.showUserDropdown = !this.showUserDropdown;
-    this.showDropdown = false; // نقفل دروب داون الإشعارات
+    this.showDropdown = false;
     this.cdr.detectChanges();
   }
 
@@ -159,7 +147,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   goToProfile(): void {
-    this.router.navigate(['/userProfile']); // تأكدي إن الـ route ده موجود
+    this.router.navigate(['/userProfile']);
     this.showUserDropdown = false;
     this.cdr.detectChanges();
   }

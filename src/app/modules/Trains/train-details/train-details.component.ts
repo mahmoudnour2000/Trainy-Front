@@ -7,6 +7,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
+
 @Component({
   standalone: true,
   selector: 'app-train-details',
@@ -19,11 +20,13 @@ export class TrainDetailsComponent implements OnInit {
   trainId!: number;
   train!: TrainListViewModel;
   isLoading: boolean = true;
-
+  isGuide: boolean | null = null; // متغير لفحص إذا كان اليوزر قائد
   stations: TrainStation[] = [];
   filteredStations: TrainStation[] = [];
   searchQuery: string = '';
   isModalOpen: boolean = false;
+  isNotificationEnabledValue: boolean | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private trainService: TrainService,
@@ -45,30 +48,40 @@ export class TrainDetailsComponent implements OnInit {
     }
   }
 
-isNotificationEnabledValue: boolean | null = null; // إضافة variable جديدة
-
-ngOnInit(): void {
-  if (!this.authService.isAuthenticated()) {
-    this.router.navigate(['/auth/login']);
-    return;
-  }
-  this.loadTrainDetails();
-  this.loadNotificationStatus(); // دالة جديدة
-  this.loadTrainStations();
-}
-
-loadNotificationStatus(): void {
-  this.notificationService.isNotificationEnabled(this.trainId).subscribe({
-    next: (enabled) => {
-      this.isNotificationEnabledValue = enabled;
-      console.log('Notification status loaded:', enabled);
-    },
-    error: (error) => {
-      console.error('Error loading notification status:', error);
-      this.isNotificationEnabledValue = null;
+  ngOnInit(): void {
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/auth/login']);
+      return;
     }
-  });
-}
+    this.loadTrainDetails();
+    this.loadNotificationStatus();
+    this.loadGuideStatus(); // فحص حالة القائد
+    this.loadTrainStations();
+  }
+
+  loadGuideStatus(): void {
+    try {
+      this.isGuide = this.authService.hasRole('Guide');
+      console.log('Guide status loaded:', this.isGuide);
+    } catch (error) {
+      console.error('Error loading guide status:', error);
+      this.isGuide = null;
+    }
+  }
+
+  loadNotificationStatus(): void {
+    this.notificationService.isNotificationEnabled(this.trainId).subscribe({
+      next: (enabled) => {
+        this.isNotificationEnabledValue = enabled;
+        console.log('Notification status loaded:', enabled);
+      },
+      error: (error) => {
+        console.error('Error loading notification status:', error);
+        this.isNotificationEnabledValue = null;
+      }
+    });
+  }
+
   loadTrainDetails(): void {
     this.trainService.getTrainById(this.trainId).subscribe({
       next: (data) => {
@@ -81,7 +94,8 @@ loadNotificationStatus(): void {
       }
     });
   }
- loadTrainStations(searchTerm: string = ''): void {
+
+  loadTrainStations(searchTerm: string = ''): void {
     this.trainService.getTrainStations(this.trainId, searchTerm).subscribe({
       next: (response) => {
         this.stations = response.Data;
@@ -109,33 +123,34 @@ loadNotificationStatus(): void {
       }
     });
   }
+
   toggleNotification(): void {
-  if (this.isNotificationEnabledValue === null) return;
+    if (this.isNotificationEnabledValue === null) return;
 
-  if (this.isNotificationEnabledValue) {
-    this.notificationService.leaveTrainGroup(this.trainId);
-    this.notificationService.disableNotification(this.trainId).subscribe(() => {
-      console.log(`Notification disabled for train ${this.trainId}`);
-      this.isNotificationEnabledValue = false; // ✅ تحديث القيمة مباشرة
-    });
-  } else {
-    this.notificationService.joinTrainGroup(this.trainId);
-    this.notificationService.enableNotification(this.trainId).subscribe(() => {
-      console.log(`Notification enabled for train ${this.trainId}`);
-      this.isNotificationEnabledValue = true; // ✅ تحديث القيمة مباشرة
-    });
+    if (this.isNotificationEnabledValue) {
+      this.notificationService.leaveTrainGroup(this.trainId);
+      this.notificationService.disableNotification(this.trainId).subscribe(() => {
+        console.log(`Notification disabled for train ${this.trainId}`);
+        this.isNotificationEnabledValue = false;
+      });
+    } else {
+      this.notificationService.joinTrainGroup(this.trainId);
+      this.notificationService.enableNotification(this.trainId).subscribe(() => {
+        console.log(`Notification enabled for train ${this.trainId}`);
+        this.isNotificationEnabledValue = true;
+      });
+    }
   }
-}
-
 
   openChat(): void {
     console.log('Opening chat for train', this.trainId);
   }
-  goToLostAndFound(): void {
-  this.router.navigate([`/traindetails/${this.trainId}/lost-and-found`]);
-}
 
-openGuideModal(): void {
+  goToLostAndFound(): void {
+    this.router.navigate([`/traindetails/${this.trainId}/lost-and-found`]);
+  }
+
+  openGuideModal(): void {
     if (!this.authService.isAuthenticated()) {
       alert('يرجى تسجيل الدخول أولاً لتصبح قائد الرحلة');
       this.router.navigate(['/auth/login']);
@@ -160,11 +175,12 @@ openGuideModal(): void {
               expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
               path: '/',
               secure: true,
-              sameSite: 'Strict' as 'Strict' // صراحة تحديد النوع
+              sameSite: 'Strict' as 'Strict'
             });
             localStorage.setItem('token', response.refreshToken);
+            this.isGuide = true; // تحديث حالة القائد
             this.closeGuideModal();
-            this.router.navigate(['/train-tracking/', this.trainId]);
+            this.router.navigate(['/train-tracking', this.trainId]);
           },
           error: (error) => {
             console.error('Error requesting guide role:', error);
@@ -177,5 +193,9 @@ openGuideModal(): void {
         alert('يرجى السماح بالوصول إلى الموقع لتصبح قائد الرحلة');
       }
     );
+  }
+
+  updateTrainLocation(): void {
+    this.router.navigate(['/train-tracking', this.trainId]);
   }
 }

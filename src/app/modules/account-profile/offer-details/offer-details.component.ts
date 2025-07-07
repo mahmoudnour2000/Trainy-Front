@@ -7,8 +7,7 @@ import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-offer-details',
-  standalone: true,
-  imports: [CommonModule, RouterModule],
+   standalone: false,
   templateUrl: './offer-details.component.html',
   styleUrls: ['./offer-details.component.css']
 })

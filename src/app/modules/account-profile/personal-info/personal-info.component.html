@@ -25,32 +25,92 @@
       </div>
     </div>
     <ng-template #editForm>
-  <form (ngSubmit)="onSubmit()">
-    <div class="row">
-      <div class="col-md-6 mb-3">
-        <label class="form-label">الاسم الكامل</label>
-        <input type="text" class="form-control" [(ngModel)]="editedUser.Name" name="name" required>
-      </div>
-      <div class="col-md-6 mb-3">
-        <label class="form-label">البريد الإلكتروني</label>
-        <input type="email" class="form-control" [(ngModel)]="editedUser.Email" name="email" required>
-      </div>
-      <div class="col-md-6 mb-3">
-        <label class="form-label">المحافظة</label>
-        <select class="form-select" [(ngModel)]="editedUser.Governorate" name="governorate" required>
-          <option *ngFor="let gov of governorates" [value]="gov">{{ gov }}</option>
-        </select>
-      </div>
-      <div class="col-md-6 mb-3">
-        <label class="form-label">المدينة</label>
-        <input type="text" class="form-control" [(ngModel)]="editedUser.City" name="city" required>
-      </div>
-      <div class="col-12">
-        <button type="submit" class="btn edit-btn me-2" [disabled]="!isFormValid()">حفظ التغييرات</button>
-        <button type="button" class="btn btn-secondary" (click)="onCancel()">إلغاء</button>
-      </div>
-    </div>
-  </form>
-</ng-template>
+      <form (ngSubmit)="onSubmit()" #personalInfoForm="ngForm">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label required-field">الاسم الكامل</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="editedUser.Name"
+              name="name"
+              required
+              #name="ngModel"
+              placeholder="أدخل الاسم الكامل"
+            >
+            <div class="text-danger" *ngIf="name.invalid && (name.dirty || name.touched)">
+              الاسم الكامل مطلوب
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label required-field">البريد الإلكتروني</label>
+            <input
+              type="email"
+              class="form-control"
+              [(ngModel)]="editedUser.Email"
+              name="email"
+              required
+              email
+              #email="ngModel"
+              placeholder="أدخل البريد الإلكتروني"
+            >
+            <div class="text-danger" *ngIf="email.invalid && (email.dirty || email.touched)">
+              <span *ngIf="email.errors?.['required']">البريد الإلكتروني مطلوب</span>
+              <span *ngIf="email.errors?.['email']">أدخل بريد إلكتروني صحيح</span>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label required-field">المحافظة</label>
+            <select
+              class="form-select"
+              [(ngModel)]="editedUser.Governorate"
+              name="governorate"
+              required
+              #governorate="ngModel"
+              (ngModelChange)="onGovernorateChange()"
+            >
+              <option value="" disabled selected>اختر المحافظة</option>
+              <option *ngFor="let gov of governorates" [value]="gov.id">{{ gov.name }}</option>
+            </select>
+            <div class="text-danger" *ngIf="governorate.invalid && (governorate.dirty || governorate.touched)">
+              من فضلك اختر المحافظة
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label required-field">المدينة</label>
+            <select
+              class="form-select"
+              [(ngModel)]="editedUser.City"
+              name="city"
+              required
+              #city="ngModel"
+              [disabled]="!editedUser.Governorate"
+            >
+              <option value="" disabled selected>اختر المدينة</option>
+              <option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</option>
+            </select>
+            <div class="text-danger" *ngIf="city.invalid && (city.dirty || city.touched)">
+              من فضلك اختر المدينة
+            </div>
+          </div>
+          <div class="col-12">
+            <button
+              type="submit"
+              class="btn edit-btn me-2"
+              [disabled]="personalInfoForm.invalid"
+            >
+              حفظ التغييرات
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="onCancel()"
+            >
+              إلغاء
+            </button>
+          </div>
+        </div>
+      </form>
+    </ng-template>
   </div>
 </div>

@@ -1,11 +1,14 @@
-import { Component } from '@angular/core';
 import { UserService, paymentMethod } from '../../../core/services/user.service';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms'; // Add this import
+
 @Component({
-  standalone: false,
   selector: 'app-wallet-card',
+  standalone: false,
   templateUrl: './wallet-card.component.html',
   styleUrls: ['./wallet-card.component.css']
 })

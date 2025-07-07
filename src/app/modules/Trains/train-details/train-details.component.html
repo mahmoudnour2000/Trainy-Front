@@ -1,7 +1,16 @@
 <div class="train-details" *ngIf="!isLoading; else loading">
   <h2>تفاصيل القطار: {{ train.No }}</h2>
-  <p>من: {{ train.Route_From }} إلى: {{ train.Route_To }}</p>
-  <p>🚩 الموقع الحالي: {{ train.Current_Location }}</p>
+<div class="route-info">
+    <div class="route-card">
+      <p>من: {{ train.Route_From }}</p>
+    </div>
+     <div class="route-card">
+      <p>🚩 الموقع الحالي: {{ train.Current_Location }}</p>
+    </div>
+    <div class="route-card">
+      <p>إلى: {{ train.Route_To }}</p>
+    </div>
+  </div>
   
   <div class="actions">
     <button (click)="openChat()">💬 الشات</button>
@@ -11,7 +20,10 @@
       </button>
     </ng-container>
     <button class="btn btn-primary" (click)="goToLostAndFound()">المفقودات</button>
-    <button class="btn btn-success" (click)="openGuideModal()">كن قائد الرحلة 🚂</button>
+    <ng-container *ngIf="isGuide !== null">
+      <button *ngIf="!isGuide" class="btn btn-success" (click)="openGuideModal()">كن قائد الرحلة 🚂</button>
+      <button *ngIf="isGuide" class="btn btn-success" (click)="updateTrainLocation()">تحديث مكان القطار 📍</button>
+    </ng-container>
   </div>
 
   <div class="stations-section">
@@ -20,7 +32,7 @@
       <input type="text" [(ngModel)]="searchQuery" placeholder="ابحث عن محطة...">
       <button (click)="searchStations()">بحث</button>
     </div>
-    <div class="stations-list">
+    <div class="stations-list" >
       <div *ngFor="let station of stations" class="station-item">
         <p>{{ station.StationName }} - الوصول: {{ station.ArrivalTime }}</p>
         <button (click)="goToStationServices(station.StationId)">خدمات المحطة</button>

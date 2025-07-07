@@ -5,20 +5,23 @@ import { environment } from '../../../environments/environment';
 import { TrainListViewModel, TrainSearchRequest, PaginatedResponse,TrainWithStations,TrainStation
 , StationServicesResponse, StationService, GuideRoleResponse
  } from '../models/train';
-
+ import { CookieService } from 'ngx-cookie-service';
+import { jwtDecode } from 'jwt-decode';
 @Injectable({
   providedIn: 'root'
 })
 export class TrainService {
   private apiUrl = `${environment.apiUrl}TrainApi`;
 private stationApiUrl = `${environment.apiUrl}Station`;
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private cookieService: CookieService, ) { }
  private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
       Authorization: `Bearer ${token}`
     });
   }
+
+  
   //used in train-list.component.ts
   getAllTrains(pageNumber: number = 1, pageSize: number = 2): Observable<PaginatedResponse<TrainListViewModel>> {
     return this.http.get<PaginatedResponse<TrainListViewModel>>(this.apiUrl, {
@@ -77,6 +80,14 @@ searchTrains(request: TrainSearchRequest): Observable<PaginatedResponse<TrainLis
 
   requestGuideRole(): Observable<GuideRoleResponse> {
     return this.http.post<GuideRoleResponse>(`http://localhost:5299/api/TrainTracking/request-guide-role`, { });
+  }
+
+  isUserGuide(trainId: number): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/trains/${trainId}/is-guide`, {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      })
+    });
   }
 } 
 

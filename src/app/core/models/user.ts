@@ -51,7 +51,7 @@ export interface Offer {
   RequestsCount: number;
   AcceptedRequestsCount: number;
   Requests: Request[];
-}
+} 
 
 export interface Request {
   Id: number;

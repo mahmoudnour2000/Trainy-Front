@@ -12,17 +12,13 @@
       <div *ngIf="offers.length === 0" class="alert alert-info">
         لا توجد عروض متاحة
       </div>  
-      <div *ngFor="let offer of offers">
-        <app-offer-card [offer]="offer"></app-offer-card>
-      </div>
+<app-offer-card [offers]="offers"></app-offer-card>
     </div>
     <div *ngIf="activeTab === 'requests'">
       <div *ngIf="requests.length === 0" class="alert alert-info">
         لا توجد طلبات متاحة
       </div>
-      <div *ngFor="let request of requests">
-        <app-request-card [request]="request"></app-request-card>
-      </div>
+        <app-request-card [requests]="requests"></app-request-card>
     </div>
   </div>
 </div>

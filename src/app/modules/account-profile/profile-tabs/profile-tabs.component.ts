@@ -5,8 +5,7 @@ import { OfferCardComponent } from '../offer-card/offer-card.component';
 import { RequestCardComponent } from '../request-card/request-card.component';
 @Component({
   selector: 'app-profile-tabs',
-  standalone: true,
-  imports: [CommonModule, OfferCardComponent,RequestCardComponent],
+  standalone: false,
   templateUrl: './profile-tabs.component.html',
   styleUrls: ['./profile-tabs.component.css']
 })

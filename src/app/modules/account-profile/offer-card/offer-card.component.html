@@ -1,43 +1,89 @@
-<div class="offer-card">
-  <div class="offer-header">
-    <div class="d-flex justify-content-between align-items-start">
-      <h6 class="mb-1">عرض رقم #{{ offer?.ID }}</h6>
-      <span class="status-badge status-{{ offer?.OfferStatus }}">
-        {{
-          offer?.OfferStatus === 'Pending' ? 'قيد الانتظار' :
-          offer?.OfferStatus === 'OnWay' ? 'في الطريق' :
-          offer?.OfferStatus === 'Delivered' ? 'تم التسليم' :
-          offer?.OfferStatus === 'InProgress' ? 'قيد التنفيذ' :
-          offer?.OfferStatus === 'Completed' ? 'مكتمل' :
-          offer?.OfferStatus === 'Canceled' ? 'ملغي' :
-          offer?.OfferStatus
-        }}
-      </span>
+<div class="offers-container">
+  <div class="offers-header">
+    <h4 class="section-title">العروض المتاحة</h4>
+    <div class="navigation-arrows" *ngIf="totalPages > 1">
+      <button 
+        class="nav-arrow nav-arrow-prev" 
+        [disabled]="currentPage === 0"
+        (click)="prevPage()">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <span class="page-indicator">{{ currentPage + 1 }} من {{ totalPages }}</span>
+      <button 
+        class="nav-arrow nav-arrow-next" 
+        [disabled]="currentPage === totalPages - 1"
+        (click)="nextPage()">
+        <i class="fas fa-chevron-right"></i>
+      </button>
     </div>
-    <small class="opacity-75">بتاريخ: {{ offer?.CreatedAt  }}</small>
   </div>
-  <div class="card-body">
-    <p class="text-muted small mb-2">{{ offer?.Description }}</p>
-    
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <strong class="text-primary">السعر: {{ offer?.Price }} جنيه</strong>
-      <span class="badge bg-light text-dark">الفئة: {{ offer?.Category }}</span>
-    </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <span class="badge bg-{{ offer?.IsBreakable ? 'danger' : 'success' }}">
-        {{ offer?.IsBreakable ? 'قابل للكسر' : 'غير قابل للكسر' }}
-      </span>
-      <small class="text-muted">الوزن: {{ offer?.Weight }} كجم</small>
+  <div class="offers-carousel-container">
+    <div class="offers-carousel" [style.transform]="'translateX(' + (-currentPage * 100) + '%)'">
+      <div class="offers-page" *ngFor="let page of paginatedOffers; let pageIndex = index">
+        <div class="offer-card" *ngFor="let offer of page">
+          <div class="offer-header">
+            <div class="d-flex justify-content-between align-items-start">
+              <h6 class="mb-1">عرض رقم #{{ offer?.ID }}</h6>
+              <span class="status-badge status-{{ offer?.OfferStatus }}">
+                {{
+                  offer?.OfferStatus === 'Pending' ? 'قيد الانتظار' :
+                  offer?.OfferStatus === 'OnWay' ? 'في الطريق' :
+                  offer?.OfferStatus === 'Delivered' ? 'تم التسليم' :
+                  offer?.OfferStatus === 'InProgress' ? 'قيد التنفيذ' :
+                  offer?.OfferStatus === 'Completed' ? 'مكتمل' :
+                  offer?.OfferStatus === 'Canceled' ? 'ملغي' :
+                  offer?.OfferStatus
+                }}
+              </span>
+            </div>
+            <small class="date-text">بتاريخ: {{ offer?.CreatedAt | date:'short' }}</small>
+          </div>
+          
+          <div class="card-body">
+            <p class="description-text">{{ offer?.Description }}</p>
+           
+            <div class="info-row">
+              <strong class="price-text">السعر: {{ offer?.Price }} جنيه</strong>
+              <span class="category-badge">الفئة: {{ offer?.Category }}</span>
+            </div>
+            
+            <div class="info-row">
+              <span class="breakable-badge badge-{{ offer?.IsBreakable ? 'danger' : 'success' }}">
+                {{ offer?.IsBreakable ? 'قابل للكسر' : 'غير قابل للكسر' }}
+              </span>
+              <small class="weight-text">الوزن: {{ offer?.Weight }} كجم</small>
+            </div>
+            
+            <div class="stations-info">
+              <div class="station-item">
+                <i class="fas fa-map-marker-alt pickup-icon"></i>
+                <small>محطة الاستلام: {{ offer?.PickupStationName }}</small>
+              </div>
+              <div class="station-item">
+                <i class="fas fa-map-marker-alt dropoff-icon"></i>
+                <small>محطة التسليم: {{ offer?.DropoffStationName }}</small>
+              </div>
+            </div>
+            
+            <div class="card-actions">
+              <a [routerLink]="['offer-details/', offer?.ID]" class="btn btn-primary">
+                <i class="fas fa-eye"></i>
+                تفاصيل العرض
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <small class="text-muted">محطة الاستلام: {{ offer?.PickupStationName }}</small>
-      <small class="text-muted">محطة التسليم: {{ offer?.DropoffStationName }}</small>
-    </div>
-
-    <div class="mt-3">
-      <a [routerLink]="['offer-details/', offer?.ID]" class="btn btn-primary btn-sm">تفاصيل العرض</a>
-    </div>
+  <div class="pagination-dots" *ngIf="totalPages > 1">
+    <span 
+      class="dot" 
+      *ngFor="let page of [].constructor(totalPages); let i = index"
+      [class.active]="i === currentPage"
+      (click)="goToPage(i)">
+    </span>
   </div>
 </div>

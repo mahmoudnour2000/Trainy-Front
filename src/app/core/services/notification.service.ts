@@ -31,19 +31,31 @@ export class NotificationService {
     }
 
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${environment.hubUrl}OurtrainTrackingHub`, {
+      .withUrl(`${environment.hubUrl}OurtrainTrackingHub`, { // تصحيح اسم الـ Hub
         accessTokenFactory: () => token
       })
       .build();
 
-    this.hubConnection.on('ReceiveNotification', (message: string) => {
-      console.log('Received notification:', message);
-      this.fetchNotifications(); // جلب الإشعارات الجديدة تلقائياً
+    this.hubConnection.on('ReceiveNotification', (notification: Notification) => {
+      console.log('Received notification:', notification);
+      this.updateNotifications(notification);
     });
 
     this.hubConnection.start()
       .then(() => console.log('SignalR connected at', new Date()))
       .catch(err => console.error('SignalR connection error:', err));
+  }
+
+  private updateNotifications(notification: Notification): void {
+    const currentNotifications = this.notifications$.value;
+    const index = currentNotifications.findIndex(n => n.Id === notification.Id);
+    if (index !== -1) {
+      currentNotifications[index] = notification;
+    } else {
+      currentNotifications.push(notification);
+    }
+    this.notifications$.next(currentNotifications);
+    this.updateUnreadCount();
   }
 
   getNotifications(): Observable<Notification> {
@@ -58,9 +70,22 @@ export class NotificationService {
     return this.unreadCount$.asObservable();
   }
 
-  markAsRead(notification: Notification): Observable<void> {
-    // شيلنا المنطق بتاع المسح لأن مفيش IsRead ومش عايزين نمسح
-    return new Observable<void>(); // فارغة
+  markAsRead(notificationId: number): Observable<void> {
+    const url = `${environment.apiUrl}Notification/markAsRead/${notificationId}`;
+    return this.http.post<void>(url, {}, {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${this.authService.getToken()}`
+      })
+    }).pipe(
+      tap(() => {
+        const currentNotifications = this.notifications$.value;
+        const updatedNotifications = currentNotifications.map(n =>
+          n.Id === notificationId ? { ...n, IsRead: true } : n
+        );
+        this.notifications$.next(updatedNotifications);
+        this.updateUnreadCount();
+      })
+    );
   }
 
   fetchNotifications(): void {
@@ -78,12 +103,17 @@ export class NotificationService {
       .subscribe({
         next: notifications => {
           console.log('Fetched notifications:', notifications);
-          this.notifications$.next(notifications); // جلب كل الإشعارات
-          this.unreadCount$.next(notifications.length); // عدد الإشعارات كلها بتبقى unread
+          this.notifications$.next(notifications);
+          this.updateUnreadCount();
           notifications.forEach(n => this.notificationSubject.next(n));
         },
         error: err => console.error('خطأ في جلب الإشعارات:', err)
       });
+  }
+
+  private updateUnreadCount(): void {
+    const unread = this.notifications$.value.filter(n => !n.IsRead).length;
+    this.unreadCount$.next(unread);
   }
 
   joinTrainGroup(trainId: number): void {

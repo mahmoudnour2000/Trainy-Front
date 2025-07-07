@@ -32,17 +32,17 @@
           <i class="fas fa-bell bell-icon" (click)="toggleDropdown()"></i>
           <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
           <div class="dropdown" *ngIf="showDropdown">
-            <ul>
-              <li *ngFor="let notification of notifications">
-                <div class="notif-card">
-                  <p>{{ notification.Message }}</p>
-                  <small>{{ notification.NotificationTime | date:'short' }}</small>
-                </div>
-              </li>
-              <li *ngIf="notifications.length === 0" class="empty-msg">لا توجد إشعارات حاليًا</li>
-            </ul>
-            <button (click)="viewAll()">عرض الكل</button>
-          </div>
+  <ul>
+    <li *ngFor="let notification of notifications">
+      <div class="notif-card">
+        <p>{{ notification.Message }}</p>
+        <small>{{ notification.NotificationTime | date:'short' }}</small>
+      </div>
+    </li>
+    <li *ngIf="notifications.length === 0" class="empty-msg">لا توجد إشعارات حاليًا</li>
+  </ul>
+  <button (click)="viewAll()">عرض الكل</button>
+</div>
         </div>
         <div class="nav-divider d-none d-lg-block"></div>
         <!-- إذا اليوزر مش مسجّل دخول -->
