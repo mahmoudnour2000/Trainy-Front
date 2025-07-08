@@ -81,15 +81,10 @@
 .requests-carousel {
   display: flex;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
 }
 
-.requests-page {
-  min-width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 20px;
-  padding: 10px;
-}
+/* لم نعد بحاجة إلى requests-page مع السلايدر الجديد */
 
 /* Card Styles */
 .request-card {
@@ -101,6 +96,10 @@
   overflow: hidden;
   transition: all 0.3s ease;
   position: relative;
+  margin: 0 10px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .request-card:hover {
@@ -326,39 +325,28 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .requests-page {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  
   .requests-header {
     flex-direction: column;
     gap: 15px;
     text-align: center;
   }
-  
   .section-title {
     font-size: 1.3rem;
   }
-  
   .request-card {
-    margin: 0 10px;
+    margin: 0 6px;
   }
-  
   .navigation-arrows {
     order: -1;
   }
-  
   .offer-description {
     max-width: 100%;
     margin-bottom: 10px;
   }
-  
   .request-header .d-flex {
     flex-direction: column;
     gap: 10px;
   }
-  
   .status-badge {
     align-self: flex-start;
   }

@@ -1,16 +1,113 @@
+
+<!-- Train List Template -->
 <app-hero-section></app-hero-section>
 <app-search-section (search)="filterTrains($event)"></app-search-section>
+
 <div style="background-image: url('/assets/main.png');" class="pb-5">
   <div class="container">
-    <!-- عرض رسالة "لا توجد قطارات" بس لو مافيش تحميل ومافيش بيانات -->
-    <div class="row" *ngIf="!isLoading && trains.length === 0">
-      <div class="col-12 text-center py-5">
-        <h3>لم يتم العثور على قطارات تطابق معايير البحث الخاصة بك.</h3>
+    
+    <!-- Loading Spinner -->
+    <div class="row" *ngIf="isLoading">
+      <div class="col-12">
+        <div class="loading-container">
+          <div class="d-flex justify-content-center align-items-center py-5">
+            <div class="spinner-border text-primary me-3" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <span>جاري تحميل القطارات...</span>
+          </div>
+        </div>
       </div>
     </div>
-    <!-- عرض ليستة القطارات -->
-    <div class="row" *ngIf="!isLoading && trains.length > 0">
-      <app-train-card *ngFor="let train of trains" [train]="train" (loadStations)="loadStations($event)"></app-train-card>
+
+    <!-- No Trains Found Message -->
+    <div class="row" *ngIf="!isLoading && trains.length === 0">
+      <div class="col-12">
+        <div class="empty-state">
+          <div class="text-center py-5">
+            <i class="fas fa-train fa-3x text-muted mb-3"></i>
+            <h3 class="text-muted">لم يتم العثور على قطارات تطابق معايير البحث الخاصة بك.</h3>
+            <p class="text-muted">جرب تعديل معايير البحث أو إعادة تحميل الصفحة</p>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Train Cards -->
+    <div class="row" *ngIf="!isLoading && trains.length > 0">
+      <app-train-card 
+        *ngFor="let train of trains" 
+        [train]="train" 
+        (loadStations)="loadStations($event)">
+      </app-train-card>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="row" *ngIf="!isLoading && trains.length > 0 && totalPages > 1">
+      <div class="col-12">
+        <nav aria-label="Train pagination" class="d-flex justify-content-center mt-4">
+          <ul class="pagination pagination-lg">
+            
+            <!-- First Page Button -->
+            <li class="page-item" [class.disabled]="pageNumber === 1">
+              <button class="page-link" (click)="goToFirstPage()" [disabled]="pageNumber === 1">
+                <i class="fas fa-angle-double-right"></i>
+              </button>
+            </li>
+
+            <!-- Previous Page Button -->
+            <li class="page-item" [class.disabled]="pageNumber === 1">
+              <button class="page-link" (click)="goToPreviousPage()" [disabled]="pageNumber === 1">
+                <i class="fas fa-angle-right"></i>
+              </button>
+            </li>
+
+            <!-- First Page Ellipsis -->
+            <li class="page-item disabled" *ngIf="showFirstPageEllipsis()">
+              <span class="page-link">...</span>
+            </li>
+
+            <!-- Page Numbers -->
+            <li class="page-item" 
+                *ngFor="let page of getPageNumbers()" 
+                [class.active]="page === pageNumber">
+              <button class="page-link" (click)="goToPage(page)">
+                {{ page }}
+              </button>
+            </li>
+
+            <!-- Last Page Ellipsis -->
+            <li class="page-item disabled" *ngIf="showLastPageEllipsis()">
+              <span class="page-link">...</span>
+            </li>
+
+            <!-- Next Page Button -->
+            <li class="page-item" [class.disabled]="pageNumber === totalPages">
+              <button class="page-link" (click)="goToNextPage()" [disabled]="pageNumber === totalPages">
+                <i class="fas fa-angle-left"></i>
+              </button>
+            </li>
+
+            <!-- Last Page Button -->
+            <li class="page-item" [class.disabled]="pageNumber === totalPages">
+              <button class="page-link" (click)="goToLastPage()" [disabled]="pageNumber === totalPages">
+                <i class="fas fa-angle-double-left"></i>
+              </button>
+            </li>
+
+          </ul>
+        </nav>
+
+        <!-- Pagination Info -->
+        <div class="text-center mt-3">
+          <small class="text-muted">
+            عرض {{ (pageNumber - 1) * pageSize + 1 }} - 
+            {{ Math.min(pageNumber * pageSize, totalItems) }} من أصل {{ totalItems }} قطار
+            (الصفحة {{ pageNumber }} من {{ totalPages }})
+          </small>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

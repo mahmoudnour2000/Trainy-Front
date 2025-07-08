@@ -81,15 +81,10 @@
 .offers-carousel {
   display: flex;
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
 }
 
-.offers-page {
-  min-width: 100%;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 20px;
-  padding: 10px;
-}
+/* لم نعد بحاجة إلى offers-page مع السلايدر الجديد */
 
 /* Card Styles */
 .offer-card {
@@ -101,6 +96,10 @@
   overflow: hidden;
   transition: all 0.3s ease;
   position: relative;
+  margin: 0 10px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .offer-card:hover {
@@ -384,35 +383,25 @@
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .offers-page {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  
   .offers-header {
     flex-direction: column;
     gap: 15px;
     text-align: center;
   }
-  
   .section-title {
     font-size: 1.3rem;
   }
-  
   .offer-card {
-    margin: 0 10px;
+    margin: 0 6px;
   }
-  
   .navigation-arrows {
     order: -1;
   }
-  
   .info-row {
     flex-direction: column;
     gap: 10px;
     align-items: stretch;
   }
-  
   .price-text, .category-badge {
     text-align: center;
   }

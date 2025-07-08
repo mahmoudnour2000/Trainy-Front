@@ -1,17 +1,17 @@
 <div class="train-details" *ngIf="!isLoading; else loading">
   <h2>تفاصيل القطار: {{ train.No }}</h2>
-<div class="route-info">
+  <div class="route-info">
     <div class="route-card">
       <p>من: {{ train.Route_From }}</p>
     </div>
-     <div class="route-card">
+    <div class="route-card">
       <p>🚩 الموقع الحالي: {{ train.Current_Location }}</p>
     </div>
     <div class="route-card">
       <p>إلى: {{ train.Route_To }}</p>
     </div>
   </div>
-  
+ 
   <div class="actions">
     <button (click)="openChat()">💬 الشات</button>
     <ng-container *ngIf="train.ID">
@@ -25,22 +25,68 @@
       <button *ngIf="isGuide" class="btn btn-success" (click)="updateTrainLocation()">تحديث مكان القطار 📍</button>
     </ng-container>
   </div>
-
+  
   <div class="stations-section">
     <h3>المحطات</h3>
     <div class="search-bar">
       <input type="text" [(ngModel)]="searchQuery" placeholder="ابحث عن محطة...">
       <button (click)="searchStations()">بحث</button>
     </div>
-    <div class="stations-list" >
+    
+    <!-- Stations List -->
+    <div class="stations-list" *ngIf="!isLoadingStations; else loadingStations">
       <div *ngFor="let station of stations" class="station-item">
         <p>{{ station.StationName }} - الوصول: {{ station.ArrivalTime }}</p>
         <button (click)="goToStationServices(station.StationId)">خدمات المحطة</button>
       </div>
       <p *ngIf="stations.length === 0">لا توجد محطات مطابقة</p>
     </div>
+    
+    <!-- Loading Stations -->
+    <ng-template #loadingStations>
+      <div class="stations-loading">
+        <div class="loading-spinner">⏳</div>
+        <p>جاري تحميل المحطات...</p>
+      </div>
+    </ng-template>
+    
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1 && !isLoadingStations">
+      <div class="pagination-info">
+        <span>عرض {{ stations.length }} من {{ totalItems }} محطة</span>
+        <span>الصفحة {{ currentPage }} من {{ totalPages }}</span>
+      </div>
+      
+      <div class="pagination-controls">
+        <button 
+          class="pagination-btn" 
+          (click)="previousPage()" 
+          [disabled]="currentPage === 1"
+          [class.disabled]="currentPage === 1">
+          السابق
+        </button>
+        
+        <div class="pagination-numbers">
+          <button 
+            *ngFor="let page of getPageNumbers()" 
+            class="pagination-number" 
+            [class.active]="page === currentPage"
+            (click)="goToPage(page)">
+            {{ page }}
+          </button>
+        </div>
+        
+        <button 
+          class="pagination-btn" 
+          (click)="nextPage()" 
+          [disabled]="currentPage === totalPages"
+          [class.disabled]="currentPage === totalPages">
+          التالي
+        </button>
+      </div>
+    </div>
   </div>
-
+  
   <!-- المودال -->
   <div class="modal" *ngIf="isModalOpen">
     <div class="modal-content">
@@ -64,4 +110,8 @@
   </div>
 </div>
 
-<ng-template #loading>جاري التحميل...</ng-template>
+<ng-template #loading>
+  <div class="loading-container">
+    جاري التحميل...
+  </div>
+</ng-template>
