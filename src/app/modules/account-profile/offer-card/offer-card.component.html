@@ -19,59 +19,55 @@
   </div>
 
   <div class="offers-carousel-container">
-    <div class="offers-carousel" [style.transform]="'translateX(' + (-currentPage * 100) + '%)'">
-      <div class="offers-page" *ngFor="let page of paginatedOffers; let pageIndex = index">
-        <div class="offer-card" *ngFor="let offer of page">
-          <div class="offer-header">
-            <div class="d-flex justify-content-between align-items-start">
-              <h6 class="mb-1">عرض رقم #{{ offer?.ID }}</h6>
-              <span class="status-badge status-{{ offer?.OfferStatus }}">
-                {{
-                  offer?.OfferStatus === 'Pending' ? 'قيد الانتظار' :
-                  offer?.OfferStatus === 'OnWay' ? 'في الطريق' :
-                  offer?.OfferStatus === 'Delivered' ? 'تم التسليم' :
-                  offer?.OfferStatus === 'InProgress' ? 'قيد التنفيذ' :
-                  offer?.OfferStatus === 'Completed' ? 'مكتمل' :
-                  offer?.OfferStatus === 'Canceled' ? 'ملغي' :
-                  offer?.OfferStatus
-                }}
-              </span>
-            </div>
-            <small class="date-text">بتاريخ: {{ offer?.CreatedAt | date:'short' }}</small>
+    <div class="offers-carousel" [style.transform]="'translateX(' + (-currentPage * (100/cardsPerPage)) + '%)'">
+      <div class="offer-card"
+           *ngFor="let offer of offers; let i = index"
+           [style.minWidth]="(100 / cardsPerPage) + '%'"
+           [style.maxWidth]="(100 / cardsPerPage) + '%'">
+        <div class="offer-header">
+          <div class="d-flex justify-content-between align-items-start">
+            <h6 class="mb-1">عرض رقم #{{ offer?.ID }}</h6>
+            <span class="status-badge status-{{ offer?.OfferStatus }}">
+              {{
+                offer?.OfferStatus === 'Pending' ? 'قيد الانتظار' :
+                offer?.OfferStatus === 'OnWay' ? 'في الطريق' :
+                offer?.OfferStatus === 'Delivered' ? 'تم التسليم' :
+                offer?.OfferStatus === 'InProgress' ? 'قيد التنفيذ' :
+                offer?.OfferStatus === 'Completed' ? 'مكتمل' :
+                offer?.OfferStatus === 'Canceled' ? 'ملغي' :
+                offer?.OfferStatus
+              }}
+            </span>
           </div>
-          
-          <div class="card-body">
-            <p class="description-text">{{ offer?.Description }}</p>
-           
-            <div class="info-row">
-              <strong class="price-text">السعر: {{ offer?.Price }} جنيه</strong>
-              <span class="category-badge">الفئة: {{ offer?.Category }}</span>
+          <small class="date-text">بتاريخ: {{ offer?.CreatedAt | date:'short' }}</small>
+        </div>
+        <div class="card-body">
+          <p class="description-text">{{ offer?.Description }}</p>
+          <div class="info-row">
+            <strong class="price-text">السعر: {{ offer?.Price }} جنيه</strong>
+            <span class="category-badge">الفئة: {{ offer?.Category }}</span>
+          </div>
+          <div class="info-row">
+            <span class="breakable-badge badge-{{ offer?.IsBreakable ? 'danger' : 'success' }}">
+              {{ offer?.IsBreakable ? 'قابل للكسر' : 'غير قابل للكسر' }}
+            </span>
+            <small class="weight-text">الوزن: {{ offer?.Weight }} كجم</small>
+          </div>
+          <div class="stations-info">
+            <div class="station-item">
+              <i class="fas fa-map-marker-alt pickup-icon"></i>
+              <small>محطة الاستلام: {{ offer?.PickupStationName }}</small>
             </div>
-            
-            <div class="info-row">
-              <span class="breakable-badge badge-{{ offer?.IsBreakable ? 'danger' : 'success' }}">
-                {{ offer?.IsBreakable ? 'قابل للكسر' : 'غير قابل للكسر' }}
-              </span>
-              <small class="weight-text">الوزن: {{ offer?.Weight }} كجم</small>
+            <div class="station-item">
+              <i class="fas fa-map-marker-alt dropoff-icon"></i>
+              <small>محطة التسليم: {{ offer?.DropoffStationName }}</small>
             </div>
-            
-            <div class="stations-info">
-              <div class="station-item">
-                <i class="fas fa-map-marker-alt pickup-icon"></i>
-                <small>محطة الاستلام: {{ offer?.PickupStationName }}</small>
-              </div>
-              <div class="station-item">
-                <i class="fas fa-map-marker-alt dropoff-icon"></i>
-                <small>محطة التسليم: {{ offer?.DropoffStationName }}</small>
-              </div>
-            </div>
-            
-            <div class="card-actions">
-              <a [routerLink]="['offer-details/', offer?.ID]" class="btn btn-primary">
-                <i class="fas fa-eye"></i>
-                تفاصيل العرض
-              </a>
-            </div>
+          </div>
+          <div class="card-actions">
+            <a [routerLink]="['offer-details/', offer?.ID]" class="btn btn-primary">
+              <i class="fas fa-eye"></i>
+              تفاصيل العرض
+            </a>
           </div>
         </div>
       </div>

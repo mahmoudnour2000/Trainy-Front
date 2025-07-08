@@ -47,7 +47,7 @@ searchTrains(request: TrainSearchRequest): Observable<PaginatedResponse<TrainLis
     });
   }
 
-  getStations(searchString: string = '', pageNumber: number = 1, pageSize: number = 100): Observable<PaginatedResponse<{ Name: string; Location: string }>> {
+  getStations(searchString: string = '', pageNumber: number = 1, pageSize: number = 20): Observable<PaginatedResponse<{ Name: string; Location: string }>> {
     let params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());
@@ -67,11 +67,18 @@ searchTrains(request: TrainSearchRequest): Observable<PaginatedResponse<TrainLis
     });
   }
 
-  getTrainStations(trainId: number, searchTerm: string = ''): Observable<PaginatedResponse<TrainStation>> {
-    const params: { [key: string]: string } = { pageSize: '100' };
-    if (searchTerm.trim()) params['stationName'] = searchTerm;
-    return this.http.get<PaginatedResponse<TrainStation>>(`${this.apiUrl}/stations/${trainId}`, { params });
+  getTrainStations(trainId: number, searchTerm: string = '', page: number = 1, pageSize: number = 4): Observable<PaginatedResponse<TrainStation>> {
+  const params: { [key: string]: string } = { 
+    pageNumber: page.toString(),
+    pageSize: pageSize.toString() 
+  };
+  
+  if (searchTerm.trim()) {
+    params['stationName'] = searchTerm;
   }
+  
+  return this.http.get<PaginatedResponse<TrainStation>>(`${this.apiUrl}/stations/${trainId}`, { params });
+}
 
   getServicesByStationId(StationId: number): Observable<StationServicesResponse> {
     return this.http.get<StationServicesResponse>(`http://localhost:5299/api/StationServicesApi/ByStation/${StationId}`);

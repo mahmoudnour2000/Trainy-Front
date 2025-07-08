@@ -20,12 +20,19 @@ export class TrainDetailsComponent implements OnInit {
   trainId!: number;
   train!: TrainListViewModel;
   isLoading: boolean = true;
-  isGuide: boolean | null = null; // متغير لفحص إذا كان اليوزر قائد
+  isGuide: boolean | null = null;
   stations: TrainStation[] = [];
   filteredStations: TrainStation[] = [];
   searchQuery: string = '';
   isModalOpen: boolean = false;
   isNotificationEnabledValue: boolean | null = null;
+  
+  // Pagination properties
+  currentPage: number = 1;
+  pageSize: number = 4;
+  totalItems: number = 0;
+  totalPages: number = 0;
+  isLoadingStations: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -55,7 +62,7 @@ export class TrainDetailsComponent implements OnInit {
     }
     this.loadTrainDetails();
     this.loadNotificationStatus();
-    this.loadGuideStatus(); // فحص حالة القائد
+    this.loadGuideStatus();
     this.loadTrainStations();
   }
 
@@ -96,21 +103,78 @@ export class TrainDetailsComponent implements OnInit {
     });
   }
 
-  loadTrainStations(searchTerm: string = ''): void {
-    this.trainService.getTrainStations(this.trainId, searchTerm).subscribe({
+  loadTrainStations(page: number = 1, searchTerm: string = ''): void {
+    this.isLoadingStations = true;
+    this.currentPage = page;
+    
+    // Update the service call to include pagination
+    this.trainService.getTrainStations(this.trainId, searchTerm, page, this.pageSize).subscribe({
       next: (response) => {
         this.stations = response.Data;
+        this.totalItems = response.TotalCount;
+        this.totalPages = response.TotalPages;
+        this.isLoadingStations = false;
         console.log('Stations loaded:', this.stations);
+        console.log('Pagination info:', {
+          currentPage: this.currentPage,
+          totalItems: this.totalItems,
+          totalPages: this.totalPages
+        });
       },
       error: (error) => {
         console.error('Error loading train stations:', error);
         this.stations = [];
+        this.totalItems = 0;
+        this.totalPages = 0;
+        this.isLoadingStations = false;
       }
     });
   }
 
   searchStations(): void {
-    this.loadTrainStations(this.searchQuery.trim());
+    this.currentPage = 1; // Reset to first page when searching
+    this.loadTrainStations(1, this.searchQuery.trim());
+  }
+
+  // Pagination methods
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages && page !== this.currentPage) {
+      this.loadTrainStations(page, this.searchQuery.trim());
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.goToPage(this.currentPage - 1);
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.goToPage(this.currentPage + 1);
+    }
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxPagesToShow = 5;
+    
+    if (this.totalPages <= maxPagesToShow) {
+      // Show all pages if total pages is less than or equal to max
+      for (let i = 1; i <= this.totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Show smart pagination
+      const startPage = Math.max(1, this.currentPage - 2);
+      const endPage = Math.min(this.totalPages, startPage + maxPagesToShow - 1);
+      
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+    }
+    
+    return pages;
   }
 
   goToStationServices(stationId: number): void {
@@ -171,7 +235,6 @@ export class TrainDetailsComponent implements OnInit {
         this.trainService.requestGuideRole().subscribe({
           next: (response) => {
             console.log(response.message);
-            // تحديث التوكين في الكوكيز و localStorage
             this.cookieService.set('auth_token', response.refreshToken, {
               expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
               path: '/',
@@ -179,7 +242,7 @@ export class TrainDetailsComponent implements OnInit {
               sameSite: 'Strict' as 'Strict'
             });
             localStorage.setItem('token', response.refreshToken);
-            this.isGuide = true; // تحديث حالة القائد
+            this.isGuide = true;
             this.closeGuideModal();
             this.router.navigate(['/train-tracking', this.trainId]);
           },
