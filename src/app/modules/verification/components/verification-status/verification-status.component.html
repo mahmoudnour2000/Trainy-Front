@@ -26,42 +26,64 @@
         <!-- Main verification status display -->
         <div class="verification-status-main">
           <div class="status-icon">
-            <i [class]="'bi ' + getStatusIcon(verificationStatus.senderStatus) + ' status-icon-large'"></i>
+            <i [class]="'bi ' + getStatusIcon(getCombinedStatus()) + ' status-icon-large'"></i>
           </div>
           
           <div class="status-info">
-            <div class="status-badge" [ngClass]="getStatusClass(verificationStatus.senderStatus)">
-              {{ getStatusText(verificationStatus.senderStatus) }}
+            <div class="status-badge" [ngClass]="getStatusClass(getCombinedStatus())">
+              {{ getStatusText(getCombinedStatus()) }}
             </div>
             
             <div class="status-description">
-              <ng-container [ngSwitch]="verificationStatus.senderStatus">
-                <p *ngSwitchCase="'NotSubmitted'">
-                  لم تقم بتقديم طلب التحقق بعد. يرجى تقديم المستندات المطلوبة للتحقق من حسابك.
-                </p>
-                <p *ngSwitchCase="'Accepted'">
-                  تم قبول طلب التحقق الخاص بك. يمكنك الآن استخدام جميع ميزات المنصة.
-                </p>
-                <p *ngSwitchCase="'Pending'">
-                  طلب التحقق الخاص بك قيد المراجعة من قبل فريقنا.
-                </p>
-                <p *ngSwitchCase="'Rejected'" class="rejection-reason">
-                  تم رفض طلب التحقق. 
-                  <span *ngIf="verificationStatus.lastSenderRejectionReason">
-                    السبب: {{ verificationStatus.lastSenderRejectionReason }}
-                  </span>
-                </p>
-                <p *ngSwitchDefault>
-                  طلب التحقق الخاص بك قيد المراجعة من قبل فريقنا.
-                </p>
-              </ng-container>
+              <p>{{ getCombinedStatusDescription() }}</p>
             </div>
             
             <!-- Processing time message -->
-            <div class="processing-time-notice">
+            <div class="processing-time-notice" *ngIf="getCombinedStatus() === 'Pending'">
               <div class="notice-content">
                 <i class="bi bi-clock me-2"></i>
                 <span>تستغرق عملية المراجعة حوالي 24 ساعة</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed verification status breakdown -->
+        <div class="detailed-status-section" *ngIf="verificationStatus.verificationRequests.length > 0">
+          <h4 class="details-title">تفاصيل التحقق</h4>
+          
+          <div class="verification-details">
+            <!-- Sender verification status -->
+            <div class="verification-box">
+              <div class="role-title">
+                <i class="bi bi-send"></i>
+                <h5>المرسل</h5>
+              </div>
+              <div class="role-status">
+                <span class="status-badge small" [ngClass]="getStatusClass(verificationStatus.senderStatus)">
+                  {{ getStatusText(verificationStatus.senderStatus) }}
+                </span>
+                <p *ngIf="verificationStatus.senderStatus === 'Rejected' && verificationStatus.lastSenderRejectionReason" 
+                   class="rejection-reason">
+                  السبب: {{ verificationStatus.lastSenderRejectionReason }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Courier verification status -->
+            <div class="verification-box">
+              <div class="role-title">
+                <i class="bi bi-truck"></i>
+                <h5>الموصل</h5>
+              </div>
+              <div class="role-status">
+                <span class="status-badge small" [ngClass]="getStatusClass(verificationStatus.courierStatus)">
+                  {{ getStatusText(verificationStatus.courierStatus) }}
+                </span>
+                <p *ngIf="verificationStatus.courierStatus === 'Rejected' && verificationStatus.lastCourierRejectionReason" 
+                   class="rejection-reason">
+                  السبب: {{ verificationStatus.lastCourierRejectionReason }}
+                </p>
               </div>
             </div>
           </div>
@@ -72,7 +94,7 @@
           <div class="navigation-buttons">
             <!-- Start verification button for NotSubmitted status -->
             <button 
-              *ngIf="verificationStatus.senderStatus === 'NotSubmitted'"
+              *ngIf="getCombinedStatus() === 'NotSubmitted'"
               class="submit-btn start-verification-btn me-2"
               (click)="goToVerificationForm()"
             >
@@ -82,7 +104,7 @@
             
             <!-- Retry button for rejected status -->
             <button 
-              *ngIf="verificationStatus.senderStatus === 'Rejected'"
+              *ngIf="getCombinedStatus() === 'Rejected'"
               class="submit-btn retry-btn me-2"
               (click)="goToVerificationForm()"
             >
@@ -92,7 +114,7 @@
             
             <!-- Main navigation to offers page for accepted users -->
             <button 
-              *ngIf="verificationStatus.senderStatus === 'Accepted'" 
+              *ngIf="getCombinedStatus() === 'Accepted'" 
               class="submit-btn primary-action me-2" 
               (click)="goToOffers()"
             >

@@ -63,6 +63,80 @@ export class VerificationStatusComponent implements OnInit {
     );
   }
 
+  /**
+   * Calculate combined verification status based on both sender and courier statuses
+   * Priority: Accepted > Pending > Rejected > NotSubmitted
+   */
+  getCombinedStatus(): VerificationStatusType {
+    const senderStatus = this.verificationStatus.senderStatus;
+    const courierStatus = this.verificationStatus.courierStatus;
+    
+    // If either is accepted, show accepted
+    if (senderStatus === 'Accepted' || courierStatus === 'Accepted') {
+      return 'Accepted';
+    }
+    
+    // If either is pending, show pending
+    if (senderStatus === 'Pending' || courierStatus === 'Pending') {
+      return 'Pending';
+    }
+    
+    // If either is rejected, show rejected
+    if (senderStatus === 'Rejected' || courierStatus === 'Rejected') {
+      return 'Rejected';
+    }
+    
+    // Both are not submitted
+    return 'NotSubmitted';
+  }
+
+  /**
+   * Get the description text for the combined status
+   */
+  getCombinedStatusDescription(): string {
+    const senderStatus = this.verificationStatus.senderStatus;
+    const courierStatus = this.verificationStatus.courierStatus;
+    const combinedStatus = this.getCombinedStatus();
+    
+    switch (combinedStatus) {
+      case 'Accepted':
+        if (senderStatus === 'Accepted' && courierStatus === 'Accepted') {
+          return 'تم قبول طلبي التحقق للمرسل والموصل. يمكنك الآن استخدام جميع ميزات المنصة.';
+        } else if (senderStatus === 'Accepted') {
+          return 'تم قبول طلب التحقق كمرسل. يمكنك الآن إنشاء العروض وإرسال الطلبات.';
+        } else {
+          return 'تم قبول طلب التحقق كموصل. يمكنك الآن إرسال طلبات وإنشاء العروض.';
+        }
+        
+      case 'Pending':
+        const pendingRoles = [];
+        if (senderStatus === 'Pending') pendingRoles.push('المرسل');
+        if (courierStatus === 'Pending') pendingRoles.push('الموصل');
+        return `طلب التحقق ${pendingRoles.join(' و ')} قيد المراجعة من قبل فريقنا.`;
+        
+      case 'Rejected':
+        const rejectedRoles = [];
+        if (senderStatus === 'Rejected') rejectedRoles.push('المرسل');
+        if (courierStatus === 'Rejected') rejectedRoles.push('الموصل');
+        
+        let rejectionText = `تم رفض طلب التحقق ${rejectedRoles.join(' و ')}.`;
+        
+        // Add rejection reasons if available
+        if (senderStatus === 'Rejected' && this.verificationStatus.lastSenderRejectionReason) {
+          rejectionText += ` سبب رفض المرسل: ${this.verificationStatus.lastSenderRejectionReason}`;
+        }
+        if (courierStatus === 'Rejected' && this.verificationStatus.lastCourierRejectionReason) {
+          rejectionText += ` سبب رفض الموصل: ${this.verificationStatus.lastCourierRejectionReason}`;
+        }
+        
+        return rejectionText;
+        
+      case 'NotSubmitted':
+      default:
+        return 'لم تقم بتقديم طلب التحقق بعد. يرجى تقديم المستندات المطلوبة للتحقق من حسابك.';
+    }
+  }
+
   refreshStatus(): void {
     this.loading = true;
     this.errorMessage = '';

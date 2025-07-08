@@ -45,13 +45,13 @@ export class AddOfferComponent implements OnInit {
     { id: 'other', name: 'أخرى' }
   ];
   
-  // Fixed stations list (0-3) - will be replaced with API call later
+  // Fixed stations list - will be replaced with API call later
   stations: Station[] = [
     { id: 1, name: 'محطة أسوان', location: 'أسوان' },
     { id: 3, name: 'محطة الأقصر', location: 'الأقصر' },
     { id: 4, name: 'محطة قنا', location: 'قنا' },
     { id: 5, name: 'محطة سوهاج', location: 'سوهاج' },
-    { id: 5, name: 'محطة القاهرة', location: 'القاهرة' }
+    { id: 6, name: 'محطة القاهرة', location: 'القاهرة' }
   ];
 
   // Price matrix for calculating suggested prices
