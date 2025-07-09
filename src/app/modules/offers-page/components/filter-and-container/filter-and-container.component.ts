@@ -41,10 +41,12 @@ export class FilterAndContainerComponent implements OnInit {
   isSenderVerified: boolean = false;
 
   categories: { id: string, name: string }[] = [
+    { id: 'documents', name: 'مستندات' },
     { id: 'electronics', name: 'إلكترونيات' },
     { id: 'clothing', name: 'ملابس' },
-    { id: 'food', name: 'طعام' },
-    { id: 'furniture', name: 'أثاث' }
+    { id: 'food', name: 'مواد غذائية' },
+    { id: 'furniture', name: 'أثاث' },
+    { id: 'other', name: 'أخرى' }
   ];
 
   dateFilters: { id: string, name: string }[] = [
@@ -56,12 +58,11 @@ export class FilterAndContainerComponent implements OnInit {
   ];
 
   locations: { id: string, name: string }[] = [
-    { id: 'cairo', name: 'القاهرة' },
-    { id: 'alexandria', name: 'الإسكندرية' },
-    { id: 'giza', name: 'الجيزة' },
-    { id: 'sharm', name: 'شرم الشيخ' },
-    { id: 'luxor', name: 'الأقصر' },
-    { id: 'aswan', name: 'أسوان' }
+    { id: '1', name: 'محطة أسوان' },
+    { id: '3', name: 'محطة الأقصر' },
+    { id: '4', name: 'محطة قنا' },
+    { id: '5', name: 'محطة سوهاج' },
+    { id: '6', name: 'محطة القاهرة' }
   ];
 
   constructor(
@@ -160,7 +161,7 @@ export class FilterAndContainerComponent implements OnInit {
   }
 
   private transformOfferToOrder(offer: any): any {
-    return {
+    const transformedOrder = {
       id: offer.ID,
       description: offer.Description,
       from: offer.PickupStationId,
@@ -168,7 +169,7 @@ export class FilterAndContainerComponent implements OnInit {
       to: offer.DropoffStationId,
       toDisplay: offer.DropoffStationName || 'غير محدد',
       category: offer.Category,
-      categoryDisplay: offer.Category,
+      categoryDisplay: this.getCategoryDisplayName(offer.Category),
       weight: offer.Weight,
       price: offer.Price,
       image: offer.Picture || 'assets/0001699_bags-handbags.jpeg',
@@ -181,6 +182,15 @@ export class FilterAndContainerComponent implements OnInit {
       requestsCount: offer.RequestsCount || 0,
       isBreakable: offer.IsBreakable
     };
+    
+    console.log('transformOfferToOrder debug:', {
+      originalCategory: offer.Category,
+      transformedCategory: transformedOrder.category,
+      categoryDisplay: transformedOrder.categoryDisplay,
+      offer: offer
+    });
+    
+    return transformedOrder;
   }
 
   private getLocationIdFromStationName(stationName: string): string {
@@ -202,9 +212,18 @@ export class FilterAndContainerComponent implements OnInit {
       'Electronics': 'electronics',
       'Clothing': 'clothing',
       'Food': 'food',
-      'Furniture': 'furniture'
+      'Furniture': 'furniture',
+      'Documents': 'documents',
+      'Other': 'other',
+      // إضافة المزيد من الحالات المحتملة
+      'electronics': 'electronics',
+      'clothing': 'clothing',
+      'food': 'food',
+      'furniture': 'furniture',
+      'documents': 'documents',
+      'other': 'other'
     };
-    return categoryMap[category] || 'electronics';
+    return categoryMap[category] || 'other';
   }
 
   private getCategoryDisplayName(category: string): string {
@@ -212,12 +231,23 @@ export class FilterAndContainerComponent implements OnInit {
       'Electronics': 'إلكترونيات',
       'Clothing': 'ملابس',
       'Food': 'طعام',
-      'Furniture': 'أثاث'
+      'Furniture': 'أثاث',
+      'Documents': 'مستندات',
+      'Other': 'أخرى',
+      'electronics': 'إلكترونيات',
+      'clothing': 'ملابس',
+      'food': 'طعام',
+      'furniture': 'أثاث',
+      'documents': 'مستندات',
+      'other': 'أخرى'
     };
-    return categoryMap[category] || 'إلكترونيات';
+    return categoryMap[category] || category || 'غير محدد';
   }
 
   applyFilters(): void {
+    console.log('🔍 Applying filters:', this.filters);
+    console.log('📦 Total orders before filtering:', this.orders.length);
+    
     this.filteredOrders = this.orders.filter(order => {
       // Search text filter
       if (this.filters.search && 
@@ -225,9 +255,13 @@ export class FilterAndContainerComponent implements OnInit {
         return false;
       }
       
-      // Category filter
-      if (this.filters.category && order.category !== this.filters.category) {
-        return false;
+      // Category filter - convert API category to frontend category ID for comparison
+      if (this.filters.category) {
+        const orderCategoryId = this.mapCategoryToId(order.category);
+        console.log(`🔍 Category filter: order.category="${order.category}" -> orderCategoryId="${orderCategoryId}" vs filter="${this.filters.category}"`);
+        if (orderCategoryId !== this.filters.category) {
+          return false;
+        }
       }
       
       // Date filter
@@ -256,15 +290,19 @@ export class FilterAndContainerComponent implements OnInit {
         }
       }
       
-      // From location filter - Note: This would need to be implemented based on station data
-      // For now, we'll skip this filter as it requires station mapping
+      // From location filter - compare station IDs
       if (this.filters.fromLocation) {
-        // TODO: Implement station-based filtering when station data is available
-        // return false;
+        const orderFromStationId = order.from?.toString();
+        console.log(`🔍 Location filter: order.from="${order.from}" -> orderFromStationId="${orderFromStationId}" vs filter="${this.filters.fromLocation}"`);
+        if (orderFromStationId !== this.filters.fromLocation) {
+          return false;
+        }
       }
       
       return true;
     });
+    
+    console.log('✅ Filtered orders count:', this.filteredOrders.length);
     
     // Apply sorting if needed
     if (this.filters.date === 'newest') {
