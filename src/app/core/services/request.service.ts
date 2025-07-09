@@ -19,6 +19,7 @@ export interface Request {
   createdAt: Date;
   fromStationId?: number;
   pickupStationName?: string;
+  PickupStationName?: string; // Added for backend compatibility
 }
 
 export enum RequestStatus {

@@ -44,7 +44,31 @@ export class RequestCardComponent implements OnInit {
       next: (offer) => {
         if (offer) {
           const currentUserId = this.authService.getUserId();
-          this.isOfferOwner = currentUserId === offer.senderId;
+          
+          // Handle different possible sender ID properties from API
+          const offerAny = offer as any;
+          const possibleSenderIds = [
+            offer.senderId,
+            offerAny?.senderId,
+            offerAny?.SenderId,
+            offerAny?.UserId,
+            offerAny?.UserID,
+            offerAny?.ID && offerAny?.SenderId ? offerAny.SenderId : null
+          ].filter(id => id != null && id !== undefined && id !== '');
+          
+          // Try both string and number comparisons
+          this.isOfferOwner = possibleSenderIds.some(id => {
+            const idStr = String(id);
+            const userIdStr = String(currentUserId);
+            return idStr === userIdStr || id === currentUserId;
+          });
+          
+          console.log('RequestCard checkIfOfferOwner debug:', {
+            currentUserId: currentUserId,
+            possibleSenderIds: possibleSenderIds,
+            isOfferOwner: this.isOfferOwner,
+            offer: offer
+          });
         }
       },
       error: (err) => console.error('Error checking offer ownership:', err)
@@ -60,25 +84,13 @@ export class RequestCardComponent implements OnInit {
   }
   
   onContact(): void {
-    // Check if the user can contact
+    // تحقق من الصلاحية قبل التنفيذ
     if (!this.canContact()) {
       alert('لا يمكنك التواصل مع هذا المستخدم');
       return;
     }
     
-    console.log('Contact button clicked for request:', this.request.id, 'for offer:', this.request.offerId);
-    // console.log('Contact details:', {
-    //   requestId: this.request.id,
-    //   offerId: this.request.offerId,
-    //   courierId: this.request.courierId,
-    //   courierName: this.request.courierName,
-    //   currentUserId: this.authService.getUserId()
-    // });
-    
-    // Emit contact event for parent component to handle
     this.contact.emit(this.request.id);
-    
-    // Show a message to the user until chat component is ready
     alert('سيتم فتح نافذة الدردشة قريباً للتواصل مع ' + (this.request.courierName || 'الموصل'));
   }
   
@@ -150,32 +162,8 @@ export class RequestCardComponent implements OnInit {
   }
   
   canContact(): boolean {
-    // Must be authenticated
-    if (!this.authService.isAuthenticated()) {
-      return false;
-    }
-    
-    // Must be the offer owner
-    if (!this.isOfferOwner) {
-      return false;
-    }
-    
-    // Request must be accepted to enable contact
-    if (this.request.status !== RequestStatus.Accepted) {
-      return false;
-    }
-    
-    console.log('canContact debug:', {
-      isAuthenticated: this.authService.isAuthenticated(),
-      isOfferOwner: this.isOfferOwner,
-      requestStatus: this.request.status,
-      requestStatusAccepted: RequestStatus.Accepted,
-      canContact: this.authService.isAuthenticated() && 
-                  this.isOfferOwner && 
-                  this.request.status === RequestStatus.Accepted
-    });
-    
-    return true;
+    // يجب أن يكون المستخدم مسجل دخول وأن يكون صاحب العرض
+    return this.authService.isAuthenticated() && this.isOfferOwner;
   }
   
   getStatusClass(): string {
