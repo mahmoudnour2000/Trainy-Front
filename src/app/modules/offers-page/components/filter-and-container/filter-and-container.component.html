@@ -15,10 +15,12 @@
                                 الفئة
                             </button>
                             <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setCategoryFilter('documents')">مستندات</a></li>
                                 <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setCategoryFilter('electronics')">إلكترونيات</a></li>
                                 <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setCategoryFilter('clothing')">ملابس</a></li>
-                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setCategoryFilter('food')">طعام</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setCategoryFilter('food')">مواد غذائية</a></li>
                                 <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setCategoryFilter('furniture')">أثاث</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setCategoryFilter('other')">أخرى</a></li>
                             </ul>
                         </div>
                         
@@ -40,12 +42,11 @@
                                 من
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('cairo')">القاهرة</a></li>
-                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('alexandria')">الإسكندرية</a></li>
-                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('giza')">الجيزة</a></li>
-                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('sharm')">شرم الشيخ</a></li>
-                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('luxor')">الأقصر</a></li>
-                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('aswan')">أسوان</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('1')">محطة أسوان</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('3')">محطة الأقصر</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('4')">محطة قنا</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('5')">محطة سوهاج</a></li>
+                                <li><a class="dropdown-item" href="#" (click)="$event.preventDefault(); setFromLocationFilter('6')">محطة القاهرة</a></li>
                             </ul>
                         </div>
                         

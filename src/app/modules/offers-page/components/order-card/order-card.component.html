@@ -24,6 +24,10 @@
                 <span>{{order.weight}} كغم</span>
             </div>
             <div class="info-item">
+                <i class="fas fa-tag"></i>
+                <span>{{order.categoryDisplay || order.category || 'غير محدد'}}</span>
+            </div>
+            <div class="info-item">
                 <i class="fas fa-calendar"></i>
                 <span>{{formatDate(order.date)}}</span>
             </div>

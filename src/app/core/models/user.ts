@@ -65,6 +65,7 @@ export interface Request {
   UpdatedAt: string;
   SenderId?: string;
   FromStationId: number;
+  PickupStationName?: string; // Added to match backend response
   ReqTime: string;
   RequestStatus: RequestStatus; 
 }

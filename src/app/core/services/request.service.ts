@@ -19,6 +19,7 @@ export interface Request {
   createdAt: Date;
   fromStationId?: number;
   pickupStationName?: string;
+  PickupStationName?: string; // Added for backend compatibility
 }
 
 export enum RequestStatus {
@@ -31,6 +32,8 @@ export enum RequestStatus {
 export interface RequestCreateModel {
   offerId: number;
   message: string;
+  fromStationId: number;
+  courierAge: number;
 }
 
 @Injectable({

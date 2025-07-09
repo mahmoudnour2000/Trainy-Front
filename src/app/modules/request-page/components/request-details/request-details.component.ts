@@ -44,7 +44,7 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
     { id: 3, name: 'محطة الأقصر' },
     { id: 4, name: 'محطة قنا' },
     { id: 5, name: 'محطة سوهاج' },
-    { id: 5, name: 'محطة القاهرة' }
+    { id: 6, name: 'محطة القاهرة' }
   ];
   
   // Filtered stations based on search
@@ -215,6 +215,11 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
       return;
     }
     
+    if (!this.selectedFromStationId) {
+      this.showError('يجب اختيار محطة التحرك');
+      return;
+    }
+    
     if (!this.offerId) {
       this.showError('معرف العرض غير موجود');
       return;
@@ -225,7 +230,9 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
     
     const requestData: RequestCreateModel = {
       offerId: this.offerId,
-      message: this.requestText.trim()
+      message: this.requestText.trim(),
+      fromStationId: this.selectedFromStationId,
+      courierAge: this.age
     };
     
     console.log('Submitting request:', requestData);

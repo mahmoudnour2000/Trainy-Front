@@ -17,7 +17,7 @@
       <div class="profile-tags">
         <span class="tag tag-from">من: {{offer.fromStationName}}</span>
         <span class="tag tag-to">إلى: {{offer.toStationName}}</span>
-        <span class="tag tag-category">{{offer.category}}</span>
+        <span class="tag tag-category">{{getCategoryDisplayName(offer.category)}}</span>
         <span class="tag tag-weight">{{offer.weight}} كجم</span>
         <span class="tag tag-price">{{offer.price}} جنيه</span>
         <span class="tag tag-breakable" *ngIf="offer.isBreakable">قابل للكسر</span>

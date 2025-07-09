@@ -39,6 +39,10 @@
           <p class="message-text">{{ request?.Message }}</p>
           <div class="request-info">
             <div class="info-item">
+              <i class="fas fa-map-marker"></i>
+              <small class="from-station">من محطة: {{ request?.PickupStationName || 'غير محدد' }}</small>
+            </div>
+            <div class="info-item">
               <i class="fas fa-calendar-alt"></i>
               <small class="created-date">أُنْشئ: {{ request?.CreatedAt | date:'short' }}</small>
             </div>

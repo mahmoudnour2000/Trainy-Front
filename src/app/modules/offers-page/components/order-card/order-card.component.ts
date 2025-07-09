@@ -278,41 +278,8 @@ export class OrderCardComponent implements OnInit, OnChanges {
       return;
     }
     
-    // Check if user is a sender
-    if (!this.authService.isSender()) {
-      alert('يجب أن تكون مسجل كمرسل لتعديل العروض');
-      return;
-    }
-    
-    // Check sender verification status
-    this.verificationService.verificationStatus$.subscribe(status => {
-      if (status.senderStatus === 'Pending') {
-        alert('طلب التحقق الخاص بك قيد المراجعة. يرجى انتظار الموافقة قبل تعديل العروض.');
-        this.router.navigate(['/verification/status']);
-        return;
-      }
-      
-      if (status.senderStatus === 'Rejected') {
-        if (confirm('تم رفض طلب التحقق الخاص بك. هل تريد إعادة المحاولة؟')) {
-          this.router.navigate(['/verification'], { 
-            queryParams: { roleType: 'Sender', returnUrl: this.router.url } 
-          });
-        }
-        return;
-      }
-      
-      if (status.senderStatus !== 'Accepted') {
-        if (confirm('يجب التحقق من حسابك كمرسل أولاً. هل تريد الانتقال إلى صفحة التحقق؟')) {
-          this.router.navigate(['/verification'], { 
-            queryParams: { roleType: 'Sender', returnUrl: this.router.url } 
-          });
-        }
-        return;
-      }
-      
-      console.log('Edit clicked for order:', this.order);
-      this.router.navigate(['/offers/add-offer', this.order.id]);
-    }).unsubscribe();
+    console.log('Edit clicked for order:', this.order);
+    this.router.navigate(['/offers/add-offer', this.order.id]);
   }
 
   onDelete(): void {
@@ -328,125 +295,44 @@ export class OrderCardComponent implements OnInit, OnChanges {
       return;
     }
     
-    // Check if user is a sender
-    if (!this.authService.isSender()) {
-      alert('يجب أن تكون مسجل كمرسل لحذف العروض');
-      return;
+    console.log('Delete clicked for order:', this.order);
+    if (confirm('هل أنت متأكد من حذف هذا العرض؟')) {
+      // Use the API to delete the offer
+      this.offerService.deleteOffer(this.order.id).subscribe({
+        next: (response) => {
+          console.log('Offer deleted successfully:', response);
+          this.deleteOrder.emit(this.order.id);
+        },
+        error: (error) => {
+          console.error('Error deleting offer:', error);
+          alert('حدث خطأ أثناء حذف العرض');
+        }
+      });
     }
-    
-    // Check sender verification status
-    this.verificationService.verificationStatus$.subscribe(status => {
-      if (status.senderStatus === 'Pending') {
-        alert('طلب التحقق الخاص بك قيد المراجعة. يرجى انتظار الموافقة قبل حذف العروض.');
-        this.router.navigate(['/verification/status']);
-        return;
-      }
-      
-      if (status.senderStatus === 'Rejected') {
-        if (confirm('تم رفض طلب التحقق الخاص بك. هل تريد إعادة المحاولة؟')) {
-          this.router.navigate(['/verification'], { 
-            queryParams: { roleType: 'Sender', returnUrl: this.router.url } 
-          });
-        }
-        return;
-      }
-      
-      if (status.senderStatus !== 'Accepted') {
-        if (confirm('يجب التحقق من حسابك كمرسل أولاً. هل تريد الانتقال إلى صفحة التحقق؟')) {
-          this.router.navigate(['/verification'], { 
-            queryParams: { roleType: 'Sender', returnUrl: this.router.url } 
-          });
-        }
-        return;
-      }
-      
-      console.log('Delete clicked for order:', this.order);
-      if (confirm('هل أنت متأكد من حذف هذا العرض؟')) {
-        // Use the API to delete the offer
-        this.offerService.deleteOffer(this.order.id).subscribe({
-          next: (response) => {
-            console.log('Offer deleted successfully:', response);
-            this.deleteOrder.emit(this.order.id);
-          },
-          error: (error) => {
-            console.error('Error deleting offer:', error);
-            alert('حدث خطأ أثناء حذف العرض');
-          }
-        });
-      }
-    }).unsubscribe();
   }
 
   canEditOrder(): boolean {
-    const currentUser = this.authService.getCurrentUser();
-    const userRoles = this.authService.getUserRoles();
-    
-    // Primary logic: authenticated + sender role + owner
-    const standardCheck = this.authService.isAuthenticated() && 
-                         this.authService.isSender() && 
-                         this.isOrderOwner;
-    
-    // Fallback logic: authenticated + owner (for cases where role might be different)
-    const fallbackCheck = this.authService.isAuthenticated() && 
-                          this.isOrderOwner &&
-                          (this.authService.hasRole('Sender') || 
-                           this.authService.hasRole('sender') ||
-                           userRoles.some(role => role.toLowerCase().includes('sender')));
-    
-    // Simple ownership check (most permissive - owner can always edit their own offers)
-    const ownershipCheck = this.authService.isAuthenticated() && this.isOrderOwner;
-    
-    const canEdit = standardCheck || fallbackCheck || ownershipCheck;
+    // Simple ownership check - owner can always edit their own offers
+    const canEdit = this.authService.isAuthenticated() && this.isOrderOwner;
            
     console.log('canEditOrder debug:', {
       isAuthenticated: this.authService.isAuthenticated(),
-      isSender: this.authService.isSender(),
       isOrderOwner: this.isOrderOwner,
-      standardCheck: standardCheck,
-      fallbackCheck: fallbackCheck,
-      ownershipCheck: ownershipCheck,
-      canEdit: canEdit,
-      currentUser: currentUser,
-      userRoles: userRoles,
-      userRole: currentUser?.Role
+      canEdit: canEdit
     });
     
     return canEdit;
   }
 
   canDeleteOrder(): boolean {
-    const currentUser = this.authService.getCurrentUser();
-    const userRoles = this.authService.getUserRoles();
-    
-    // Primary logic: authenticated + sender role + owner
-    const standardCheck = this.authService.isAuthenticated() && 
-                         this.authService.isSender() && 
-                         this.isOrderOwner;
-    
-    // Fallback logic: authenticated + owner (for cases where role might be different)
-    const fallbackCheck = this.authService.isAuthenticated() && 
-                          this.isOrderOwner &&
-                          (this.authService.hasRole('Sender') || 
-                           this.authService.hasRole('sender') ||
-                           userRoles.some(role => role.toLowerCase().includes('sender')));
-    
-    // Simple ownership check (most permissive - owner can always delete their own offers)
-    const ownershipCheck = this.authService.isAuthenticated() && this.isOrderOwner;
-    
-    const canDelete = standardCheck || fallbackCheck || ownershipCheck;
+    // Simple ownership check - owner can always delete their own offers
+    const canDelete = this.authService.isAuthenticated() && this.isOrderOwner;
            
-    // console.log('canDeleteOrder debug:', {
-    //   isAuthenticated: this.authService.isAuthenticated(),
-    //   isSender: this.authService.isSender(),
-    //   isOrderOwner: this.isOrderOwner,
-    //   standardCheck: standardCheck,
-    //   fallbackCheck: fallbackCheck,
-    //   ownershipCheck: ownershipCheck,
-    //   canDelete: canDelete,
-    //   currentUser: currentUser,
-    //   userRoles: userRoles,
-    //   userRole: currentUser?.role
-    // });
+    console.log('canDeleteOrder debug:', {
+      isAuthenticated: this.authService.isAuthenticated(),
+      isOrderOwner: this.isOrderOwner,
+      canDelete: canDelete
+    });
     
     return canDelete;
   }
