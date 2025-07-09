@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Offer } from '../../../core/models/user';
 
 @Component({
@@ -12,9 +12,9 @@ import { Offer } from '../../../core/models/user';
 })
 export class OfferCardComponent implements OnInit {
   // @Input() offer: any[] = [];
+   constructor(private router: Router) {} 
 @Input() offers: Offer[] = [];
   @Input() cardsPerPage: number = 3;
-  
   currentPage: number = 0;
   totalPages: number = 0;
   paginatedOffers: any[][] = [];
@@ -65,4 +65,8 @@ export class OfferCardComponent implements OnInit {
       this.currentPage = pageIndex;
     }
   }
+
+  goToOfferRequest(offerId: number | string): void {
+  this.router.navigate(['/requests/offer', offerId]);
+}
 }

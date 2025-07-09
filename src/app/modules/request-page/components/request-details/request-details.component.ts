@@ -102,7 +102,7 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
     // Get user name from token
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
-      this.currentUserName = currentUser.name || 'المستخدم';
+      this.currentUserName = currentUser.Name || 'المستخدم';
     }
     
     // Load user profile image

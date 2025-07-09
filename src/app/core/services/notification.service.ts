@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import { Observable, Subject, BehaviorSubject, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { AuthService } from '../services/auth.service';
@@ -12,15 +12,25 @@ import { Notification } from '../../core/models/notification';
 })
 export class NotificationService {
   private hubConnection!: HubConnection;
-  private notificationSubject = new Subject<Notification>();
   private notifications$ = new BehaviorSubject<Notification[]>([]);
   private unreadCount$ = new BehaviorSubject<number>(0);
+  private hasNewNotification$ = new BehaviorSubject<boolean>(false); // BehaviorSubject لحالة الإشعار الجديد
 
   constructor(
     private http: HttpClient,
     private authService: AuthService
   ) {
-    this.initHubConnection();
+    this.authService.isAuthenticated$().subscribe(isAuthenticated => {
+      if (isAuthenticated) {
+        this.initHubConnection();
+        this.fetchNotifications();
+      } else {
+        this.stopHubConnection();
+        this.notifications$.next([]);
+        this.unreadCount$.next(0);
+        this.hasNewNotification$.next(false);
+      }
+    });
   }
 
   private initHubConnection(): void {
@@ -30,8 +40,12 @@ export class NotificationService {
       return;
     }
 
+    if (this.hubConnection && this.hubConnection.state === 'Connected') {
+      return;
+    }
+
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${environment.hubUrl}OurtrainTrackingHub`, { // تصحيح اسم الـ Hub
+      .withUrl(`${environment.hubUrl}OurtrainTrackingHub`, {
         accessTokenFactory: () => token
       })
       .build();
@@ -39,6 +53,9 @@ export class NotificationService {
     this.hubConnection.on('ReceiveNotification', (notification: Notification) => {
       console.log('Received notification:', notification);
       this.updateNotifications(notification);
+      if (!notification.IsRead) {
+        this.hasNewNotification$.next(true); // تحديث حالة الإشعار الجديد
+      }
     });
 
     this.hubConnection.start()
@@ -46,20 +63,24 @@ export class NotificationService {
       .catch(err => console.error('SignalR connection error:', err));
   }
 
+  private stopHubConnection(): void {
+    if (this.hubConnection) {
+      this.hubConnection.stop()
+        .then(() => console.log('SignalR disconnected'))
+        .catch(err => console.error('Error stopping SignalR:', err));
+    }
+  }
+
   private updateNotifications(notification: Notification): void {
     const currentNotifications = this.notifications$.value;
     const index = currentNotifications.findIndex(n => n.Id === notification.Id);
-    if (index !== -1) {
-      currentNotifications[index] = notification;
+    if (index === -1) {
+      currentNotifications.unshift(notification); // إضافة الإشعار الجديد في بداية القايمة
     } else {
-      currentNotifications.push(notification);
+      currentNotifications[index] = notification; // تحديث الإشعار لو موجود
     }
-    this.notifications$.next(currentNotifications);
+    this.notifications$.next([...currentNotifications]);
     this.updateUnreadCount();
-  }
-
-  getNotifications(): Observable<Notification> {
-    return this.notificationSubject.asObservable();
   }
 
   getAllNotifications(): Observable<Notification[]> {
@@ -68,6 +89,14 @@ export class NotificationService {
 
   getUnreadCount(): Observable<number> {
     return this.unreadCount$.asObservable();
+  }
+
+  getHasNewNotification(): Observable<boolean> {
+    return this.hasNewNotification$.asObservable();
+  }
+
+  resetNewNotification(): void {
+    this.hasNewNotification$.next(false); // إعادة تعيين حالة الإشعار الجديد
   }
 
   markAsRead(notificationId: number): Observable<void> {
@@ -84,6 +113,9 @@ export class NotificationService {
         );
         this.notifications$.next(updatedNotifications);
         this.updateUnreadCount();
+        if (updatedNotifications.every(n => n.IsRead)) {
+          this.hasNewNotification$.next(false);
+        }
       })
     );
   }
@@ -91,6 +123,9 @@ export class NotificationService {
   fetchNotifications(): void {
     if (!this.authService.isAuthenticated()) {
       console.error('المستخدم غير مصادق عليه');
+      this.notifications$.next([]);
+      this.unreadCount$.next(0);
+      this.hasNewNotification$.next(false);
       return;
     }
     const url = `${environment.apiUrl}Notification/getUserNotifications`;
@@ -105,14 +140,20 @@ export class NotificationService {
           console.log('Fetched notifications:', notifications);
           this.notifications$.next(notifications);
           this.updateUnreadCount();
-          notifications.forEach(n => this.notificationSubject.next(n));
+          this.hasNewNotification$.next(notifications.some(n => !n.IsRead));
         },
-        error: err => console.error('خطأ في جلب الإشعارات:', err)
+        error: err => {
+          console.error('خطأ في جلب الإشعارات:', err);
+          this.notifications$.next([]);
+          this.unreadCount$.next(0);
+          this.hasNewNotification$.next(false);
+        }
       });
   }
 
   private updateUnreadCount(): void {
     const unread = this.notifications$.value.filter(n => !n.IsRead).length;
+    console.log('Updated unread count:', unread);
     this.unreadCount$.next(unread);
   }
 

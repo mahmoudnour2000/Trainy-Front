@@ -1,3 +1,42 @@
+.offers-list {
+  /* ...existing code... */
+}
+
+@media (max-width: 1200px) {
+  .offers-list {
+    gap: 14px;
+  }
+  .offer-card {
+    min-width: 240px;
+    max-width: 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .offers-list {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .offer-card {
+    flex: 1 1 calc(50% - 20px);
+    min-width: 220px;
+    max-width: 420px;
+    margin: 10px 6px;
+  }
+}
+
+@media (max-width: 768px) {
+  .offers-list {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .offer-card {
+    flex: 1 1 100%;
+    min-width: 90vw;
+    max-width: 100vw;
+    margin: 10px auto;
+  }
+}
 /* Container Styles */
 .offers-container {
   padding: 20px;
@@ -25,10 +64,31 @@
 }
 
 /* Navigation Arrows */
+
+/* Default: arrows at top */
 .navigation-arrows {
   display: flex;
   align-items: center;
   gap: 15px;
+  justify-content: flex-end;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+/* Responsive: move arrows below cards on small screens */
+@media (max-width: 768px) {
+  .navigation-arrows {
+    order: 2;
+    justify-content: center;
+    margin-top: 18px;
+    margin-bottom: 0;
+    width: 100%;
+  }
+  .offers-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
 }
 
 .nav-arrow {
@@ -72,21 +132,64 @@
 }
 
 /* Carousel Styles */
-.offers-carousel-container {
-  overflow: hidden;
+
+.offers-pagination-container {
+  width: 100%;
   border-radius: 16px;
   margin-bottom: 20px;
 }
 
-.offers-carousel {
+.offers-list {
   display: flex;
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-wrap: wrap;
+  gap: 24px;
   width: 100%;
+  justify-content: flex-start;
+  align-items: stretch;
+}
+
+.offer-card {
+  flex: 1 1 calc(33.333% - 24px);
+  min-width: 290px;
+  max-width: 420px;
+  margin: 0;
+}
+
+@media (max-width: 1200px) {
+  .offer-card {
+    min-width: 240px;
+    max-width: 1fr;
+  }
+}
+
+@media (max-width: 992px) {
+  .offers-list {
+    gap: 16px;
+  }
+  .offer-card {
+    flex: 1 1 calc(50% - 16px);
+    min-width: 220px;
+    max-width: 98vw;
+    margin: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .offers-list {
+    gap: 10px;
+  }
+  .offer-card {
+    flex: 1 1 100%;
+    min-width: 95vw;
+    max-width: 100vw;
+    margin: 0 auto;
+  }
 }
 
 /* لم نعد بحاجة إلى offers-page مع السلايدر الجديد */
 
 /* Card Styles */
+
 .offer-card {
   background: white;
   border: 2px solid #dde8ff;
@@ -96,10 +199,12 @@
   overflow: hidden;
   transition: all 0.3s ease;
   position: relative;
-  margin: 0 10px;
-  flex-shrink: 0;
+  min-width: 280px;
+  max-width: 350px;
+  flex: 1 1 0;
   display: flex;
   flex-direction: column;
+  margin: 0;
 }
 
 .offer-card:hover {

@@ -408,7 +408,7 @@ export class OrderCardComponent implements OnInit, OnChanges {
       canEdit: canEdit,
       currentUser: currentUser,
       userRoles: userRoles,
-      userRole: currentUser?.role
+      userRole: currentUser?.Role
     });
     
     return canEdit;

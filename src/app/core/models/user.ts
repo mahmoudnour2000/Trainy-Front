@@ -9,6 +9,7 @@ export interface User {
   Image?: string; 
   CreatedAt?: string; // أضفنا joinDate عشان تتطابق مع الـ HTML
   Balance?: number;
+  Role?: string; // أضفنا Role عشان تتطابق مع الـ HTML
 }
 export enum PaymentMethod {
   EtisalatCash = 0,

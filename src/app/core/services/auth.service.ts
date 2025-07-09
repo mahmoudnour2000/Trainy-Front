@@ -3,7 +3,7 @@ import { IUserLogin, IUserRegister } from '../models/auth';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, throwError, BehaviorSubject } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AuthResponse, AUser } from '../models/auth';
+import { AuthResponse } from '../models/auth';
 import { tap, map } from 'rxjs/operators';
 import { CookieService } from 'ngx-cookie-service'; 
 import { jwtDecode } from 'jwt-decode';
@@ -15,15 +15,14 @@ import { UserService } from './user.service';
 })
 export class AuthService {
   LoggedUser: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
-
+private currentUserSubject = new BehaviorSubject<User | null>(null);
+public currentUser$ = this.currentUserSubject.asObservable();
+private authStateSubject = new BehaviorSubject<boolean>(false);
+public authStateChanged$ = this.authStateSubject.asObservable();
   private apiUrl: string = environment.apiUrl + 'Account/';
   
   // Reactive state management
-  private authStateSubject = new BehaviorSubject<boolean>(false);
-  private currentUserSubject = new BehaviorSubject<AUser | null>(null);
   
-  public authStateChanged$ = this.authStateSubject.asObservable();
-  public currentUser$ = this.currentUserSubject.asObservable();
   
   constructor(private http: HttpClient, private cookieService: CookieService) { 
     // Initialize subjects with current state after dependencies are injected
@@ -119,17 +118,20 @@ export class AuthService {
     return this.getCurrentUserId();
   }
 
-  getCurrentUser(): AUser | null {
+  getCurrentUser(): User | null {
     const token = this.getToken();
     if (token) {
       try {
         const decoded: any = jwtDecode(token);
         // console.log('🔑 Decoded token:', decoded);
-        const user = {
-          id: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || '',
-          email: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '',
-          name: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || '',
-          role: decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || ''
+        const user: User = {
+          Id: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || '',
+          Name: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || '',
+          Email: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '',
+          Role: decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || '',
+          Governorate: '',
+          City: '',
+          PhoneNumber: ''
         };
         // console.log('👤 Current user:', user);
         return user;
@@ -153,7 +155,11 @@ export class AuthService {
     
     this.authStateSubject.next(isAuth);
     this.currentUserSubject.next(user);
+      this.LoggedUser.next(user);
+
   }
+
+  
 
   // Observable version of isAuthenticated
   isAuthenticated$(): Observable<boolean> {
@@ -163,12 +169,12 @@ export class AuthService {
   // Role-based authentication methods
   isSender(): boolean {
     const user = this.getCurrentUser();
-    return user?.role === 'Sender' || user?.role === 'sender';
+    return user?.Role === 'Sender' || user?.Role === 'sender';
   }
 
   isCourier(): boolean {
     const user = this.getCurrentUser();
-    return user?.role === 'Courier' || user?.role === 'courier';
+    return user?.Role === 'Courier' || user?.Role === 'courier';
   }
 
   // Get user roles from token

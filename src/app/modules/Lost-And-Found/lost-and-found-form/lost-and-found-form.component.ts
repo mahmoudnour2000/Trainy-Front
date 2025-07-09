@@ -119,7 +119,7 @@ export class LostAndFoundFormComponent implements OnInit {
       next: (response: { message: string }) => {
         this.successMessage = response.message;
         setTimeout(() => {
-          this.router.navigate([`/traindetails/${this.trainId}`]);
+          this.router.navigate([`/traindetails/${this.trainId}/lost-and-found`]);
         }, 2000);
       },
       error: (error) => {
