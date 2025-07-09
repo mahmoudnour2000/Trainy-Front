@@ -56,8 +56,16 @@ export class OfferDetailsComponent implements OnInit, OnDestroy, OnChanges {
                 createdAt: offer.createdAt || offerAny.CreatedAt,
                 isBreakable: offer.isBreakable ?? offerAny.IsBreakable,
                 requestsCount: offer.requestsCount ?? offerAny.RequestsCount,
-                image: offer.image || offerAny.Picture
+                image: offer.image || offerAny.Picture,
+                category: offer.category || offerAny.Category
               };
+              
+              console.log('offer-details debug:', {
+                originalCategory: offerAny.Category,
+                transformedCategory: this.offer?.category,
+                categoryDisplay: this.getCategoryDisplayName(this.offer?.category || ''),
+                offer: this.offer
+              });
               this.requestService.setOfferDetails(this.offer);
             } else {
               this.error = 'لم يتم العثور على تفاصيل العرض';
@@ -87,8 +95,16 @@ export class OfferDetailsComponent implements OnInit, OnDestroy, OnChanges {
         createdAt: offer.createdAt || offerAny.CreatedAt,
         isBreakable: offer.isBreakable ?? offerAny.IsBreakable,
         requestsCount: offer.requestsCount ?? offerAny.RequestsCount,
-        image: offer.image || offerAny.Picture
+        image: offer.image || offerAny.Picture,
+        category: offer.category || offerAny.Category
       };
+      
+      console.log('offer-details ngOnChanges debug:', {
+        originalCategory: offerAny.Category,
+        transformedCategory: this.offer?.category,
+        categoryDisplay: this.getCategoryDisplayName(this.offer?.category || ''),
+        offer: this.offer
+      });
       this.isLoading = false;
       this.error = null;
       this.requestService.setOfferDetails(this.offer);
@@ -117,5 +133,26 @@ export class OfferDetailsComponent implements OnInit, OnDestroy, OnChanges {
     const arabicYear = date.getFullYear().toString().split('').map(d => arabicNumerals[parseInt(d)]).join('');
     
     return `${arabicDay} ${arabicMonths[date.getMonth()]} ${arabicYear}`;
+  }
+
+  getCategoryDisplayName(category: string): string {
+    if (!category) return 'غير محدد';
+    
+    const categoryMap: { [key: string]: string } = {
+      'Electronics': 'إلكترونيات',
+      'Clothing': 'ملابس',
+      'Food': 'طعام',
+      'Furniture': 'أثاث',
+      'Documents': 'مستندات',
+      'Other': 'أخرى',
+      'electronics': 'إلكترونيات',
+      'clothing': 'ملابس',
+      'food': 'طعام',
+      'furniture': 'أثاث',
+      'documents': 'مستندات',
+      'other': 'أخرى'
+    };
+    
+    return categoryMap[category] || category;
   }
 } 
