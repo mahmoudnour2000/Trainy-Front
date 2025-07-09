@@ -83,13 +83,13 @@ export class RequestCardComponent implements OnInit {
   }
   
   acceptRequest(): void {
-    // Check if user is authenticated and is a sender
+    // Check if user is authenticated and is the offer owner
     if (!this.authService.isAuthenticated()) {
       alert('يجب تسجيل الدخول أولاً');
       return;
     }
     
-    if (!this.authService.isSender() || !this.isOfferOwner) {
+    if (!this.isOfferOwner) {
       alert('فقط صاحب العرض يمكنه قبول الطلبات');
       return;
     }
@@ -113,13 +113,13 @@ export class RequestCardComponent implements OnInit {
   }
   
   rejectRequest(): void {
-    // Check if user is authenticated and is a sender
+    // Check if user is authenticated and is the offer owner
     if (!this.authService.isAuthenticated()) {
       alert('يجب تسجيل الدخول أولاً');
       return;
     }
     
-    if (!this.authService.isSender() || !this.isOfferOwner) {
+    if (!this.isOfferOwner) {
       alert('فقط صاحب العرض يمكنه رفض الطلبات');
       return;
     }
@@ -143,8 +143,8 @@ export class RequestCardComponent implements OnInit {
   }
   
   canAcceptOrReject(): boolean {
-    // Only senders who own the offer can accept/reject and only if the request is pending
-    return this.authService.isSender() && 
+    // Only offer owners can accept/reject and only if the request is pending
+    return this.authService.isAuthenticated() && 
            this.isOfferOwner && 
            this.request.status === RequestStatus.Pending;
   }
@@ -155,8 +155,8 @@ export class RequestCardComponent implements OnInit {
       return false;
     }
     
-    // Must be the offer owner (sender)
-    if (!this.authService.isSender() || !this.isOfferOwner) {
+    // Must be the offer owner
+    if (!this.isOfferOwner) {
       return false;
     }
     
@@ -167,12 +167,10 @@ export class RequestCardComponent implements OnInit {
     
     console.log('canContact debug:', {
       isAuthenticated: this.authService.isAuthenticated(),
-      isSender: this.authService.isSender(),
       isOfferOwner: this.isOfferOwner,
       requestStatus: this.request.status,
       requestStatusAccepted: RequestStatus.Accepted,
       canContact: this.authService.isAuthenticated() && 
-                  this.authService.isSender() && 
                   this.isOfferOwner && 
                   this.request.status === RequestStatus.Accepted
     });

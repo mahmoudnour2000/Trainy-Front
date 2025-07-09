@@ -313,6 +313,79 @@
   }
 }
 
+// New styles for detailed verification status section
+.detailed-status-section {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border: 1px solid #e9ecef;
+}
+
+.details-title {
+  color: #333;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 0.75rem;
+}
+
+.verification-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.verification-box {
+  background-color: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.25rem;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.role-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  color: #333;
+  
+  i {
+    font-size: 1.25rem;
+    margin-left: 0.5rem;
+    color: #0d6efd;
+  }
+  
+  h5 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+.role-status {
+  .status-badge.small {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.8rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .rejection-reason {
+    color: #dc3545;
+    font-size: 0.875rem;
+    margin: 0.5rem 0 0 0;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+}
+
 @media (max-width: 768px) {
   .verification-status-card {
     padding: 1.5rem;
@@ -336,5 +409,23 @@
   
   .role-title h3 {
     font-size: 1.1rem;
+  }
+
+  .verification-details {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .detailed-status-section {
+    padding: 1rem;
+    margin: 1.5rem 0;
+  }
+  
+  .details-title {
+    font-size: 1.1rem;
+  }
+  
+  .verification-box {
+    padding: 1rem;
   }
 } 

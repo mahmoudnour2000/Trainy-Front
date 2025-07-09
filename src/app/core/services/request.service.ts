@@ -31,6 +31,8 @@ export enum RequestStatus {
 export interface RequestCreateModel {
   offerId: number;
   message: string;
+  fromStationId: number;
+  courierAge: number;
 }
 
 @Injectable({
