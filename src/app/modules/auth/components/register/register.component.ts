@@ -1,28 +1,24 @@
-import { Component } from '@angular/core';
-import { OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Gender, IUserRegister } from '../../../../core/models/auth';
 import { AuthService } from '../../../../core/services/auth.service';
 import { AuthResponse } from '../../../../core/models/auth';
 import { Router } from '@angular/router';
 import { Governorate, City, governorates } from '../../../../core/models/governorates-cities';
+
 @Component({
   selector: 'app-register',
   standalone: false,
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrls: ['./register.component.css']
 })
 export class RegisterComponent implements OnInit {
   showPassword: boolean = false;
   showConfirmPassword: boolean = false;
-  
-  // Loading state
   isLoading: boolean = false;
-  
-  // Error message
-  errorMessage: string = '';
-  successMessage: string = ''; // لرسالة النجاح
+  errorMessages: string[] = []; // تغيير إلى قائمة لتخزين رسائل الخطأ
+  successMessage: string = '';
 
-  user : IUserRegister = {
+  user: IUserRegister = {
     UserName: '',
     Email: '',
     Password: '',
@@ -33,40 +29,54 @@ export class RegisterComponent implements OnInit {
     Gender: Gender.Male,
     DateOfBirth: ''
   };
-  governorates: Governorate[] = governorates; // قائمة المحافظات
+  governorates: Governorate[] = governorates;
   cities: City[] = [];
+
   constructor(
-    private accountSrv:AuthService,private router: Router) { }
-    onSubmit() {
-      this.isLoading = true;
-    this.errorMessage = '';
+    private accountSrv: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {}
+
+  onSubmit() {
+    if (!this.user.UserName || this.user.UserName.length < 10) {
+      this.errorMessages = ['اسم المستخدم قصير جدًا، يجب أن يحتوي على 10 أحرف على الأقل'];
+      return;
+    }
+    if (!this.user.Password || this.user.Password.length < 8) {
+  this.errorMessages = ['كلمة المرور قصيرة جدًا، يجب أن تحتوي على 8 أحرف على الأقل'];
+  return;
+}
+    // التحقق من تطابق كلمتي المرور قبل الإرسال
+    if (this.user.Password !== this.user.ConfirmPassword) {
+      this.errorMessages = ['كلمتا المرور غير متطابقتان'];
+      return;
+    }
+
+    this.isLoading = true;
+    this.errorMessages = [];
     this.successMessage = '';
-      if (this.user.Password !== this.user.ConfirmPassword) {
-        console.error('Passwords do not match');
-        return;
-      }
-      this.accountSrv.Register(this.user).subscribe({
-        next: (res: AuthResponse) => {
-       this.isLoading = false;
+
+    this.accountSrv.Register(this.user).subscribe({
+      next: (res: AuthResponse) => {
+        this.isLoading = false;
         this.successMessage = 'تم إنشاء الحساب بنجاح!';
-        // تأخير الانتقال لصفحة تسجيل الدخول لمدة 3 ثوانٍ
         setTimeout(() => {
           this.router.navigate(['auth/login']);
         }, 3000);
-          this.router.navigate(['auth/login']);
-          },
-        error: (err: any) => {
-          this.isLoading = false;
-        // استخراج الرسالة والأخطاء من استجابة الخادم
-        this.errorMessage = err.error.message || 'حدث خطأ أثناء التسجيل';
-        if (err.error.errors && err.error.errors.length > 0) {
-          this.errorMessage += ': ' + err.error.errors.join('، ');
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        // استخراج رسائل الخطأ من الاستجابة
+        if (err.error && err.error.errors && Array.isArray(err.error.errors)) {
+          this.errorMessages = err.error.errors;
+        } else {
+          this.errorMessages = ['حدث خطأ أثناء التسجيل. من فضلك حاول مرة أخرى.'];
         }
-          console.error('Error:', err);
-        }
-      });
-    }
-  ngOnInit() {
+        console.error('Registration error:', err);
+      }
+    });
   }
 
   onGovernorateChange() {
@@ -74,12 +84,13 @@ export class RegisterComponent implements OnInit {
       gov => gov.id === this.user.Governorate
     );
     this.cities = selectedGovernorate ? selectedGovernorate.cities : [];
-    this.user.City = ''; // إعادة تعيين المدينة عند تغيير المحافظة
+    this.user.City = '';
   }
- togglePasswordVisibility(): void {
+
+  togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
-  
+
   toggleConfirmPasswordVisibility(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
   }

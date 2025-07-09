@@ -266,30 +266,58 @@
 }
 
 /* Enhanced Password Input */
+
+/* Password Input (unified with login) */
 .password-input {
-  padding-left: 60px;
+  padding-left: 50px;
 }
 
 .password-toggle-btn {
-  left: 20px;
-  width: 45px;
-  height: 45px;
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 10px;
+  transition: all 0.2s ease;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: transparent;
+  z-index: 2;
+  border: none;
+  box-shadow: none;
+  padding: 0;
 }
 
-.password-toggle-btn:hover {
-  background: rgba(25, 60, 177, 0.15) !important;
-  transform: scale(1.1);
+.password-toggle-btn:hover,
+.password-toggle-btn:focus {
+  background: rgba(76, 117, 255, 0.1) !important;
+  box-shadow: 0 2px 8px rgba(76, 117, 255, 0.08);
 }
 
 .password-toggle-btn i {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: #193cb1;
+  transition: color 0.2s;
+}
+
+/* RTL Support for password toggle */
+[dir="rtl"] .password-toggle-btn {
+  left: auto;
+  right: 15px;
+}
+[dir="rtl"] .password-input {
+  padding-left: 18px;
+  padding-right: 50px;
+}
+
+/* Accessibility focus */
+.password-toggle-btn:focus-visible {
+  outline: 2px solid #4c75ff;
+  outline-offset: 2px;
 }
 
 /* Enhanced Gender Options */

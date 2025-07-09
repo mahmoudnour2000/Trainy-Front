@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
 import { Request } from '../../../core/models/user';
-
+import { Router } from '@angular/router';
 @Component({
   standalone: false,
   selector: 'app-request-card',
@@ -8,6 +8,9 @@ import { Request } from '../../../core/models/user';
   styleUrls: ['./request-card.component.css']
 })
 export class RequestCardComponent implements OnInit, OnChanges {
+
+
+   constructor(private router: Router) {} 
   @Input() requests: Request[] = [];
   @Input() cardsPerPage: number = 3;
   
@@ -83,4 +86,8 @@ export class RequestCardComponent implements OnInit, OnChanges {
       default: return '';
     }
   }
+
+    goToOfferRequest(offerId: number | string): void {
+  this.router.navigate(['/requests/offer', offerId]);
+}
 }

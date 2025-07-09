@@ -1,3 +1,22 @@
+.wallet-card .text-center.mt-3 {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+@media (max-width: 576px) {
+  .wallet-card .text-center.mt-3 {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .wallet-card .btn-success,
+  .wallet-card .btn-danger {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+  }
+}
 /* Modal Action Buttons: Deposit/Withdraw & Close */
 .modal .btn-action {
   background: #2529ae !important;
@@ -261,14 +280,16 @@
 @media (max-width: 576px) {
   .wallet-card {
     padding: 1.2rem;
+    margin-left: auto;
+    margin-right: auto;
+    float: none;
+    display: block;
   }
-  
   .wallet-card i {
     width: 60px;
     height: 60px;
     font-size: 1.5rem !important;
   }
-  
   .balance-amount {
     font-size: 1.6rem;
   }

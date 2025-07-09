@@ -116,12 +116,49 @@ background: linear-gradient(135deg, #2529ae 0%, #262b89 50%, #1e206b 100%);
   background: rgba(255,255,255,0.97);
   border: 1px solid rgba(157,183,255,0.18);
   border-radius: 20px;
-  min-width: 320px;
+  min-width: 290px;
+  max-width: 78vw;
   box-shadow: 0 20px 40px rgba(38,43,137,0.13), 0 8px 16px rgba(157,183,255,0.13), inset 0 1px 0 rgba(255,255,255,0.5);
   z-index: 1000;
   padding: 0.7rem 0 0.2rem 0;
   overflow: hidden;
   backdrop-filter: blur(12px);
+  transition: min-width 0.2s, max-width 0.2s, right 0.2s;
+}
+
+.dropdown ul {
+  max-height: 340px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #2529ae #dde8ff;
+}
+.dropdown ul::-webkit-scrollbar {
+  width: 7px;
+  background: #dde8ff;
+  border-radius: 8px;
+}
+.dropdown ul::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #2529ae 0%, #dde8ff 100%);
+  border-radius: 8px;
+}
+.dropdown ul::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #1e206b 0%, #2529ae 100%);
+}
+
+@media (max-width: 600px) {
+  .dropdown {
+    min-width: 200px;
+    max-width: 95vw;
+    right: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dropdown {
+    min-width: 170px;
+    max-width: 98vw;
+    right: 8px;
+  }
 }
 .dropdown ul {
   list-style: none;
@@ -345,4 +382,14 @@ background: linear-gradient(135deg, #2529ae 0%, #262b89 50%, #1e206b 100%);
 
 .user-dropdown li:hover {
   background-color: #f8f9fa;
+}
+
+.notification-badge.updated {
+  animation: flash 0.5s;
+}
+
+@keyframes flash {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
 }

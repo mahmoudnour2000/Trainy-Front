@@ -13,7 +13,6 @@ import { OfferCardComponent } from './offer-card/offer-card.component';
 import { RequestCardComponent } from './request-card/request-card.component';
 import { WithdrawButtonComponent } from './withdraw-button/withdraw-button.component';
 import { DepositButtonComponent } from './deposit-button/deposit-button.component';
-import { OfferDetailsComponent } from './offer-details/offer-details.component';
 import { AccountProfileRoutingModule } from './account-profile-routing.module';
 
 @NgModule({
@@ -27,8 +26,7 @@ import { AccountProfileRoutingModule } from './account-profile-routing.module';
     OfferCardComponent,
     RequestCardComponent,
     WithdrawButtonComponent,
-    DepositButtonComponent,
-    OfferDetailsComponent
+    DepositButtonComponent
   ],
   imports: [
     CommonModule,
@@ -45,8 +43,6 @@ import { AccountProfileRoutingModule } from './account-profile-routing.module';
     OfferCardComponent,
     RequestCardComponent,
     WithdrawButtonComponent,
-    DepositButtonComponent,
-    OfferDetailsComponent
-  ]
+    DepositButtonComponent  ]
 })
 export class AccountProfileModule {}
