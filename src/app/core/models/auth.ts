@@ -23,9 +23,9 @@ export interface IUserLogin {
 
 export interface AuthResponse {
   token: string;
-  user: AUser;
+  expiration: string;
+  Role: string[];
 }
-
 export interface AUser {
   id: string;
   email: string;

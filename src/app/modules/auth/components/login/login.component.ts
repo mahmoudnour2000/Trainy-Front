@@ -5,13 +5,13 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { CookieService } from 'ngx-cookie-service';
 import { UserService } from '../../../../core/services/user.service';
 import { User } from '../../../../core/models/user';
-
+import { AuthResponse } from '../../../../core/models/auth';
 @Component({
   standalone: false,
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
-})
+}) 
 export class LoginComponent implements OnInit {
   user: IUserLogin = {
     LoginMethod: '',
@@ -73,14 +73,4 @@ export class LoginComponent implements OnInit {
       }
     });
   }
-}
-
-interface AuthResponse {
-  token: string;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    role: string;
-  };
 }
