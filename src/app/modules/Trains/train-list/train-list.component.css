@@ -535,40 +535,6 @@
   }
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .train-list {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    color: #e2e8f0;
-    border-color: rgba(25, 60, 177, 0.3);
-  }
-
-  .train-list li {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.8) 100%);
-    border-color: rgba(25, 60, 177, 0.2);
-  }
-
-  .train-info {
-    color: #cbd5e1;
-  }
-
-  .train-info .route {
-    background: linear-gradient(135deg, rgba(25, 60, 177, 0.2) 0%, rgba(44, 76, 255, 0.1) 100%);
-    border-color: rgba(25, 60, 177, 0.3);
-    color: #60a5fa;
-  }
-
-  .loading-container {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    color: #60a5fa;
-  }
-
-  .empty-state {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.6) 100%);
-    border-color: rgba(25, 60, 177, 0.3);
-    color: #94a3b8;
-  }
-}
 
 /* Custom Scrollbar */
 .train-list::-webkit-scrollbar {
@@ -903,42 +869,3 @@
 [dir="rtl"] .pagination .page-item:last-child .page-link {
   border-radius: 16px 0 0 16px;
 }
-
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  .pagination-container {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    border-color: rgba(25, 60, 177, 0.3);
-  }
-  
-  .pagination {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.8) 100%);
-    border-color: rgba(25, 60, 177, 0.2);
-  }
-  .pagination .page-link {
-    color: #60a5fa;
-    background: transparent;
-  }
-  .pagination .page-item.active .page-link {
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-    border-color: #2529ae;
-    box-shadow: 0 6px 20px rgba(37, 41, 174, 0.3);
-  }
-  .pagination .page-item.active .page-link:hover {
-    background: #2529ae;
-    transform: scale(1.15);
-    box-shadow: 0 8px 24px rgba(37, 41, 174, 0.4);
-  }
-  .pagination .page-item.disabled .page-link {
-    color: #94a3b8;
-    background: rgba(30, 41, 59, 0.5);
-  }
-  .pagination-info {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.8) 100%);
-    border-color: rgba(25, 60, 177, 0.2);
-  }
-  .pagination-info::before {
-    background: linear-gradient(45deg, transparent 0%, rgba(25, 60, 177, 0.02) 50%, transparent 100%);
-  }
-}
-  
