@@ -33,6 +33,8 @@ export class NotificationService {
     });
   }
 
+ 
+  
   private initHubConnection(): void {
     const token = this.authService.getToken();
     if (!token) {

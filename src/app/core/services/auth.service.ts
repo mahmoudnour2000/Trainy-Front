@@ -18,6 +18,10 @@ export class AuthService {
 private currentUserSubject = new BehaviorSubject<User | null>(null);
 public currentUser$ = this.currentUserSubject.asObservable();
 private authStateSubject = new BehaviorSubject<boolean>(false);
+
+private rolesSubject = new BehaviorSubject<string[]>([]);
+public roles$ = this.rolesSubject.asObservable();
+
 public authStateChanged$ = this.authStateSubject.asObservable();
   private apiUrl: string = environment.apiUrl + 'Account/';
   
@@ -29,17 +33,23 @@ public authStateChanged$ = this.authStateSubject.asObservable();
     setTimeout(() => this.updateAuthState(), 0);
   }
 
-  Login(user: IUserLogin): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(this.apiUrl + 'login', user).pipe(
-      tap(response => {
-        if (response?.token) {
-          localStorage.setItem('token', response.token);
-          this.cookieService.set('auth_token', response.token);  
-          this.updateAuthState(); // Update reactive state
-        }
-      })
-    );
-  }
+ Login(user: IUserLogin): Observable<AuthResponse> {
+  return this.http.post<AuthResponse>(this.apiUrl + 'login', user).pipe(
+    tap(response => {
+      if ( response?.token) {
+        localStorage.setItem('token', response.token);
+        this.cookieService.set('auth_token', response.token);
+        this.rolesSubject.next(response.Role || []);
+         console.log('Login successful, Roles:', response.Role );
+        this.updateAuthState();
+      }
+    }),
+    catchError(err => {
+      console.error('Login error:', err);
+      return throwError(() => new Error('Login failed'));
+    })
+  );
+}
 
   Register(user: IUserRegister): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(this.apiUrl + 'register', user).pipe(
@@ -70,13 +80,12 @@ public authStateChanged$ = this.authStateSubject.asObservable();
     return this.cookieService.get('auth_token');
   }
 
-  clearToken(): void {
-
-    localStorage.removeItem('token');
-    this.cookieService.delete('auth_token');   
-    this.updateAuthState(); // Update reactive state
-  }
-
+ clearToken(): void {
+  localStorage.removeItem('token');
+  this.cookieService.delete('auth_token');
+  this.rolesSubject.next([]);
+  this.updateAuthState();
+}
   isAuthenticated(): boolean {
     const token = this.getToken();
     return !!token;
@@ -118,46 +127,47 @@ public authStateChanged$ = this.authStateSubject.asObservable();
     return this.getCurrentUserId();
   }
 
-  getCurrentUser(): User | null {
-    const token = this.getToken();
-    if (token) {
-      try {
-        const decoded: any = jwtDecode(token);
-        // console.log('🔑 Decoded token:', decoded);
-        const user: User = {
-          Id: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || '',
-          Name: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || '',
-          Email: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '',
-          Role: decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || '',
-          Governorate: '',
-          City: '',
-          PhoneNumber: ''
-        };
-        // console.log('👤 Current user:', user);
-        return user;
-      } catch (error) {
-        console.error('❌ Error decoding token:', error);
-        return null;
-      }
+ getCurrentUser(): User | null {
+  const token = this.getToken();
+  if (token) {
+    try {
+      const decoded: any = jwtDecode(token);
+      const user: User = {
+        Id: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] || '',
+        Name: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || '',
+        Email: decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'] || '',
+        PhoneNumber: decoded['phone_number'] || '',
+        Governorate: decoded['governorate'] || '',
+        City: decoded['city'] || '',
+        Image: decoded['image'] || 'assets/default-profile.png',
+        CreatedAt: decoded['created_at'] || '',
+        Balance: decoded['balance'] ? parseFloat(decoded['balance']) : 0
+      };
+      console.log('👤 Current user:', user);
+      return user;
+    } catch (error) {
+      console.error('❌ Error decoding token:', error);
+      return null;
     }
-    return null;
   }
+  return null;
+}
 
-  private updateAuthState(): void {
-    const isAuth = this.isAuthenticated();
-    const user = this.getCurrentUser();
-    
-    console.log('🔄 Auth state updated:', {
-      isAuthenticated: isAuth,
-      user: user,
-      token: !!this.getToken()
-    });
-    
-    this.authStateSubject.next(isAuth);
-    this.currentUserSubject.next(user);
-      this.LoggedUser.next(user);
+ private updateAuthState(): void {
+  const isAuth = this.isAuthenticated();
+  const user = this.getCurrentUser();
 
-  }
+  console.log('🔄 Auth state updated:', {
+    isAuthenticated: isAuth,
+    user: user,
+    token: !!this.getToken(),
+    roles: this.rolesSubject.value
+  });
+
+  this.authStateSubject.next(isAuth);
+  this.currentUserSubject.next(user);
+  this.LoggedUser.next(user);
+}
 
   
 
@@ -168,38 +178,33 @@ public authStateChanged$ = this.authStateSubject.asObservable();
 
   // Role-based authentication methods
   isSender(): boolean {
-    const user = this.getCurrentUser();
-    return user?.Role === 'Sender' || user?.Role === 'sender';
-  }
+  const roles = this.rolesSubject.value.length > 0 ? this.rolesSubject.value : this.getUserRoles();
+  return roles.some(role => role.toLowerCase() === 'sender');
+}
 
-  isCourier(): boolean {
-    const user = this.getCurrentUser();
-    return user?.Role === 'Courier' || user?.Role === 'courier';
-  }
+isCourier(): boolean {
+  const roles = this.rolesSubject.value.length > 0 ? this.rolesSubject.value : this.getUserRoles();
+  return roles.some(role => role.toLowerCase() === 'courier');
+}
 
-  // Get user roles from token
-  getUserRoles(): string[] {
-    const token = this.getToken();
-    if (token) {
-      try {
-        const decoded: any = jwtDecode(token);
-        const role = decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-        
-        if (Array.isArray(role)) {
-          return role;
-        } else if (role) {
-          return [role];
-        }
-      } catch (error) {
-        console.error('Error decoding token roles:', error);
-      }
+getUserRoles(): string[] {
+  const token = this.getToken();
+  if (token) {
+    try {
+      const decoded: any = jwtDecode(token);
+      const roles = decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+      return Array.isArray(roles) ? roles : roles ? [roles] : [];
+    } catch (error) {
+      console.error('Error decoding token roles:', error);
+      return [];
     }
-    return [];
   }
+  return [];
+}
 
-  // Check if user has specific role
-  hasRole(role: string): boolean {
-    const roles = this.getUserRoles();
-    return roles.some(r => r.toLowerCase() === role.toLowerCase());
-  }
+hasRole(role: string): boolean {
+  const roles = this.rolesSubject.value.length > 0 ? this.rolesSubject.value : this.getUserRoles();
+  return roles.some(r => r.toLowerCase() === role.toLowerCase());
+}
+
 }
