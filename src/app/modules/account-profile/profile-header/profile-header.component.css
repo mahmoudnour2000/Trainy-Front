@@ -454,30 +454,3 @@
     0 4px 16px rgba(157, 183, 255, 0.3) !important;
 }
 
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  .profile-header {
-    background: linear-gradient(135deg, #1e206b 0%, #262b89 50%, #2529ae 100%);
-  }
-  
-  .profile-header .row {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(157, 183, 255, 0.1);
-  }
-  
-  .profile-header h2 {
-    background: linear-gradient(135deg, #c2d4ff 0%, #9db7ff 50%, #dde8ff 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  
-  .profile-header p {
-    color: #dde8ff;
-  }
-  
-  .profile-header p:hover {
-    color: #ecf3ff;
-    background: rgba(157, 183, 255, 0.05);
-  }
-}
