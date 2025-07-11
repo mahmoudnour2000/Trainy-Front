@@ -1,47 +1,56 @@
 <div class="search-section">
+  <div class="search-background"></div>
   <div class="container">
-    <div class="row d-flex align-items-end">
-      <div class="col-md-3 mb-3 mb-md-0">
-        <label for="trainType" class="form-label">نوع القطار</label>
-        <div class="dropdown-select">
-          <button class="select-btn dropdown-toggle" type="button" id="trainTypeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ selectedTrainType === 'Any' ? 'الكل' : selectedTrainType }} <i class="fas fa-check-circle text-primary ms-2"></i>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="trainTypeDropdown">
-            <li *ngFor="let type of trainTypes">
-              <a class="dropdown-item" (click)="selectTrainType(type)">{{ type === 'Any' ? 'الكل' : type }}</a>
-            </li>
-          </ul>
+    <div class="search-card">
+      <div class="row g-3 align-items-end">
+        <div class="col-12 col-md-3">
+          <label for="trainType" class="form-label">نوع القطار</label>
+          <div class="dropdown-select">
+            <button class="select-btn dropdown-toggle" type="button" id="trainTypeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ selectedTrainType === 'Any' ? 'الكل' : selectedTrainType }} 
+              <i class="fas fa-check-circle text-primary ms-2"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="trainTypeDropdown">
+              <li *ngFor="let type of trainTypes">
+                <a class="dropdown-item" (click)="selectTrainType(type)">{{ type === 'Any' ? 'الكل' : type }}</a>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <div class="col-md-3 mb-3 mb-md-0">
-        <label for="destination" class="form-label">محطة التحرك</label>
-        <div class="dropdown-select">
-          <button class="select-btn dropdown-toggle" type="button" id="destinationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ selectedDestination === 'Any' ? 'الكل' : selectedDestination }} <i class="fas fa-check-circle text-primary ms-2"></i>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="destinationDropdown">
-            <li *ngFor="let station of stations">
-              <a class="dropdown-item" (click)="selectDestination(station)">{{ station === 'Any' ? 'الكل' : station }}</a>
-            </li>
-          </ul>
+        <div class="col-12 col-md-3">
+          <label for="destination" class="form-label">محطة التحرك</label>
+          <div class="dropdown-select">
+            <button class="select-btn dropdown-toggle" type="button" id="destinationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ selectedDestination === 'Any' ? 'الكل' : selectedDestination }} 
+              <i class="fas fa-map-marker-alt text-primary ms-2"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="destinationDropdown">
+              <li *ngFor="let station of stations">
+                <a class="dropdown-item" (click)="selectDestination(station)">{{ station === 'Any' ? 'الكل' : station }}</a>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <div class="col-md-3 mb-3 mb-md-0">
-        <label for="trainNo" class="form-label">رقم القطار</label>
-        <div class="dropdown-select">
-          <button class="select-btn dropdown-toggle" type="button" id="trainNoDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ selectedTrainNo === 'Any' ? 'الكل' : selectedTrainNo }} <i class="fas fa-train text-primary ms-2"></i>
-          </button>
-          <ul class="dropdown-menu" aria-labelledby="trainNoDropdown">
-            <li *ngFor="let trainNo of trainNumbers">
-              <a class="dropdown-item" (click)="selectTrainNo(trainNo)">{{ trainNo === 'Any' ? 'الكل' : trainNo }}</a>
-            </li>
-          </ul>
+        <div class="col-12 col-md-3">
+          <label for="trainNo" class="form-label">رقم القطار</label>
+          <div class="dropdown-select">
+            <button class="select-btn dropdown-toggle" type="button" id="trainNoDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+              {{ selectedTrainNo === 'Any' ? 'الكل' : selectedTrainNo }} 
+              <i class="fas fa-train text-primary ms-2"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="trainNoDropdown">
+              <li *ngFor="let trainNo of trainNumbers">
+                <a class="dropdown-item" (click)="selectTrainNo(trainNo)">{{ trainNo === 'Any' ? 'الكل' : trainNo }}</a>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <div class="col-md-3">
-        <button class="btn search-btn w-100 py-2" (click)="onSearch()">بحث</button>
+        <div class="col-12 col-md-3">
+          <button class="btn search-btn w-100 py-3" (click)="onSearch()">
+            <i class="fas fa-search me-2"></i>
+            بحث
+          </button>
+        </div>
       </div>
     </div>
   </div>

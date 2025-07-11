@@ -1,42 +1,34 @@
-<footer>
+<footer class="footer">
   <div class="container">
-    <!-- Brand Logo Placeholder -->
-    <div class="logo mb-4">
-      <img src="assets/image 2.png" alt="شعار ع السكه" />
+    <!-- شعار الموقع -->
+    <div class="logo">
+      <img src="assets/NewLogo.png" alt="شعار ع السكه" />
     </div>
-    
-    <!-- Main Navigation -->
-    <div class="footer-nav mb-4">
-      <a href="#" routerLink="/station">الصفحة الرئيسية</a>
-      <a href="#">تفاصيل الموقع</a>
-      <a href="#">الإشتراك بالموقع</a>
+   
+    <!-- التنقل الرئيسي -->
+    <div class="footer-nav">
+      <a [routerLink]="['/']" >الصفحة الرئيسية</a>
+      <a [routerLink]="['/offers']">التوصيل </a>
+      <a [routerLink]="['/stations']">الخدمات</a>
+      <a [routerLink]="['/about-us']">من نحن</a>
+      <a [routerLink]="['/public-chat']">المجتمع </a>
     </div>
-    
-    <!-- Divider Line between category groups -->
+   
+    <!-- الخط الفاصل مع أيقونة القطار -->
     <div class="divider"></div>
-    
-    <!-- Secondary Navigation -->
-    <div class="footer-nav mb-4">
-      <a href="#">مميزاتنا</a>
-      <a href="#">خدماتنا</a>
-      <a href="#">الأسعار</a>
-      <a href="#">الأسئلة الشائعة</a>
-      <a href="#">من نحن</a>
-      <a href="#">اتصل بنا</a>
-    </div>
-    
-    <!-- Social Media Icons -->
+   
+    <!-- أيقونات التواصل الاجتماعي -->
     <div class="social-icons">
-      <a href="#"><i class="bi bi-facebook"></i></a>
-      <a href="#"><i class="bi bi-twitter"></i></a>
-      <a href="#"><i class="bi bi-whatsapp"></i></a>
-      <a href="#"><i class="bi bi-linkedin"></i></a>
-      <a href="#"><i class="bi bi-instagram"></i></a>
+      <a href="#" title="فيسبوك"><i class="bi bi-facebook"></i></a>
+      <a href="#" title="تويتر"><i class="bi bi-twitter"></i></a>
+      <a href="#" title="واتساب"><i class="bi bi-whatsapp"></i></a>
+      <a href="#" title="لينكد إن"><i class="bi bi-linkedin"></i></a>
+      <a href="#" title="انستجرام"><i class="bi bi-instagram"></i></a>
     </div>
-    
-    <!-- Footer Bottom - Copyright and Legal -->
-    <div class="footer-bottom mt-3">
-      <div class="mb-2">
+   
+    <!-- أسفل الفوتر -->
+    <div class="footer-bottom">
+      <div>
         <a href="#">الشروط والأحكام</a>
         <a href="#">سياسة الخصوصية</a>
       </div>

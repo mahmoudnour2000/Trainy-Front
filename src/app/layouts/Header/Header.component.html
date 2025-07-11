@@ -2,12 +2,14 @@
   <div class="container">
     <a class="navbar-brand" href="#">
       <img src="assets/NewLogo.png" alt="شعار ع السكه">
-      <span class="brand-name">ع السكه</span>
+      <span class="brand-name">ع السـكـة</span>
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
@@ -26,31 +28,35 @@
           <a class="nav-link" href="#">المجتمع</a>
         </li>
       </ul>
+
       <div class="d-flex align-items-center">
-        <!-- دروب داون الإشعارات -->
+        <!-- إشعارات -->
         <div class="position-relative mx-2" *ngIf="isLoggedIn">
           <i class="fas fa-bell bell-icon" (click)="toggleDropdown()"></i>
           <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
           <div class="dropdown" *ngIf="showDropdown">
-  <ul>
-    <li *ngFor="let notification of notifications">
-      <div class="notif-card">
-        <p>{{ notification.Message }}</p>
-        <small>{{ notification.NotificationTime | date:'short' }}</small>
-      </div>
-    </li>
-    <li *ngIf="notifications.length === 0" class="empty-msg">لا توجد إشعارات حاليًا</li>
-  </ul>
-  <button (click)="viewAll()">عرض الكل</button>
-</div>
+            <ul>
+              <li *ngFor="let notification of notifications">
+                <div class="notif-card">
+                  <p>{{ notification.Message }}</p>
+                  <small>{{ notification.NotificationTime | date:'short' }}</small>
+                </div>
+              </li>
+              <li *ngIf="notifications.length === 0" class="empty-msg">لا توجد إشعارات حاليًا</li>
+            </ul>
+            <button (click)="viewAll()">عرض الكل</button>
+          </div>
         </div>
+
         <div class="nav-divider d-none d-lg-block"></div>
-        <!-- إذا اليوزر مش مسجّل دخول -->
+
+        <!-- لو مش مسجل دخول -->
         <div class="auth-buttons" *ngIf="!isLoggedIn">
           <button class="btn btn-auth" routerLink="/auth/login">تسجيل الدخول</button>
           <button class="btn btn-auth" routerLink="/auth/register">إنشاء حساب</button>
         </div>
-        <!-- إذا اليوزر مسجّل دخول -->
+
+        <!-- لو مسجل دخول -->
         <div class="position-relative mx-2" *ngIf="isLoggedIn">
           <div class="user-profile" (click)="toggleUserDropdown()">
             <img [src]="profileImage || 'assets/default-profile.png'" alt="صورة المستخدم" class="profile-img">

@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms'; // Add this import
 })
 export class WalletCardComponent {
   balance: number | undefined;
+  lastUpdatedAt: string | undefined;
   showModal: boolean = false;
   modalType: 'deposit' | 'withdraw' = 'deposit';
   amount: number = 0;
@@ -31,10 +32,16 @@ export class WalletCardComponent {
 
   constructor(private userService: UserService) {}
 
-  ngOnInit(): void {
+ ngOnInit(): void {
     this.userService.getUserBalance().subscribe({
-      next: (res) => this.balance = res.balance,
-      error: () => this.balance = 0
+      next: (res) => {
+        this.balance = res.balance;
+        this.lastUpdatedAt = res.lastUpdatedAt;
+      },
+      error: () => {
+        this.balance = 0;
+        this.lastUpdatedAt = undefined;
+      }
     });
   }
 
