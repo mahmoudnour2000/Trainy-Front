@@ -1,0 +1,270 @@
+.delivery-chat-page {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+/* Page Header */
+.page-header {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  padding: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+}
+
+.page-title h4 {
+  font-weight: 600;
+  margin: 0;
+}
+
+.page-title .btn {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.page-title .btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.page-info {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* Main Content */
+.main-content {
+  padding: 1.5rem 0;
+}
+
+/* Request Card Section */
+.request-card-section {
+  margin-bottom: 1.5rem;
+}
+
+.request-card-section .card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.request-card-section .card-header {
+  border-bottom: 1px solid #e9ecef;
+  padding: 1rem 1.25rem;
+}
+
+.request-card-section .card-header h6 {
+  color: #495057;
+  font-weight: 600;
+}
+
+/* Chat Section */
+.chat-section .card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 600px;
+}
+
+/* Action Buttons Section */
+.action-buttons-section {
+  margin-top: 1.5rem;
+}
+
+.action-buttons-section .card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.action-buttons-section .card-header {
+  border-bottom: 1px solid #e9ecef;
+  padding: 1rem 1.25rem;
+}
+
+.action-buttons-section .card-header h6 {
+  color: #495057;
+  font-weight: 600;
+}
+
+.action-buttons-section .btn {
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.action-buttons-section .btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons-section .btn:disabled {
+  transform: none;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.action-buttons-section .btn-success {
+  background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+}
+
+.action-buttons-section .btn-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+}
+
+/* Loading Container */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2rem;
+}
+
+.loading-container .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Error Container */
+.error-container {
+  padding: 2rem 0;
+}
+
+.error-container .alert {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(220, 53, 69, 0.1);
+}
+
+/* Auth Required */
+.auth-required {
+  padding: 2rem 0;
+}
+
+.auth-required .alert {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(255, 193, 7, 0.1);
+}
+
+/* Card Shadows */
+.card.shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+  transition: box-shadow 0.15s ease-in-out;
+}
+
+.card.shadow-sm:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-header {
+    padding: 0.75rem 0;
+  }
+  
+  .page-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .page-title .btn {
+    align-self: flex-start;
+  }
+  
+  .main-content {
+    padding: 1rem 0;
+  }
+  
+  .request-card-section {
+    margin-bottom: 1rem;
+  }
+  
+  .chat-section .card {
+    min-height: 500px;
+  }
+  
+  .action-buttons-section {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-header .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .page-title h4 {
+    font-size: 1.1rem;
+  }
+  
+  .main-content .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .request-card-section .card-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .chat-section .card {
+    min-height: 450px;
+  }
+  
+  .action-buttons-section .btn {
+    padding: 0.625rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main-content {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+/* Scroll Behavior */
+.delivery-chat-page {
+  scroll-behavior: smooth;
+}
+
+/* Focus States */
+.btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* RTL Support */
+[dir="rtl"] .page-title .btn {
+  margin-right: 0;
+  margin-left: 1rem;
+}
+
+[dir="rtl"] .page-title .btn i {
+  transform: scaleX(-1);
+} 

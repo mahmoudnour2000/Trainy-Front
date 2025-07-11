@@ -1,0 +1,131 @@
+<!-- Delivery Chat Component Template -->
+<div class="chat-container">
+  <!-- Chat Header -->
+  <div class="chat-header" *ngIf="chatStatus">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="chat-info">
+        <h6 class="mb-1">
+          <i class="fas fa-comments me-2"></i>
+          محادثة التوصيل
+        </h6>
+        <small class="text-muted">
+          {{chatStatus.isSender ? 'أنت صاحب العرض' : 'أنت الموصل'}}
+        </small>
+      </div>
+      <div class="chat-status">
+        <span class="badge" [ngClass]="getStatusClass()">
+          {{getStatusText()}}
+        </span>
+        <div class="connection-status mt-1">
+          <small [ngClass]="getConnectionStatusClass()">
+            <i class="fas fa-circle me-1" style="font-size: 0.6rem;"></i>
+            {{getConnectionStatus()}}
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Messages Area -->
+  <div class="chat-messages" #messagesContainer>
+    <div class="message-wrapper" 
+         *ngFor="let message of messages; trackBy: trackByMessageId" 
+         [ngClass]="{'sent': isMessageFromCurrentUser(message), 'received': !isMessageFromCurrentUser(message)}">
+      <div class="message-bubble" 
+           [ngClass]="{'message-sent': isMessageFromCurrentUser(message), 'message-received': !isMessageFromCurrentUser(message)}">
+        <div class="message-text">{{ message.message }}</div>
+        <div class="message-meta">
+          <span class="message-time">{{ formatTime(message.messageTime) }}</span>
+          <i class="fas fa-check-double message-read-indicator" 
+             *ngIf="isMessageFromCurrentUser(message) && message.isRead"
+             title="تم قراءة الرسالة"></i>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Empty state -->
+    <div class="empty-chat" *ngIf="messages.length === 0">
+      <div class="text-center text-muted py-4">
+        <i class="fas fa-comments fa-3x mb-3 opacity-50"></i>
+        <p>لا توجد رسائل بعد</p>
+        <small>ابدأ المحادثة بكتابة رسالة أدناه</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Input Area -->
+  <div class="message-input-area" *ngIf="canSendMessages()">
+    <!-- Debug Info -->
+    <div class="debug-info mb-2" style="font-size: 0.8rem; color: #666;">
+      <small>
+        متصل: {{isConnected ? 'نعم' : 'لا'}} | 
+        مصادق: {{isAuthenticated() ? 'نعم' : 'لا'}} | 
+        Chat ID: {{chatId}}
+      </small>
+    </div>
+    
+    <div class="input-group">
+      <input 
+        type="text" 
+        class="form-control message-input" 
+        [(ngModel)]="newMessage"
+        (keypress)="onKeyPress($event)"
+        placeholder="اكتب رسالتك هنا..."
+        [disabled]="isProcessing"
+        maxlength="500">
+      <button 
+        class="btn btn-primary send-btn" 
+        type="button"
+        (click)="sendMessage()"
+        [disabled]="!newMessage.trim() || isProcessing">
+        <span *ngIf="isProcessing && actionType === 'send'" class="spinner-border spinner-border-sm me-2"></span>
+        <i class="fas fa-paper-plane" *ngIf="!(isProcessing && actionType === 'send')"></i>
+        إرسال
+        <small *ngIf="!isConnected" class="ms-1">(غير متصل)</small>
+      </button>
+    </div>
+    <div class="character-count" *ngIf="newMessage.length > 400">
+      <small class="text-muted">{{newMessage.length}}/500</small>
+    </div>
+  </div>
+
+
+
+  <!-- Connection Error -->
+  <div class="connection-error" *ngIf="!isConnected && chatId">
+    <div class="alert alert-warning text-center mb-0">
+      <i class="fas fa-exclamation-triangle me-2"></i>
+      لا يوجد اتصال بالخادم. جاري المحاولة...
+    </div>
+  </div>
+
+  <!-- Chat Not Available -->
+  <div class="chat-unavailable" *ngIf="chatStatus?.offerStatus === 'Completed' || chatStatus?.offerStatus === 'Cancelled'">
+    <div class="alert alert-info text-center mb-0">
+      <i class="fas fa-info-circle me-2"></i>
+      هذه المحادثة غير متاحة حالياً
+    </div>
+  </div>
+
+  <!-- Fallback Message Input (for debugging) -->
+  <div class="fallback-message-input" *ngIf="!canSendMessages() && isAuthenticated()">
+    <div class="alert alert-warning">
+      <h6>رسالة تجريبية (للتصحيح)</h6>
+      <div class="input-group">
+        <input 
+          type="text" 
+          class="form-control" 
+          [(ngModel)]="newMessage"
+          placeholder="اكتب رسالة تجريبية..."
+          maxlength="500">
+        <button 
+          class="btn btn-warning" 
+          (click)="sendMessage()"
+          [disabled]="!newMessage.trim()">
+          إرسال تجريبي
+        </button>
+      </div>
+      <small class="text-muted">هذا الإدخال يظهر فقط للتصحيح عندما لا يعمل الإدخال الرئيسي</small>
+    </div>
+  </div>
+</div>

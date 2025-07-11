@@ -136,6 +136,11 @@ export const routes: Routes = [
         loadComponent: () => import('./modules/verification/components/verification-status/verification-status.component').then(m => m.VerificationStatusComponent),
         canActivate: [AuthGuard]
       },
+      {
+        path: 'delivery-chat/:requestId',
+        loadComponent: () => import('./modules/deliveryChatPage/deliveryChatPage').then(m => m.DeliveryChatPageComponent),
+        canActivate: [AuthGuard]
+      },
     ]
   },
 
