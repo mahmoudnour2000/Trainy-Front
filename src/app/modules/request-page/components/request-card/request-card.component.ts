@@ -93,7 +93,7 @@ export class RequestCardComponent implements OnInit {
     }
     
     this.contact.emit(this.request.id);
-    
+    console.log('this is my requesttttttt',this.request)
     // Navigate to delivery chat page
     this.router.navigate(['/delivery-chat', this.request.id], {
       queryParams: {

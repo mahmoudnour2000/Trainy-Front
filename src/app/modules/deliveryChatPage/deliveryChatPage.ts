@@ -80,12 +80,13 @@ export class DeliveryChatPageComponent implements OnInit, OnDestroy {
             this.request = request;
             // Fallback: if offerId is missing, try to get it from query params
             const offerIdParam = this.route.snapshot.queryParamMap.get('offerId');
+
             this.offerId = request.offerId || (offerIdParam ? +offerIdParam : 0);
-            // Fallback: if courierId is missing, use current user ID, always as string
-            this.courierId = request.courierId || this.authService.getUserId() || '';
+            // // Fallback: if courierId is missing, use current user ID, always as string
+            // this.courierId = request.courierId || this.authService.getUserId() || '';
             // Debug logs
-            console.log('Loaded request:', this.request);
-            console.log('Extracted offerId:', this.offerId, 'courierId:', this.courierId);
+            console.log('Loaded request:', this.request.CourierId);
+            console.log('Extracted offerId:', this.offerId, 'courierId:', this.request.CourierId);
             // After loading request, create/get chat
             await this.initializeChat();
           } else {
@@ -114,14 +115,14 @@ export class DeliveryChatPageComponent implements OnInit, OnDestroy {
         console.error('Invalid offerId:', this.offerId);
         return;
       }
-      if (!this.courierId) {
-        this.error = 'معرف الموصل غير صالح (courierId)';
-        console.error('Invalid courierId:', this.courierId);
+      if (!this.request?.CourierId) {
+        this.error = 'معرف الموصل غير صالح (request.CourierId)';
+        console.error('Invalid courierId:', this.request?.CourierId);
         return;
       }
       // Debug log before calling createChat
-      console.log('Calling createChat with offerId:', this.offerId, 'courierId:', this.courierId);
-      const chat = await this.deliveryChatService.createChat(this.offerId, this.courierId);
+      console.log('Calling createChat with offerId:', this.offerId, 'courierId:',this.request?.CourierId);
+      const chat = await this.deliveryChatService.createChat(this.offerId, this.request?.CourierId);
       if (chat) {
         this.chatId = chat.id;
       } else {
