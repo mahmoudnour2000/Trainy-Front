@@ -6,13 +6,11 @@ import { TrainListViewModel, TrainStation, StationServicesResponse, GuideRoleRes
 import { AuthService } from '../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   standalone: true,
   selector: 'app-train-details',
   imports: [CommonModule, FormsModule],  
-  providers: [CookieService],
   templateUrl: './train-details.component.html',
   styleUrls: ['./train-details.component.css']
 })
@@ -39,7 +37,6 @@ export class TrainDetailsComponent implements OnInit {
     private trainService: TrainService,
     public notificationService: NotificationService,
     public authService: AuthService,
-    private cookieService: CookieService,
     private router: Router
   ) {
     const idParam = this.route.snapshot.paramMap.get('trainId');
@@ -209,6 +206,12 @@ export class TrainDetailsComponent implements OnInit {
 
   openChat(): void {
     console.log('Opening chat for train', this.trainId);
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate([`/train-chat/${this.trainId}`]);
+    } else {
+      alert('يجب تسجيل الدخول أولاً');
+      this.router.navigate(['/auth/login']);
+    }
   }
 
   goToLostAndFound(): void {
@@ -235,12 +238,6 @@ export class TrainDetailsComponent implements OnInit {
         this.trainService.requestGuideRole().subscribe({
           next: (response) => {
             console.log(response.message);
-            this.cookieService.set('auth_token', response.refreshToken, {
-              expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-              path: '/',
-              secure: true,
-              sameSite: 'Strict' as 'Strict'
-            });
             localStorage.setItem('token', response.refreshToken);
             this.isGuide = true;
             this.closeGuideModal();

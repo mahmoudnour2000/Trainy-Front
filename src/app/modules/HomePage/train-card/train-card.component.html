@@ -29,6 +29,7 @@
       <button class="action-btn go-to-train" (click)="goToTrainDetails(train.ID)">
         <i class="fas fa-train"></i> انتقل للقطار
       </button>
+     
     </div>
   </div>
   <div class="stations-container" [ngClass]="{ 'expanded': showStations }" *ngIf="showStations || isLoadingStations">

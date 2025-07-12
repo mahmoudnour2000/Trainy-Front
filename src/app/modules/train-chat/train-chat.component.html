@@ -1,0 +1,32 @@
+<!-- Chat Header -->
+<div class="chat-header">
+    <h2>🚆 الشات خاص بالقطار رقم {{ trainNo }}</h2>
+</div>
+
+<!-- Chat Container -->
+<div class="chat-container">
+    <div class="messages-container" #messagesContainer>
+        <div 
+            *ngFor="let message of messages"
+            class="message"
+            [ngClass]="{ 'my-message': message.userId === currentUserId, 'other-message': message.userId !== currentUserId }"
+        >
+            <div class="message-bubble">
+                <img [src]="message.image" class="avatar" alt="User Avatar">
+                <div class="message-content">
+                    <strong>{{ message.name }}</strong>
+                    <p>{{ message.message }}</p>
+                    <button class="report-btn" (click)="openReportModal(message.name, message.userId)">!</button>
+                    <span class="time">{{ message.time }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Input Container -->
+<div class="input-container">
+    <input type="text" class="message-input" [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" placeholder="اكتب رسالة..." />
+    <button class="send-btn" (click)="sendMessage()">إرسال</button>
+</div>
+  
