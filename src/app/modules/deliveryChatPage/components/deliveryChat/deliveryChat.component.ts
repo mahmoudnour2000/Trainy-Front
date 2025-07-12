@@ -278,6 +278,7 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
       isSender: false,
       isRead: true,
       messageType: 'System',
+      isDeleted: false,
       chatId: this.chatId
     };
     

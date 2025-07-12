@@ -56,7 +56,7 @@ export const authInterceptor: HttpInterceptorFn = (
       }
     }),
     catchError((error: HttpErrorResponse) => {
-      console.error('❌ HTTP Error in interceptor:', {
+      console.error(error.message, {
         status: error.status,
         message: error.message,
         url: error.url,
