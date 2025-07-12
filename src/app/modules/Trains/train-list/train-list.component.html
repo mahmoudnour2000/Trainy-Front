@@ -2,7 +2,7 @@
 <div class="hero-section-with-search position-relative" style="height: 500px;">
   <app-hero-section></app-hero-section>
   <div class="search-overlay-container"
-       style="position: absolute; left: 50%; bottom: -30px; transform: translateX(-50%); width: 100%; height: auto; display: flex; justify-content: center; align-items: flex-end; pointer-events: none; z-index: 20;">
+       style="position: absolute; left: 50%; bottom: -30px; transform: translateX(-50%); width: 100%; height: auto; display: flex; justify-content: center; align-items: flex-end; pointer-events: none; z-index: 5;">
     <div style="pointer-events: auto; width: 100%; max-width: 900px; padding: 0 2vw; display: flex; justify-content: center; align-items: flex-end;">
       <app-search-section (search)="filterTrains($event)"></app-search-section>
     </div>
