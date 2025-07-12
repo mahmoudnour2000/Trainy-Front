@@ -1,7 +1,16 @@
-
 <!-- Train List Template -->
-<app-hero-section></app-hero-section>
-<app-search-section (search)="filterTrains($event)"></app-search-section>
+<div class="hero-section-with-search position-relative" style="height: 500px;">
+  <app-hero-section></app-hero-section>
+  <div class="search-overlay-container"
+       style="position: absolute; left: 50%; bottom: -30px; transform: translateX(-50%); width: 100%; height: auto; display: flex; justify-content: center; align-items: flex-end; pointer-events: none; z-index: 5;">
+    <div style="pointer-events: auto; width: 100%; max-width: 900px; padding: 0 2vw; display: flex; justify-content: center; align-items: flex-end;">
+      <app-search-section (search)="filterTrains($event)"></app-search-section>
+    </div>
+  </div>
+</div>
+
+<!-- إضافة مسافة إضافية بعد الهيرو -->
+<div style="height: 90px; background: transparent;"></div>
 
 <div style="background-image: url('/assets/main.png');" class="pb-5">
   <div class="container">
@@ -34,7 +43,7 @@
     </div>
 
     <!-- Train Cards -->
-    <div class="row" *ngIf="!isLoading && trains.length > 0">
+    <div class="row mt-4" *ngIf="!isLoading && trains.length > 0">
       <app-train-card 
         *ngFor="let train of trains" 
         [train]="train" 

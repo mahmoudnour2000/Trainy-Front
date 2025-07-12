@@ -75,11 +75,9 @@ private getUserRole(): string{
     return this.http.post<{ imageUrl: string }>(`${this.apiUrl}UserProfile/UpdateProfileImage`, formData, { withCredentials: true });
   }
 
-  getUserBalance(): Observable<{ balance: number }> {
-    // const userId = this.getUserId();
-    return this.http.get<{ balance: number }>(`${this.apiUrl}UserProfile/GetUserBalance`, { withCredentials: true });
+ getUserBalance(): Observable<{ balance: number, lastUpdatedAt: string }> {
+    return this.http.get<{ balance: number, lastUpdatedAt: string }>(`${this.apiUrl}UserProfile/GetUserBalance`, { withCredentials: true });
   }
-
  getUserOffers(): Observable<Offer[] | { message: string }> {
     return this.http.get<Offer[] | { message: string }>(`${this.apiUrl}UserProfile/GetUserOffers`, { withCredentials: true });
   }
