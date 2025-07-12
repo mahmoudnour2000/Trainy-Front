@@ -42,9 +42,9 @@
               <div class="station-info">
                 <span class="info-item">
                   <i class="fas fa-clock"></i>
-                  {{ trainData.LastUpdated | date:'shortTime' }}
+                  {{ trainData.LastUpdated | egyptTime }}
                 </span>
-                
+
               </div>
               
             </div>
@@ -103,7 +103,9 @@
         </div>
         <div class="detail-content">
           <div class="detail-label">آخر تحديث</div>
-          <div class="detail-value">{{ trainData.LastUpdated | date:'shortTime' }}</div>
+          <div class="detail-value">
+            {{ trainData.LastUpdated | egyptTime }}
+          </div>
         </div>
       </div>
     </div>
