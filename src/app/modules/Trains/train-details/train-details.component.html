@@ -1,5 +1,5 @@
 <div class="train-details" *ngIf="!isLoading; else loading">
-  <h2>تفاصيل القطار: {{ train.No }}</h2>
+  <h2>تفاصيل قطر {{ train.No }}</h2>
   <div class="route-info">
     <div class="route-card">
       <p>من: {{ train.Route_From }}</p>
@@ -11,7 +11,7 @@
       <p>إلى: {{ train.Route_To }}</p>
     </div>
   </div>
- 
+  
   <div class="actions">
     <button (click)="openChat()">💬 الشات</button>
     <ng-container *ngIf="train.ID">
@@ -45,7 +45,7 @@
     <!-- Loading Stations -->
     <ng-template #loadingStations>
       <div class="stations-loading">
-        <div class="loading-spinner">⏳</div>
+        <div class="loading-spinner"></div>
         <p>جاري تحميل المحطات...</p>
       </div>
     </ng-template>

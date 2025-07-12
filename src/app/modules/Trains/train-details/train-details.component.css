@@ -186,7 +186,7 @@
 }
 
 .actions button {
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%); /* لون خلفية الأزرار المطلوب */
+  background: #0d3d9f; /* لون خلفية الأزرار المطلوب */
   color: #fff;
   border: none;
   padding: 1.2rem 2rem;
