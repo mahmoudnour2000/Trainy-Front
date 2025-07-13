@@ -294,6 +294,68 @@ export class ServicesComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  // Create custom icons for different service types
+  private createServiceIcon(serviceType: number): L.DivIcon {
+    let iconClass = '';
+    let iconColor = '';
+
+    switch (serviceType) {
+      case 0: // مطاعم
+        iconClass = 'fa-utensils';
+        iconColor = '#e74c3c'; // أحمر
+        break;
+      case 1: // فنادق
+        iconClass = 'fa-hotel';
+        iconColor = '#27ae60'; // أخضر
+        break;
+      case 3: // صيدليات
+        iconClass = 'fa-pills';
+        iconColor = '#f39c12'; // برتقالي
+        break;
+      case 5: // كافيهات
+        iconClass = 'fa-coffee';
+        iconColor = '#8e44ad'; // بنفسجي
+        break;
+      default:
+        iconClass = 'fa-map-marker-alt';
+        iconColor = '#3498db'; // أزرق
+    }
+
+    return L.divIcon({
+      html: `
+        <div style="
+          background-color: ${iconColor};
+          width: 35px;
+          height: 35px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 3px solid white;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          position: relative;
+        ">
+          <i class="fas ${iconClass}" style="color: white; font-size: 16px;"></i>
+          <div style="
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid ${iconColor};
+          "></div>
+        </div>
+      `,
+      className: 'custom-service-marker',
+      iconSize: [35, 43],
+      iconAnchor: [17, 43],
+      popupAnchor: [0, -43]
+    });
+  }
+
   updateMapWithAllServices(): void {
     if (!this.map) {
       console.log('🗺️ Map not initialized, skipping update');
@@ -311,7 +373,7 @@ export class ServicesComponent implements OnInit, AfterViewInit, OnDestroy {
     let hasValidCoordinates = false;
     const markers: L.Marker[] = [];
     const bounds = L.latLngBounds([]);
-    
+
     console.log('🗺️ Processing services for map markers...');
     
     this.services.forEach((service, index) => {
@@ -330,11 +392,14 @@ export class ServicesComponent implements OnInit, AfterViewInit, OnDestroy {
         
         console.log(`   ✅ Creating marker at: ${lat}, ${lng}`);
         
-        const marker = L.marker(latLng)
+        // Create custom icon based on service type
+        const customIcon = this.createServiceIcon(service.Type);
+
+        const marker = L.marker(latLng, { icon: customIcon })
           .addTo(this.map!)
           .bindPopup(`
             <div style="text-align: center; min-width: 200px;">
-              <h6 style="margin: 0 0 8px 0; color: #007bff; font-size: 14px;">${service.Name || 'خدمة غير معروفة'}</h6>
+              <h6 style="margin: 0 0 8px 0; color: #06236b; font-size: 14px; font-weight: bold;">${service.Name || 'خدمة غير معروفة'}</h6>
               <p style="margin: 0 0 5px 0; font-size: 12px; color: #666;">
                 <i class="fas fa-tag me-1"></i>${this.getServiceTypeName(service.Type)}
               </p>
@@ -342,12 +407,12 @@ export class ServicesComponent implements OnInit, AfterViewInit, OnDestroy {
                 <i class="fas fa-phone me-1"></i>${service.PhoneNumber || 'غير متاح'}
               </p>
               <div style="display: flex; gap: 5px; justify-content: center;">
-                <button onclick="showServiceDetails(${service.Id})" 
-                        style="padding: 4px 8px; font-size: 10px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                <button onclick="showServiceDetails(${service.Id})"
+                        style="padding: 4px 8px; font-size: 10px; background: #06236b; color: white; border: none; border-radius: 3px; cursor: pointer;">
                   <i class="fas fa-info-circle me-1"></i>التفاصيل
                 </button>
-                <button onclick="showServiceLocation(${lat}, ${lng})" 
-                        style="padding: 4px 8px; font-size: 10px; background: #28a745; color: white; border: none; border-radius: 3px; cursor: pointer;">
+                <button onclick="showServiceLocation(${lat}, ${lng})"
+                        style="padding: 4px 8px; font-size: 10px; background: #0846a0; color: white; border: none; border-radius: 3px; cursor: pointer;">
                   <i class="fas fa-map-marker-alt me-1"></i>الموقع
                 </button>
               </div>
@@ -413,11 +478,12 @@ export class ServicesComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
       
-      // Add new marker and center map
-      const marker = L.marker(latLng).addTo(this.map);
+      // Add new marker with custom icon and center map
+      const customIcon = this.createServiceIcon(service.Type);
+      const marker = L.marker(latLng, { icon: customIcon }).addTo(this.map);
       marker.bindPopup(`
         <div style="text-align: center; min-width: 200px;">
-          <h6 style="margin: 0 0 8px 0; color: #007bff; font-size: 14px;">${service.Name || 'خدمة غير معروفة'}</h6>
+          <h6 style="margin: 0 0 8px 0; color: #06236b; font-size: 14px; font-weight: bold;">${service.Name || 'خدمة غير معروفة'}</h6>
           <p style="margin: 0 0 5px 0; font-size: 12px; color: #666;">
             <i class="fas fa-tag me-1"></i>${this.getServiceTypeName(service.Type)}
           </p>
@@ -493,10 +559,10 @@ export class ServicesComponent implements OnInit, AfterViewInit, OnDestroy {
   // Convert service type number to readable name
   getServiceTypeName(type: number): string {
     switch (type) {
-      case 1: return 'مطعم';
-      case 2: return 'فندق';
+      case 0: return 'مطعم';
+      case 1: return 'فندق';
       case 3: return 'صيدلية';
-      case 4: return 'كافيه';
+      case 5: return 'كافيه';
       default: return 'خدمة أخرى';
     }
   }
