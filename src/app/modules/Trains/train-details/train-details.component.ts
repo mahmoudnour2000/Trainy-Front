@@ -238,10 +238,12 @@ export class TrainDetailsComponent implements OnInit {
         this.trainService.requestGuideRole().subscribe({
           next: (response) => {
             console.log(response.message);
-            localStorage.setItem('token', response.refreshToken);
+            localStorage.removeItem('token');
             this.isGuide = true;
             this.closeGuideModal();
-            this.router.navigate(['/train-tracking', this.trainId]);
+            localStorage.setItem('redirectAfterLogin', window.location.pathname);
+            this.authService.LogOut();
+            this.router.navigate(['/auth/login']);
           },
           error: (error) => {
             console.error('Error requesting guide role:', error);

@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit {
         }
 
         console.log('Login successful', 'Token:', res.token);
-        this.router.navigate(['/userProfile']);
+        this.router.navigate(['/']);
       },
       error: (err: any) => {
         this.isLoading = false;
