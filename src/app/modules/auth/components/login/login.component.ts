@@ -49,23 +49,25 @@ export class LoginComponent implements OnInit {
         this.isLoading = false;
 
         if (res.token) {
-
           this.UserSrv.getUserProfile().subscribe({
             next: (user: User) => {
-              this.accountSrv.LoggedUser.next(user); // تحديث الـ BehaviorSubject
+              this.accountSrv.LoggedUser.next(user);
               console.log('User profile fetched successfully:', user);
+              // التحقق من وجود مسار للرجوع إليه
+              const redirectUrl = localStorage.getItem('redirectAfterLogin') || '/';
+              localStorage.removeItem('redirectAfterLogin'); // حذف المسار بعد استخدامه
+              this.router.navigateByUrl(redirectUrl);
             },
             error: (error) => {
               console.error('Error fetching user profile:', error);
+              // لو فشل جلب الملف الشخصي، نوجه للصفحة الرئيسية
+              this.router.navigate(['/']);
             }
           });
-
         } else {
           console.warn('User data missing in login response');
+          this.errorMessage = 'Login failed: No token received';
         }
-
-        console.log('Login successful', 'Token:', res.token);
-        this.router.navigate(['/']);
       },
       error: (err: any) => {
         this.isLoading = false;

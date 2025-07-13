@@ -231,19 +231,27 @@ export class TrainDetailsComponent implements OnInit {
     this.isModalOpen = false;
   }
 
-  requestGuideRole(): void {
+ requestGuideRole(): void {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         console.log('Location access granted:', position.coords);
         this.trainService.requestGuideRole().subscribe({
           next: (response) => {
             console.log(response.message);
-            localStorage.removeItem('token');
-            this.isGuide = true;
-            this.closeGuideModal();
-            localStorage.setItem('redirectAfterLogin', window.location.pathname);
-            this.authService.LogOut();
-            this.router.navigate(['/auth/login']);
+            // حفظ مسار الصفحة الحالية
+            localStorage.setItem('redirectAfterLogin', `/traindetails/${this.trainId}`);
+            // تسجيل الخروج
+            this.authService.LogOut().subscribe({
+              next: () => {
+                this.isGuide = true;
+                this.closeGuideModal();
+                this.router.navigate(['/auth/login']);
+              },
+              error: (error) => {
+                console.error('Error during logout:', error);
+                alert('حدث خطأ أثناء تسجيل الخروج');
+              }
+            });
           },
           error: (error) => {
             console.error('Error requesting guide role:', error);
