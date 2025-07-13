@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
@@ -14,7 +14,7 @@ export class NotificationService {
   private hubConnection!: HubConnection;
   private notifications$ = new BehaviorSubject<Notification[]>([]);
   private unreadCount$ = new BehaviorSubject<number>(0);
-  private hasNewNotification$ = new BehaviorSubject<boolean>(false); 
+  private hasNewNotification$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private http: HttpClient,
@@ -24,7 +24,9 @@ export class NotificationService {
       if (isAuthenticated) {
         this.initHubConnection();
         this.fetchNotifications();
-      } else {
+        this.LoadNotifications();
+      } 
+      else {
         this.stopHubConnection();
         this.notifications$.next([]);
         this.unreadCount$.next(0);
@@ -33,8 +35,8 @@ export class NotificationService {
     });
   }
 
- 
-  
+
+
   private initHubConnection(): void {
     const token = this.authService.getToken();
     if (!token) {
@@ -52,17 +54,14 @@ export class NotificationService {
       })
       .build();
 
-    this.hubConnection.on('ReceiveNotification', (notification: Notification) => {
-      console.log('Received notification:', notification);
-      this.updateNotifications(notification);
-      if (!notification.IsRead) {
-        this.hasNewNotification$.next(true); 
-      }
-    });
 
     this.hubConnection.start()
-      .then(() => console.log('SignalR connected at', new Date()))
+      .then(() => {
+        console.log('SignalR connected at', new Date())
+       
+      })
       .catch(err => console.error('SignalR connection error:', err));
+
   }
 
   private stopHubConnection(): void {
@@ -76,12 +75,12 @@ export class NotificationService {
   private updateNotifications(notification: Notification): void {
     const currentNotifications = this.notifications$.value;
     console.log("Basoom");
-    
+
     const index = currentNotifications.findIndex(n => n.Id === notification.Id);
     if (index === -1) {
-      currentNotifications.unshift(notification); 
+      currentNotifications.unshift(notification);
     } else {
-      currentNotifications[index] = notification; 
+      currentNotifications[index] = notification;
     }
     this.notifications$.next([...currentNotifications]);
     this.updateUnreadCount();
@@ -100,11 +99,11 @@ export class NotificationService {
   }
 
   resetNewNotification(): void {
-    this.hasNewNotification$.next(false); 
+    this.hasNewNotification$.next(false);
   }
 
   markAsRead(notificationId: number): Observable<void> {
-    const url = `${environment.apiUrl}Notification/markAsRead/${notificationId}`;
+    const url = `${environment.apiUrl}Notification/MarkAsRead/${notificationId}`;
     return this.http.post<void>(url, {}, {
       headers: new HttpHeaders({
         Authorization: `Bearer ${this.authService.getToken()}`
@@ -132,7 +131,7 @@ export class NotificationService {
       this.hasNewNotification$.next(false);
       return;
     }
-    const url = `${environment.hubUrl}OurtrainTrackingHub`;
+    const url = `${environment.apiUrl}Notification/getUserNotifications`;
     this.http
       .get<Notification[]>(url, {
         headers: new HttpHeaders({
@@ -155,6 +154,31 @@ export class NotificationService {
       });
   }
 
+
+  LoadNotifications(): void {
+    console.log('---------------------------------------------------------');
+     if (this.hubConnection && this.hubConnection.state === HubConnectionState.Connected) {
+      console.log('✅ متصل بـ OurtrainTrackingHub');
+      this.hubConnection.on('ReceiveNotification', (notification: Notification) => {
+        console.log('📨 إشعار جديد:', notification);
+        this.updateNotifications(notification);
+        if (!notification.IsRead) {
+          this.hasNewNotification$.next(true);
+        }
+      });
+      this.hubConnection.invoke('LoadNotifications').then(
+        (notification: any) => {
+        console.log('Received notification:', notification);
+        // this.updateNotifications(notification);
+        // if (!notification.IsRead) {
+        //   this.hasNewNotification$.next(true); 
+        // }
+      }).catch(err => {
+        console.error('Error loading notifications:', err)    
+      });
+    }
+
+  }
   private updateUnreadCount(): void {
     const unread = this.notifications$.value.filter(n => !n.IsRead).length;
     console.log('Updated unread count:', unread);
@@ -193,7 +217,7 @@ export class NotificationService {
       .pipe(
         tap(() => {
           this.joinTrainGroup(trainId);
-          this.fetchNotifications();
+          // this.fetchNotifications();
         })
       );
   }
