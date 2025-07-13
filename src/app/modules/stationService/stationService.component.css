@@ -164,6 +164,24 @@
   margin-bottom: 20px;
   padding-bottom: 12px;
   border-bottom: 2px solid #f8f9fa;
+  flex-wrap: wrap;
+  gap: 15px;
+  direction: rtl; /* اتجاه النص العربي */
+
+  .section-title-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 200px;
+    order: 1; /* العنوان في اليمين (أول عنصر في RTL) */
+    justify-content: flex-start;
+  }
+
+  .carousel-controls {
+    order: 2; /* الأسهم في اليسار (ثاني عنصر في RTL) */
+    flex-shrink: 0;
+  }
 
   h3 {
     margin: 0;
@@ -182,6 +200,107 @@
   }
 }
 
+/* Carousel Controls */
+.carousel-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  opacity: 1;
+  visibility: visible;
+}
+
+.carousel-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0846a0, #06236b);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  box-shadow: 0 3px 8px rgba(8, 70, 160, 0.3);
+
+  &:hover:not(.disabled) {
+    background: linear-gradient(135deg, #06236b, #041a52);
+    transform: scale(1.15) translateY(-2px);
+    box-shadow: 0 6px 15px rgba(8, 70, 160, 0.5);
+  }
+
+  &:active:not(.disabled) {
+    transform: scale(1.05) translateY(-1px);
+  }
+
+  &.disabled {
+    background: linear-gradient(135deg, #e9ecef, #dee2e6) !important;
+    color: #adb5bd !important;
+    cursor: not-allowed !important;
+    opacity: 0.5 !important;
+    transform: none !important;
+    box-shadow: 0 1px 3px rgba(173, 181, 189, 0.2) !important;
+    border: 1px solid #dee2e6 !important;
+
+    &:hover {
+      background: linear-gradient(135deg, #e9ecef, #dee2e6) !important;
+      color: #adb5bd !important;
+      transform: none !important;
+      box-shadow: 0 1px 3px rgba(173, 181, 189, 0.2) !important;
+    }
+  }
+
+  &:disabled {
+    background: linear-gradient(135deg, #e9ecef, #dee2e6) !important;
+    color: #adb5bd !important;
+    cursor: not-allowed !important;
+    opacity: 0.5 !important;
+    transform: none !important;
+    box-shadow: 0 1px 3px rgba(173, 181, 189, 0.2) !important;
+    border: 1px solid #dee2e6 !important;
+
+    &:hover {
+      background: linear-gradient(135deg, #e9ecef, #dee2e6) !important;
+      color: #adb5bd !important;
+      transform: none !important;
+      box-shadow: 0 1px 3px rgba(173, 181, 189, 0.2) !important;
+    }
+  }
+
+  i {
+    font-size: 0.8rem;
+  }
+}
+
+/* حالات خاصة للأزرار */
+.carousel-controls .carousel-btn {
+  /* الحالة النشطة - افتراضية */
+  &.active {
+    background: linear-gradient(135deg, #0846a0, #06236b);
+    color: white;
+    cursor: pointer;
+  }
+
+  /* الحالة المعطلة - بيانات موجودة لكن لا يمكن التحرك */
+  &.disabled {
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+    color: #6c757d !important;
+    cursor: not-allowed !important;
+    opacity: 0.7 !important;
+    border: 1px solid #dee2e6 !important;
+  }
+
+  /* حالة عدم وجود بيانات */
+  &.no-data {
+    background: linear-gradient(135deg, #f1f3f4, #e8eaed) !important;
+    color: #9aa0a6 !important;
+    cursor: not-allowed !important;
+    opacity: 0.4 !important;
+    border: 1px solid #dadce0 !important;
+  }
+}
+
 /* Service Cards */
 .service-card {
   border: 1px solid #e0e0e0;
@@ -193,11 +312,27 @@
   transition: all 0.3s ease;
   height: 100%;
   overflow: hidden;
+  width: 100%;
+  max-width: 100%;
 
   &:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     transform: translateY(-2px);
+    border-color: #0846a0;
   }
+}
+
+/* Responsive Grid Layout */
+.row.g-3 {
+  margin: 0 -0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.row.g-3 > [class*="col-"] {
+  padding: 0 0.75rem;
+  margin-bottom: 1.5rem;
+  flex: 0 0 auto;
 }
 
 .service-image-container {
@@ -249,52 +384,93 @@
 
 .service-actions {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
   margin-top: 12px;
 
   .btn {
     flex: 1;
     min-width: 100px;
-    font-size: 0.8rem;
-    padding: 6px 10px;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      margin-left: 4px;
+    }
   }
 }
 
-/* Pagination Styles */
+/* Enhanced Pagination Styles */
 .pagination-container {
-  margin-top: 20px;
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  padding: 15px 0;
 }
 
 .pagination {
+  background: linear-gradient(135deg, #f8f9fa, #ffffff);
+  padding: 10px 15px;
+  border-radius: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 2px solid #e9ecef;
+
   .page-item {
+    margin: 0 2px;
+
     .page-link {
-      color: #0846a0;
-      border: 1px solid #dee2e6;
-      padding: 6px 10px;
-      margin: 0 1px;
-      border-radius: 4px;
-      transition: all 0.3s ease;
-      font-size: 0.85rem;
+      color: #0846a0 !important;
+      border: 2px solid #dee2e6 !important;
+      padding: 10px 15px !important;
+      border-radius: 50% !important;
+      transition: all 0.3s ease !important;
+      font-size: 0.9rem !important;
+      font-weight: 500 !important;
+      background: white !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+      min-width: 45px !important;
+      height: 45px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-decoration: none !important;
 
       &:hover {
-        background-color: #0846a0;
-        color: white;
-        border-color: #0846a0;
+        background: linear-gradient(135deg, #0846a0, #06236b) !important;
+        color: white !important;
+        border-color: #0846a0 !important;
+        transform: translateY(-2px) scale(1.05) !important;
+        box-shadow: 0 4px 12px rgba(8, 70, 160, 0.4) !important;
+      }
+
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(8, 70, 160, 0.25) !important;
       }
     }
 
     &.active .page-link {
-      background-color: #0846a0;
-      border-color: #0846a0;
-      color: white;
+      background: linear-gradient(135deg, #0846a0, #06236b) !important;
+      border-color: #0846a0 !important;
+      color: white !important;
+      transform: scale(1.1) !important;
+      box-shadow: 0 4px 12px rgba(8, 70, 160, 0.5) !important;
     }
 
     &.disabled .page-link {
-      color: #6c757d;
-      pointer-events: none;
-      background-color: #fff;
-      border-color: #dee2e6;
+      color: #6c757d !important;
+      pointer-events: none !important;
+      background: #f8f9fa !important;
+      border-color: #dee2e6 !important;
+      opacity: 0.6 !important;
+      transform: none !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     }
   }
 }
@@ -572,6 +748,27 @@
       }
     }
   }
+
+  .pagination-container {
+    margin-top: 20px;
+    padding: 10px 0;
+  }
+
+  .pagination {
+    padding: 8px 12px;
+    border-radius: 20px;
+
+    .page-item {
+      margin: 0 1px;
+
+      .page-link {
+        min-width: 40px !important;
+        height: 40px !important;
+        padding: 8px 12px !important;
+        font-size: 0.85rem !important;
+      }
+    }
+  }
 }
 
 @media (max-width: 576px) {
@@ -598,6 +795,27 @@
   .main-content-layout {
     gap: 15px;
   }
+
+  .pagination-container {
+    margin-top: 15px;
+    padding: 8px 0;
+  }
+
+  .pagination {
+    padding: 6px 10px;
+    border-radius: 15px;
+
+    .page-item {
+      margin: 0;
+
+      .page-link {
+        min-width: 35px !important;
+        height: 35px !important;
+        padding: 6px 10px !important;
+        font-size: 0.8rem !important;
+      }
+    }
+  }
 }
 
 /* Loading Spinner */
@@ -617,40 +835,50 @@
 
 /* Custom Button Styles */
 .btn-primary {
-  background-color: #0846a0;
-  border-color: #0846a0;
-  color: white;
+  background-color: #0846a0 !important;
+  border-color: #0846a0 !important;
+  color: white !important;
+  font-weight: 500;
+  border-width: 2px;
+  box-shadow: 0 2px 4px rgba(8, 70, 160, 0.2);
 
   &:hover {
-    background-color: #06236b;
-    border-color: #06236b;
+    background-color: #06236b !important;
+    border-color: #06236b !important;
+    color: white !important;
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(8, 70, 160, 0.3);
+    box-shadow: 0 4px 12px rgba(8, 70, 160, 0.4);
   }
 
   &:focus, &:active {
-    background-color: #06236b;
-    border-color: #06236b;
+    background-color: #06236b !important;
+    border-color: #06236b !important;
+    color: white !important;
     box-shadow: 0 0 0 0.2rem rgba(8, 70, 160, 0.25);
   }
 }
 
 .btn-secondary {
-  background-color: #06236b;
-  border-color: #06236b;
-  color: white;
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+  color: white !important;
+  font-weight: 500;
+  border-width: 2px;
+  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
 
   &:hover {
-    background-color: #0846a0;
-    border-color: #0846a0;
+    background-color: #5a6268 !important;
+    border-color: #5a6268 !important;
+    color: white !important;
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(6, 35, 107, 0.3);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
   }
 
   &:focus, &:active {
-    background-color: #0846a0;
-    border-color: #0846a0;
-    box-shadow: 0 0 0 0.2rem rgba(6, 35, 107, 0.25);
+    background-color: #5a6268 !important;
+    border-color: #5a6268 !important;
+    color: white !important;
+    box-shadow: 0 0 0 0.2rem rgba(108, 117, 125, 0.25);
   }
 }
 
@@ -720,6 +948,105 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Service Card Button Specific Styles */
+.service-card .btn {
+  border-radius: 6px;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.3px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.service-card .btn-primary {
+  background: linear-gradient(135deg, #0846a0, #06236b) !important;
+  border: 2px solid #0846a0 !important;
+  color: white !important;
+  box-shadow: 0 2px 6px rgba(8, 70, 160, 0.3);
+}
+
+.service-card .btn-primary:hover {
+  background: linear-gradient(135deg, #06236b, #041a52) !important;
+  border-color: #06236b !important;
+  box-shadow: 0 4px 12px rgba(8, 70, 160, 0.5);
+  transform: translateY(-2px);
+}
+
+.service-card .btn-secondary {
+  background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+  border: 2px solid #6c757d !important;
+  color: white !important;
+  box-shadow: 0 2px 6px rgba(108, 117, 125, 0.3);
+}
+
+.service-card .btn-secondary:hover {
+  background: linear-gradient(135deg, #5a6268, #495057) !important;
+  border-color: #5a6268 !important;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Ensure buttons are visible and clickable */
+.service-card .service-actions .btn {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  display: inline-flex !important;
+  min-height: 36px;
+}
+
+/* Small button specific styles */
+.service-card .btn-sm {
+  padding: 8px 12px !important;
+  font-size: 0.85rem !important;
+  line-height: 1.4;
+  border-radius: 6px !important;
+  font-weight: 500 !important;
+  min-width: 100px;
+  text-align: center;
+}
+
+.service-card .btn-sm i {
+  font-size: 0.9rem;
+  margin-left: 4px;
+}
+
+/* Force visibility for all button states */
+.service-card .btn-primary.btn-sm {
+  background: linear-gradient(135deg, #0846a0, #06236b) !important;
+  border: 2px solid #0846a0 !important;
+  color: white !important;
+  box-shadow: 0 2px 6px rgba(8, 70, 160, 0.3) !important;
+}
+
+.service-card .btn-primary.btn-sm:hover,
+.service-card .btn-primary.btn-sm:focus,
+.service-card .btn-primary.btn-sm:active {
+  background: linear-gradient(135deg, #06236b, #041a52) !important;
+  border-color: #06236b !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(8, 70, 160, 0.5) !important;
+  transform: translateY(-2px) !important;
+}
+
+.service-card .btn-secondary.btn-sm {
+  background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+  border: 2px solid #6c757d !important;
+  color: white !important;
+  box-shadow: 0 2px 6px rgba(108, 117, 125, 0.3) !important;
+}
+
+.service-card .btn-secondary.btn-sm:hover,
+.service-card .btn-secondary.btn-sm:focus,
+.service-card .btn-secondary.btn-sm:active {
+  background: linear-gradient(135deg, #5a6268, #495057) !important;
+  border-color: #5a6268 !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.5) !important;
+  transform: translateY(-2px) !important;
+}
+
 /* Custom marker styles */
 .custom-service-marker {
   background: transparent !important;
@@ -733,3 +1060,140 @@
 .custom-service-marker:hover div {
   transform: scale(1.1);
 }
+
+/* Override any conflicting styles */
+.service-actions .btn,
+.service-actions button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  border-style: solid !important;
+  border-width: 2px !important;
+  outline: none !important;
+  user-select: none !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Ensure proper spacing and layout */
+.service-actions {
+  margin-top: 15px !important;
+  padding-top: 10px;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* Fix any potential Bootstrap conflicts */
+.service-card .service-actions .btn:not(:disabled):not(.disabled) {
+  cursor: pointer !important;
+}
+
+.service-card .service-actions .btn:not(:disabled):not(.disabled):active,
+.service-card .service-actions .btn:not(:disabled):not(.disabled).active {
+  background-image: none !important;
+}
+
+/* Responsive Styles for Cards and Carousel */
+
+/* Desktop: 3 cards (default) */
+@media (min-width: 992px) {
+  .row.g-3 > [class*="col-"] {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+}
+
+/* Tablet: 2 cards */
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .row.g-3 > [class*="col-"] {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .section-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    direction: rtl; /* اتجاه النص العربي */
+
+    .section-title-area {
+      flex: 1;
+      min-width: 200px;
+      order: 1; /* العنوان في اليمين (أول عنصر في RTL) */
+    }
+
+    .carousel-controls {
+      order: 2; /* الأسهم في اليسار (ثاني عنصر في RTL) */
+    }
+  }
+
+  .carousel-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Mobile: 1 card */
+@media (max-width: 575.98px) {
+  .row.g-3 > [class*="col-"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .section-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    direction: rtl; /* اتجاه النص العربي */
+
+    .section-title-area {
+      flex: 1;
+      min-width: 150px;
+      order: 1; /* العنوان في اليمين (أول عنصر في RTL) */
+    }
+
+    .carousel-controls {
+      order: 2; /* الأسهم في اليسار (ثاني عنصر في RTL) */
+      gap: 6px;
+    }
+  }
+
+  .carousel-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 0.7rem;
+  }
+
+  .service-card {
+    margin-bottom: 20px;
+  }
+
+  /* في حالة عدم وجود مساحة كافية، ضع الأسهم أسفل العنوان */
+  @media (max-width: 400px) {
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      direction: rtl; /* اتجاه النص العربي */
+
+      .section-title-area {
+        width: 100%;
+        order: 1; /* العنوان أولاً */
+        align-self: flex-start;
+      }
+
+      .carousel-controls {
+        align-self: flex-start;
+        order: 2; /* الأسهم ثانياً */
+      }
+    }
+  }
+}
+

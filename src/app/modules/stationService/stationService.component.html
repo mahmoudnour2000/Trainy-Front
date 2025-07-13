@@ -85,12 +85,31 @@
                 <!-- المطاعم -->
                 <div class="service-section mb-5" *ngIf="serviceCategories[0].totalItems > 0">
                     <div class="section-header">
-                        <h3><i class="fas fa-utensils me-2"></i>{{ serviceCategories[0].name }}</h3>
-                        <span class="badge bg-primary">{{ serviceCategories[0].totalItems }} خدمة</span>
+                        <!-- Section Title -->
+                        <div class="section-title-area">
+                            <h3><i class="fas fa-utensils me-2"></i>{{ serviceCategories[0].name }}</h3>
+                            <span class="badge bg-primary">{{ serviceCategories[0].totalItems }} خدمة</span>
+                        </div>
+
+                        <!-- Carousel Controls -->
+                        <div class="carousel-controls">
+                            <button class="carousel-btn prev-btn"
+                                    [class.disabled]="!canMovePrev(serviceCategories[0])"
+                                    (click)="moveCarousel(serviceCategories[0], 'prev')"
+                                    [disabled]="!canMovePrev(serviceCategories[0])">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            <button class="carousel-btn next-btn"
+                                    [class.disabled]="!canMoveNext(serviceCategories[0])"
+                                    (click)="moveCarousel(serviceCategories[0], 'next')"
+                                    [disabled]="!canMoveNext(serviceCategories[0])">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                        </div>
                     </div>
-                    
+
                     <div class="row g-3">
-                        <div *ngFor="let service of getPaginatedServices(serviceCategories[0]); trackBy: trackByServiceId" class="col-md-6 col-lg-4">
+                        <div *ngFor="let service of getVisibleServices(serviceCategories[0]); trackBy: trackByServiceId" class="col-md-6 col-lg-4">
                             <div class="service-card">
                                 <div class="service-image-container" *ngIf="service.ImagePath">
                                     <img [src]="service.ImagePath" 
@@ -131,39 +150,37 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Pagination for Restaurants -->
-                    <div class="pagination-container" *ngIf="getTotalPages(serviceCategories[0]) > 1">
-                        <nav aria-label="Restaurants pagination">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item" [class.disabled]="serviceCategories[0].currentPage === 1">
-                                    <a class="page-link" (click)="onPageChange(serviceCategories[0], serviceCategories[0].currentPage - 1)" style="cursor: pointer;">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item" *ngFor="let page of getPageNumbers(serviceCategories[0])" 
-                                    [class.active]="page === serviceCategories[0].currentPage">
-                                    <a class="page-link" (click)="onPageChange(serviceCategories[0], page)" style="cursor: pointer;">{{ page }}</a>
-                                </li>
-                                <li class="page-item" [class.disabled]="serviceCategories[0].currentPage === getTotalPages(serviceCategories[0])">
-                                    <a class="page-link" (click)="onPageChange(serviceCategories[0], serviceCategories[0].currentPage + 1)" style="cursor: pointer;">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+
                 </div>
 
                 <!-- الفنادق -->
                 <div class="service-section mb-5" *ngIf="serviceCategories[1].totalItems > 0">
                     <div class="section-header">
-                        <h3><i class="fas fa-hotel me-2"></i>{{ serviceCategories[1].name }}</h3>
-                        <span class="badge bg-success">{{ serviceCategories[1].totalItems }} خدمة</span>
+                        <!-- Section Title -->
+                        <div class="section-title-area">
+                            <h3><i class="fas fa-hotel me-2"></i>{{ serviceCategories[1].name }}</h3>
+                            <span class="badge bg-success">{{ serviceCategories[1].totalItems }} خدمة</span>
+                        </div>
+
+                        <!-- Carousel Controls -->
+                        <div class="carousel-controls">
+                            <button class="carousel-btn prev-btn"
+                                    [class.disabled]="!canMovePrev(serviceCategories[1])"
+                                    (click)="moveCarousel(serviceCategories[1], 'prev')"
+                                    [disabled]="!canMovePrev(serviceCategories[1])">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            <button class="carousel-btn next-btn"
+                                    [class.disabled]="!canMoveNext(serviceCategories[1])"
+                                    (click)="moveCarousel(serviceCategories[1], 'next')"
+                                    [disabled]="!canMoveNext(serviceCategories[1])">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                        </div>
                     </div>
-                    
+
                     <div class="row g-3">
-                        <div *ngFor="let service of getPaginatedServices(serviceCategories[1]); trackBy: trackByServiceId" class="col-md-6 col-lg-4">
+                        <div *ngFor="let service of getVisibleServices(serviceCategories[1]); trackBy: trackByServiceId" class="col-md-6 col-lg-4">
                             <div class="service-card">
                                 <div class="service-image-container" *ngIf="service.ImagePath">
                                     <img [src]="service.ImagePath" 
@@ -204,39 +221,37 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Pagination for Hotels -->
-                    <div class="pagination-container" *ngIf="getTotalPages(serviceCategories[1]) > 1">
-                        <nav aria-label="Hotels pagination">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item" [class.disabled]="serviceCategories[1].currentPage === 1">
-                                    <a class="page-link" (click)="onPageChange(serviceCategories[1], serviceCategories[1].currentPage - 1)" style="cursor: pointer;">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item" *ngFor="let page of getPageNumbers(serviceCategories[1])" 
-                                    [class.active]="page === serviceCategories[1].currentPage">
-                                    <a class="page-link" (click)="onPageChange(serviceCategories[1], page)" style="cursor: pointer;">{{ page }}</a>
-                                </li>
-                                <li class="page-item" [class.disabled]="serviceCategories[1].currentPage === getTotalPages(serviceCategories[1])">
-                                    <a class="page-link" (click)="onPageChange(serviceCategories[1], serviceCategories[1].currentPage + 1)" style="cursor: pointer;">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+
                 </div>
 
                 <!-- الصيدليات -->
                 <div class="service-section mb-5" *ngIf="serviceCategories[2].totalItems > 0">
                     <div class="section-header">
-                        <h3><i class="fas fa-pills me-2"></i>{{ serviceCategories[2].name }}</h3>
-                        <span class="badge bg-warning">{{ serviceCategories[2].totalItems }} خدمة</span>
+                        <!-- Section Title -->
+                        <div class="section-title-area">
+                            <h3><i class="fas fa-pills me-2"></i>{{ serviceCategories[2].name }}</h3>
+                            <span class="badge bg-warning">{{ serviceCategories[2].totalItems }} خدمة</span>
+                        </div>
+
+                        <!-- Carousel Controls -->
+                        <div class="carousel-controls">
+                            <button class="carousel-btn prev-btn"
+                                    [class.disabled]="!canMovePrev(serviceCategories[2])"
+                                    (click)="moveCarousel(serviceCategories[2], 'prev')"
+                                    [disabled]="!canMovePrev(serviceCategories[2])">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            <button class="carousel-btn next-btn"
+                                    [class.disabled]="!canMoveNext(serviceCategories[2])"
+                                    (click)="moveCarousel(serviceCategories[2], 'next')"
+                                    [disabled]="!canMoveNext(serviceCategories[2])">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                        </div>
                     </div>
-                    
+
                     <div class="row g-3">
-                        <div *ngFor="let service of getPaginatedServices(serviceCategories[2]); trackBy: trackByServiceId" class="col-md-6 col-lg-4">
+                        <div *ngFor="let service of getVisibleServices(serviceCategories[2]); trackBy: trackByServiceId" class="col-md-6 col-lg-4">
                             <div class="service-card">
                                 <div class="service-image-container" *ngIf="service.ImagePath">
                                     <img [src]="service.ImagePath" 
@@ -277,39 +292,37 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Pagination for Pharmacies -->
-                    <div class="pagination-container" *ngIf="getTotalPages(serviceCategories[2]) > 1">
-                        <nav aria-label="Pharmacies pagination">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item" [class.disabled]="serviceCategories[2].currentPage === 1">
-                                    <a class="page-link" (click)="onPageChange(serviceCategories[2], serviceCategories[2].currentPage - 1)" style="cursor: pointer;">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item" *ngFor="let page of getPageNumbers(serviceCategories[2])" 
-                                    [class.active]="page === serviceCategories[2].currentPage">
-                                    <a class="page-link" (click)="onPageChange(serviceCategories[2], page)" style="cursor: pointer;">{{ page }}</a>
-                                </li>
-                                <li class="page-item" [class.disabled]="serviceCategories[2].currentPage === getTotalPages(serviceCategories[2])">
-                                    <a class="page-link" (click)="onPageChange(serviceCategories[2], serviceCategories[2].currentPage + 1)" style="cursor: pointer;">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+
                 </div>
 
                 <!-- الكافيهات -->
                 <div class="service-section mb-5" *ngIf="serviceCategories[3].totalItems > 0">
                     <div class="section-header">
-                        <h3><i class="fas fa-coffee me-2"></i>{{ serviceCategories[3].name }}</h3>
-                        <span class="badge bg-info">{{ serviceCategories[3].totalItems }} خدمة</span>
+                        <!-- Section Title -->
+                        <div class="section-title-area">
+                            <h3><i class="fas fa-coffee me-2"></i>{{ serviceCategories[3].name }}</h3>
+                            <span class="badge bg-info">{{ serviceCategories[3].totalItems }} خدمة</span>
+                        </div>
+
+                        <!-- Carousel Controls -->
+                        <div class="carousel-controls">
+                            <button class="carousel-btn prev-btn"
+                                    [class.disabled]="!canMovePrev(serviceCategories[3])"
+                                    (click)="moveCarousel(serviceCategories[3], 'prev')"
+                                    [disabled]="!canMovePrev(serviceCategories[3])">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            <button class="carousel-btn next-btn"
+                                    [class.disabled]="!canMoveNext(serviceCategories[3])"
+                                    (click)="moveCarousel(serviceCategories[3], 'next')"
+                                    [disabled]="!canMoveNext(serviceCategories[3])">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                        </div>
                     </div>
-                    
+
                     <div class="row g-3">
-                        <div *ngFor="let service of getPaginatedServices(serviceCategories[3]); trackBy: trackByServiceId" class="col-md-6 col-lg-4">
+                        <div *ngFor="let service of getVisibleServices(serviceCategories[3]); trackBy: trackByServiceId" class="col-md-6 col-lg-4">
                             <div class="service-card">
                                 <div class="service-image-container" *ngIf="service.ImagePath">
                                     <img [src]="service.ImagePath" 
@@ -350,28 +363,7 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Pagination for Cafes -->
-                    <div class="pagination-container" *ngIf="getTotalPages(serviceCategories[3]) > 1">
-                        <nav aria-label="Cafes pagination">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item" [class.disabled]="serviceCategories[3].currentPage === 1">
-                                    <a class="page-link" (click)="onPageChange(serviceCategories[3], serviceCategories[3].currentPage - 1)" style="cursor: pointer;">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item" *ngFor="let page of getPageNumbers(serviceCategories[3])" 
-                                    [class.active]="page === serviceCategories[3].currentPage">
-                                    <a class="page-link" (click)="onPageChange(serviceCategories[3], page)" style="cursor: pointer;">{{ page }}</a>
-                                </li>
-                                <li class="page-item" [class.disabled]="serviceCategories[3].currentPage === getTotalPages(serviceCategories[3])">
-                                    <a class="page-link" (click)="onPageChange(serviceCategories[3], serviceCategories[3].currentPage + 1)" style="cursor: pointer;">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import * as L from 'leaflet';
 import { Service, ServiceResponse } from '../../core/models/stationService';
@@ -10,8 +10,8 @@ interface ServiceCategory {
   name: string;
   type: number;
   services: Service[];
-  currentPage: number;
-  pageSize: number;
+  currentIndex: number;
+  visibleCards: number;
   totalItems: number;
   isLoading: boolean;
 }
@@ -38,13 +38,20 @@ export class ServicesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Service categories with pagination
   serviceCategories: ServiceCategory[] = [
-    { name: 'المطاعم', type: 0, services: [], currentPage: 1, pageSize: 6, totalItems: 0, isLoading: false },
-    { name: 'الفنادق', type: 1, services: [], currentPage: 1, pageSize: 6, totalItems: 0, isLoading: false },
-    { name: 'الصيدليات', type: 3, services: [], currentPage: 1, pageSize: 6, totalItems: 0, isLoading: false },
-    { name: 'الكافيهات', type: 5, services: [], currentPage: 1, pageSize: 6, totalItems: 0, isLoading: false }
+    { name: 'المطاعم', type: 0, services: [], currentIndex: 0, visibleCards: 3, totalItems: 0, isLoading: false },
+    { name: 'الفنادق', type: 1, services: [], currentIndex: 0, visibleCards: 3, totalItems: 0, isLoading: false },
+    { name: 'الصيدليات', type: 3, services: [], currentIndex: 0, visibleCards: 3, totalItems: 0, isLoading: false },
+    { name: 'الكافيهات', type: 5, services: [], currentIndex: 0, visibleCards: 3, totalItems: 0, isLoading: false }
   ];
 
-  constructor(private apiService: StationApiService, private route: ActivatedRoute) {
+  // متغير لتتبع حجم الشاشة الحالي
+  currentScreenSize: 'mobile' | 'tablet' | 'desktop' = 'desktop';
+
+  constructor(
+    private apiService: StationApiService,
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
+  ) {
     this.stationId = +this.route.snapshot.paramMap.get('stationId')! || 0;
     console.log('🚀 ServicesComponent initialized with stationId:', this.stationId);
     
@@ -58,6 +65,15 @@ export class ServicesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     console.log('📋 ngOnInit called');
+
+    // تحديد حجم الشاشة الأولي
+    this.updateScreenSize();
+
+    // الاستماع لتغييرات حجم الشاشة
+    window.addEventListener('resize', () => {
+      this.updateScreenSize();
+    });
+
     this.loadAllServices();
   }
 
@@ -214,40 +230,56 @@ export class ServicesComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  getPaginatedServices(category: ServiceCategory): Service[] {
-    const startIndex = (category.currentPage - 1) * category.pageSize;
-    const endIndex = startIndex + category.pageSize;
+  getVisibleServices(category: ServiceCategory): Service[] {
+    const startIndex = category.currentIndex;
+    const endIndex = startIndex + category.visibleCards;
     return category.services.slice(startIndex, endIndex);
   }
 
-  onPageChange(category: ServiceCategory, page: number): void {
-    console.log(`📄 Changing page for ${category.name} to ${page}`);
-    category.currentPage = page;
-  }
+  moveCarousel(category: ServiceCategory, direction: 'prev' | 'next'): void {
+    const maxIndex = Math.max(0, category.services.length - category.visibleCards);
 
-  getTotalPages(category: ServiceCategory): number {
-    return Math.ceil(category.totalItems / category.pageSize);
-  }
-
-  getPageNumbers(category: ServiceCategory): number[] {
-    const totalPages = this.getTotalPages(category);
-    const pages: number[] = [];
-    const maxVisiblePages = 5;
-    
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      const startPage = Math.max(1, category.currentPage - 2);
-      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-      
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i);
-      }
+    if (direction === 'next' && category.currentIndex < maxIndex) {
+      category.currentIndex++;
+      console.log(`🎠 Moving ${category.name} carousel next to index ${category.currentIndex}`);
+    } else if (direction === 'prev' && category.currentIndex > 0) {
+      category.currentIndex--;
+      console.log(`🎠 Moving ${category.name} carousel prev to index ${category.currentIndex}`);
     }
-    
-    return pages;
+
+    // Force change detection
+    this.cdr.detectChanges();
+  }
+
+  canMovePrev(category: ServiceCategory): boolean {
+    return category.currentIndex > 0 && category.services.length > 0;
+  }
+
+  canMoveNext(category: ServiceCategory): boolean {
+    return category.currentIndex < Math.max(0, category.services.length - category.visibleCards) &&
+           category.services.length > category.visibleCards;
+  }
+
+  hasMultipleCards(category: ServiceCategory): boolean {
+    return category.services.length > category.visibleCards;
+  }
+
+  // دالة للتحقق من وجود بيانات
+  hasData(category: ServiceCategory): boolean {
+    return category.services.length > 0;
+  }
+
+  // دالة للحصول على حالة الزر
+  getButtonState(category: ServiceCategory, direction: 'prev' | 'next'): string {
+    if (!this.hasData(category)) {
+      return 'no-data';
+    }
+
+    if (direction === 'prev') {
+      return this.canMovePrev(category) ? 'active' : 'disabled';
+    } else {
+      return this.canMoveNext(category) ? 'active' : 'disabled';
+    }
   }
 
   initMap(latitude?: number, longitude?: number): void {
@@ -525,10 +557,56 @@ export class ServicesComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.map) {
       this.map.remove();
     }
+
+    // إزالة event listener لتغيير حجم الشاشة
+    window.removeEventListener('resize', this.updateScreenSize);
+  }
+
+  // دالة لتحديث حجم الشاشة وعدد الكاردات المرئية
+  updateScreenSize(): void {
+    const width = window.innerWidth;
+    let newScreenSize: 'mobile' | 'tablet' | 'desktop';
+    let newVisibleCards: number;
+
+    if (width < 576) {
+      // موبايل - كارد واحد
+      newScreenSize = 'mobile';
+      newVisibleCards = 1;
+    } else if (width < 992) {
+      // تابليت - كاردين
+      newScreenSize = 'tablet';
+      newVisibleCards = 2;
+    } else {
+      // ديسكتوب - 3 كاردات
+      newScreenSize = 'desktop';
+      newVisibleCards = 3;
+    }
+
+    // تحديث إذا تغير حجم الشاشة
+    if (this.currentScreenSize !== newScreenSize) {
+      this.currentScreenSize = newScreenSize;
+
+      // تحديث عدد الكاردات المرئية لجميع الفئات
+      this.serviceCategories.forEach(category => {
+        const oldVisibleCards = category.visibleCards;
+        category.visibleCards = newVisibleCards;
+
+        // إعادة تعيين المؤشر إذا كان خارج النطاق الجديد
+        const maxIndex = Math.max(0, category.services.length - newVisibleCards);
+        if (category.currentIndex > maxIndex) {
+          category.currentIndex = Math.max(0, maxIndex);
+        }
+
+        console.log(`📱 Screen size changed to ${newScreenSize}, ${category.name}: ${oldVisibleCards} → ${newVisibleCards} cards`);
+      });
+
+      // إجبار إعادة الرسم
+      this.cdr.detectChanges();
+    }
   }
 
   // Track by function for ngFor optimization
-  trackByServiceId(index: number, service: Service): number {
+  trackByServiceId(_index: number, service: Service): number {
     return service.Id;
   }
 
@@ -550,8 +628,9 @@ export class ServicesComponent implements OnInit, AfterViewInit, OnDestroy {
       categories: this.serviceCategories.map(cat => ({
         name: cat.name,
         count: cat.services.length,
-        currentPage: cat.currentPage,
-        totalPages: this.getTotalPages(cat)
+        currentIndex: cat.currentIndex,
+        visibleCards: cat.visibleCards,
+        maxIndex: Math.max(0, cat.services.length - cat.visibleCards)
       }))
     };
   }
