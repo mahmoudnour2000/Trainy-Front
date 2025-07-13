@@ -9,6 +9,7 @@ export interface Request {
   id: number;
   offerId: number;
   courierId: string;
+  CourierId?: string;
   courierName?: string;
   courierImage?: string;
   CourierName?: string;

@@ -129,6 +129,11 @@ export const routes: Routes = [
         canActivate: [AuthGuard]
       },
       {
+        path: 'delivery-chat/:requestId',
+        loadComponent: () => import('./modules/deliveryChatPage/deliveryChatPage').then(m => m.DeliveryChatPageComponent),
+        canActivate: [AuthGuard]
+      },
+      {
         path: 'train-chat/:trainId',
         canActivate: [AuthGuard],
         loadComponent: () => import('./modules/train-chat/train-chat.component').then(m => m.TrainChatComponent)

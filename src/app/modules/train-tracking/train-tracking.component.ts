@@ -10,13 +10,14 @@ import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { interval, Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
+import { EgyptTimePipe } from '../../shared/pipes/egypt-time.pipe';
 
 @Component({
   selector: 'app-train-tracking',
   templateUrl: './train-tracking.component.html',
   styleUrls: ['./train-tracking.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, LeafletModule, DatePipe]
+  imports: [CommonModule, FormsModule, LeafletModule, EgyptTimePipe]
 })
 export class TrainTrackingComponent implements OnInit, OnDestroy {
   trainId = 0;

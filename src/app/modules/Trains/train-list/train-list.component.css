@@ -14,6 +14,70 @@
   animation: fadeInScale 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.hero-section-with-search {
+  position: relative;
+}
+
+.search-overlay-container {
+  position: absolute;
+  bottom: -60px; /* Adjusted to position search section below hero content */
+  left: 50%;
+  transform: translateX(-50%); /* Center horizontally */
+  width: 100%;
+  max-width: 1100px; /* Match search-card max-width for consistency */
+  padding: 0 2vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  z-index: 2;
+
+  @media (max-width: 768px) {
+    bottom: -40px; /* Adjust for smaller screens */
+    padding: 0 1vw;
+  }
+
+  @media (max-width: 480px) {
+    bottom: -30px; /* Further adjust for mobile */
+    padding: 0 0.5vw;
+  }
+}
+
+.search-section {
+  position: relative;
+  background: transparent;
+  padding: 0;
+  margin: 0; /* Remove negative margin to prevent overlap */
+  z-index: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.search-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  max-width: 1100px;
+  width: 98%;
+  padding: 2rem;
+  pointer-events: auto; /* Ensure the search card is interactive */
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+    border-radius: 15px;
+    width: 96%;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+    border-radius: 14px;
+    width: 98%;
+  }
+}
+
 @keyframes fadeInScale {
   from {
     opacity: 0;
@@ -366,7 +430,7 @@
 }
 
 .loading-container::after {
-  content: '🚂';
+  content: ' ';
   position: absolute;
   right: 2rem;
   font-size: 2rem;
@@ -398,7 +462,7 @@
 }
 
 .empty-state::before {
-  content: '🚂💨';
+  content: '';
   display: block;
   font-size: 3rem;
   margin-bottom: 1rem;

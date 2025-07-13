@@ -14,6 +14,8 @@ import { OfferService } from '../../../../core/services/offer.service';
 })
 export class RequestCardComponent implements OnInit {
   @Input() request!: Request;
+  @Input() showActions: boolean = true; // Control whether to show action buttons
+  @Input() isViewOnly: boolean = false; // Control if this is view-only mode
   @Output() accept = new EventEmitter<number>();
   @Output() reject = new EventEmitter<number>();
   @Output() contact = new EventEmitter<number>();
@@ -91,75 +93,19 @@ export class RequestCardComponent implements OnInit {
     }
     
     this.contact.emit(this.request.id);
-    alert('سيتم فتح نافذة الدردشة قريباً للتواصل مع ' + (this.request.courierName || 'الموصل'));
-  }
-  
-  acceptRequest(): void {
-    // Check if user is authenticated and is the offer owner
-    if (!this.authService.isAuthenticated()) {
-      alert('يجب تسجيل الدخول أولاً');
-      return;
-    }
-    
-    if (!this.isOfferOwner) {
-      alert('فقط صاحب العرض يمكنه قبول الطلبات');
-      return;
-    }
-    
-    if (this.isActionInProgress) return;
-    this.isActionInProgress = true;
-    
-    this.requestService.acceptRequest(this.request.id).subscribe({
-      next: () => {
-        alert('تم قبول الطلب بنجاح');
-        // Update the request status locally
-        this.request.status = RequestStatus.Accepted;
-        this.isActionInProgress = false;
-      },
-      error: (err) => {
-        console.error('Error accepting request:', err);
-        alert('حدث خطأ أثناء قبول الطلب');
-        this.isActionInProgress = false;
+    console.log('this is my requesttttttt',this.request)
+    // Navigate to delivery chat page
+    this.router.navigate(['/delivery-chat', this.request.id], {
+      queryParams: {
+        offerId: this.request.offerId,
+        courierId: this.request.courierId
       }
     });
   }
   
-  rejectRequest(): void {
-    // Check if user is authenticated and is the offer owner
-    if (!this.authService.isAuthenticated()) {
-      alert('يجب تسجيل الدخول أولاً');
-      return;
-    }
-    
-    if (!this.isOfferOwner) {
-      alert('فقط صاحب العرض يمكنه رفض الطلبات');
-      return;
-    }
-    
-    if (this.isActionInProgress) return;
-    this.isActionInProgress = true;
-    
-    this.requestService.rejectRequest(this.request.id).subscribe({
-      next: () => {
-        alert('تم رفض الطلب بنجاح');
-        // Update the request status locally
-        this.request.status = RequestStatus.Rejected;
-        this.isActionInProgress = false;
-      },
-      error: (err) => {
-        console.error('Error rejecting request:', err);
-        alert('حدث خطأ أثناء رفض الطلب');
-        this.isActionInProgress = false;
-      }
-    });
-  }
+
   
-  canAcceptOrReject(): boolean {
-    // Only offer owners can accept/reject and only if the request is pending
-    return this.authService.isAuthenticated() && 
-           this.isOfferOwner && 
-           this.request.status === RequestStatus.Pending;
-  }
+
   
   canContact(): boolean {
     // يجب أن يكون المستخدم مسجل دخول وأن يكون صاحب العرض
