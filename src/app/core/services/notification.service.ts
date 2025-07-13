@@ -14,7 +14,7 @@ export class NotificationService {
   private hubConnection!: HubConnection;
   private notifications$ = new BehaviorSubject<Notification[]>([]);
   private unreadCount$ = new BehaviorSubject<number>(0);
-  private hasNewNotification$ = new BehaviorSubject<boolean>(false); // BehaviorSubject لحالة الإشعار الجديد
+  private hasNewNotification$ = new BehaviorSubject<boolean>(false); 
 
   constructor(
     private http: HttpClient,
@@ -56,7 +56,7 @@ export class NotificationService {
       console.log('Received notification:', notification);
       this.updateNotifications(notification);
       if (!notification.IsRead) {
-        this.hasNewNotification$.next(true); // تحديث حالة الإشعار الجديد
+        this.hasNewNotification$.next(true); 
       }
     });
 
@@ -77,9 +77,9 @@ export class NotificationService {
     const currentNotifications = this.notifications$.value;
     const index = currentNotifications.findIndex(n => n.Id === notification.Id);
     if (index === -1) {
-      currentNotifications.unshift(notification); // إضافة الإشعار الجديد في بداية القايمة
+      currentNotifications.unshift(notification); 
     } else {
-      currentNotifications[index] = notification; // تحديث الإشعار لو موجود
+      currentNotifications[index] = notification; 
     }
     this.notifications$.next([...currentNotifications]);
     this.updateUnreadCount();
@@ -98,7 +98,7 @@ export class NotificationService {
   }
 
   resetNewNotification(): void {
-    this.hasNewNotification$.next(false); // إعادة تعيين حالة الإشعار الجديد
+    this.hasNewNotification$.next(false); 
   }
 
   markAsRead(notificationId: number): Observable<void> {
@@ -130,7 +130,7 @@ export class NotificationService {
       this.hasNewNotification$.next(false);
       return;
     }
-    const url = `${environment.apiUrl}Notification/getUserNotifications`;
+    const url = `${environment.hubUrl}OurtrainTrackingHub`;
     this.http
       .get<Notification[]>(url, {
         headers: new HttpHeaders({
