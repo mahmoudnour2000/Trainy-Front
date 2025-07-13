@@ -1,10 +1,10 @@
-import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TrainChatService } from '../../core/services/train-chat.service';
+import { AuthService } from '../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
-
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-train-chat',
@@ -13,32 +13,41 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule, FormsModule],
   providers: [TrainChatService]
-
-   
-   
 })
-export class TrainChatComponent implements OnInit {
+export class TrainChatComponent implements OnInit, OnDestroy {
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
   trainId!: number;
   trainNo: string = '';
-  currentUser: string = localStorage.getItem('username') || 'ضيف';
+  currentUser: string = 'ضيف';
   currentUserId: string = '';
   newMessage: string = '';
   messages: any[] = [];
+  private authSubscription?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
-    private chatService: TrainChatService
+    private chatService: TrainChatService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
-    this.extractCurrentUserId();
+    this.extractCurrentUserInfo();
+    
+    // Subscribe to auth state changes
+    this.authSubscription = this.authService.authStateChanged$.subscribe(isAuthenticated => {
+      console.log('🔄 Auth state changed:', isAuthenticated);
+      if (isAuthenticated) {
+        this.extractCurrentUserInfo();
+      } else {
+        this.currentUser = 'ضيف';
+        this.currentUserId = '';
+      }
+    });
     
     this.route.paramMap.subscribe(params => {
       this.trainId = Number(params.get('trainId'));
       this.loadTrainNo();
       this.chatService.connect(this.trainId);
-      // Removed duplicate loadRecentMessages call - now handled in service
     });
 
     this.chatService.messages$.subscribe((data: any) => {
@@ -52,9 +61,27 @@ export class TrainChatComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    if (this.authSubscription) {
+      this.authSubscription.unsubscribe();
+    }
+  }
 
   sendMessage() {
     if (!this.newMessage.trim()) return;
+    
+    // Check if user is authenticated
+    if (!this.authService.isAuthenticated()) {
+      alert('يجب تسجيل الدخول أولاً لإرسال الرسائل');
+      return;
+    }
+    
+    // Check if we have valid user info
+    if (this.currentUser === 'ضيف' || !this.currentUserId) {
+      alert('خطأ في بيانات المستخدم، يرجى إعادة تسجيل الدخول');
+      return;
+    }
+    
     this.chatService.sendMessage(this.currentUser, this.newMessage, this.trainId);
     this.newMessage = '';
   }
@@ -73,14 +100,24 @@ export class TrainChatComponent implements OnInit {
     }, 100);
   }
 
-  private extractCurrentUserId() {
-    const userId = localStorage.getItem('userId');
-    this.currentUserId = userId || '';
+  private extractCurrentUserInfo() {
+    // Get current user from AuthService
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.currentUser = currentUser.Name || 'مستخدم';
+      this.currentUserId = currentUser.Id || '';
+      console.log('👤 Current user info:', { name: this.currentUser, id: this.currentUserId });
+    } else {
+      console.warn('⚠️ No authenticated user found');
+      this.currentUser = 'ضيف';
+      this.currentUserId = '';
+    }
   }
 
   private loadTrainNo() {
     // This method should load the train number based on trainId
     // For now, we'll set a default value or you can implement the actual logic
-    this.trainNo = `Train-${this.trainId}`;
+    // this.trainNo = `Train-${this.trainId}`;
+    this.trainNo = this.trainNo;
   }
 }

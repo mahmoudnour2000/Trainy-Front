@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { PublicChatService } from '../../core/services/public-chat.service';
+import { AuthService } from '../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -18,17 +19,35 @@ export class PublicChatComponent implements OnInit {
   newMessage: string = '';
   messages: any[] = [];
 
-  constructor(private chatService: PublicChatService) {}
+  constructor(private chatService: PublicChatService, private authService: AuthService) {}
 
   ngOnInit() {
-    this.extractCurrentUserId();
+    this.extractCurrentUserInfo();
     this.connectToPublicChat();
   }
 
-  private extractCurrentUserId() {
-    const userId = localStorage.getItem('userId');
-    this.currentUserId = userId || '';
+
+
+  private extractCurrentUserInfo() {
+    // Get current user from AuthService
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser) {
+      this.currentUser = currentUser.Name || 'مستخدم';
+      this.currentUserId = currentUser.Id || '';
+      console.log('👤 Current user info:', { name: this.currentUser, id: this.currentUserId });
+    } else {
+      console.warn('⚠️ No authenticated user found');
+      this.currentUser = 'ضيف';
+      this.currentUserId = '';
+    }
   }
+
+
+  
+  // private extractCurrentUserId() {
+  //   const userId = localStorage.getItem('userId');
+  //   this.currentUserId = userId || '';
+  // }
 
   private connectToPublicChat() {
     this.chatService.connect();
