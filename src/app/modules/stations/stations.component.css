@@ -1,6 +1,6 @@
 /* Hero Section */
 .hero-section {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #06236b 0%, #0846a0 100%);
   color: white;
   padding: 60px 20px;
   text-align: center;
@@ -142,8 +142,8 @@
 
 .search-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  border-color: #06236b;
+  box-shadow: 0 4px 20px rgba(6, 35, 107, 0.3);
   transform: translateY(-2px);
 }
 
@@ -152,7 +152,7 @@
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  color: #667eea;
+  color: #06236b;
   font-size: 1.1rem;
 }
 
@@ -185,7 +185,7 @@
 
 .search-results {
   font-weight: 600;
-  color: #667eea;
+  color: #06236b;
 }
 
 /* Section Headers */
@@ -207,7 +207,7 @@
 
 .section-header h2 i {
   margin-left: 10px;
-  color: #667eea;
+  color: #06236b;
 }
 
 .section-header p {
@@ -232,13 +232,13 @@
 }
 
 .view-btn:hover {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: #06236b;
+  color: #06236b;
 }
 
 .view-btn.active {
-  background: #667eea;
-  border-color: #667eea;
+  background: #06236b;
+  border-color: #06236b;
   color: white;
 }
 
@@ -272,6 +272,7 @@
 }
 
 .station-card {
+  position: relative;
   background: white;
   border-radius: 15px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -279,6 +280,7 @@
   overflow: hidden;
   transition: all 0.3s ease;
   cursor: pointer;
+  /* z-index: -1; */
 }
 
 .station-card:hover {
@@ -297,7 +299,7 @@
 .station-icon {
   width: 50px;
   height: 50px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #06236b, #0846a0);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -330,7 +332,7 @@
 }
 
 .station-location i {
-  color: #667eea;
+  color: #06236b;
 }
 
 .station-actions {
@@ -353,27 +355,28 @@
 }
 
 .btn-map {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: rgba(6, 35, 107, 0.1);
+  color: #06236b;
 }
 
 .btn-map:hover {
-  background: #1976d2;
+  background: #06236b;
   color: white;
 }
 
 .btn-services {
-  background: #f3e5f5;
-  color: #7b1fa2;
+  background: rgba(8, 70, 160, 0.1);
+  color: #0846a0;
 }
 
 .btn-services:hover {
-  background: #7b1fa2;
+  background: #0846a0;
   color: white;
 }
 
 .station-card-body {
   padding: 20px;
+  padding-bottom: 8rem;
 }
 
 .station-details {
@@ -392,10 +395,14 @@
 
 .detail-item i {
   width: 16px;
-  color: #667eea;
+  color: #06236b;
 }
 
 .station-card-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   padding: 20px;
   background: #f8f9fa;
   display: flex;
@@ -420,7 +427,7 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #0846a0, #06236b);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -435,7 +442,7 @@
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(8, 70, 160, 0.4);
 }
 
 /* Pagination */
@@ -483,11 +490,11 @@
 
 .page-link:hover {
   background: #f0f0f0;
-  color: #667eea;
+  color: #06236b;
 }
 
 .page-item.active .page-link {
-  background: #667eea;
+  background: #06236b;
   color: white;
 }
 
@@ -518,7 +525,7 @@
   width: 80px;
   height: 80px;
   margin: 0 auto 30px;
-  background: linear-gradient(135deg, #667eea, #764ba2);
+  background: linear-gradient(135deg, #06236b, #0846a0);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -657,6 +664,8 @@
   
   .station-card {
     margin: 0 10px;
+    min-height: 550px;
+
   }
   
   .map-sidebar {
@@ -677,6 +686,7 @@
   position: sticky;
   top: 20px;
   height: fit-content;
+  z-index: 10;
 }
 
 .map-container-wrapper {
@@ -699,7 +709,7 @@
 }
 
 .map-header h4 i {
-  color: #667eea;
+  color: #06236b;
 }
 
 .map-header small {
@@ -715,6 +725,37 @@
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 15px;
+}
+
+/* تأكيد أن عنصر الخريطة يظهر بشكل صحيح */
+#map {
+  height: 100% !important;
+  width: 100% !important;
+  min-height: 350px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  z-index: 1;
+  position: relative;
+}
+
+/* رسالة تحميل الخريطة */
+.map-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #06236b;
+  font-size: 16px;
+  z-index: 10;
+}
+
+.map-loading i {
+  font-size: 24px;
+  color: #06236b;
 }
 
 .map-legend {
@@ -741,4 +782,103 @@
 .stations-content {
   flex: 1;
   min-width: 0; /* Prevents flex item from overflowing */
+}
+
+/* Custom 3D Station Pin Icon */
+.custom-station-pin {
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: visible;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+/* تأثيرات ثلاثية الأبعاد للأيقونة */
+.custom-station-pin i {
+  position: relative;
+  z-index: 2;
+  text-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 4px 8px rgba(6, 35, 107, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  filter: drop-shadow(0 6px 12px rgba(6, 35, 107, 0.4));
+  transform: translateZ(10px);
+  transition: all 0.3s ease;
+}
+
+.custom-station-pin:hover {
+  transform: scale(1.3) rotateY(15deg) rotateX(10deg);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.custom-station-pin:hover i {
+  color: #0846a0 !important;
+  text-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    0 8px 16px rgba(8, 70, 160, 0.3),
+    0 0 0 2px rgba(255, 255, 255, 0.2);
+  filter: drop-shadow(0 10px 20px rgba(8, 70, 160, 0.6));
+  transform: translateZ(20px) scale(1.1);
+}
+
+/* قاعدة ثلاثية الأبعاد للدبوس */
+.custom-station-pin::before {
+  content: '';
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, rgba(6, 35, 107, 0.4) 0%, rgba(6, 35, 107, 0.1) 70%, transparent 100%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotateX(75deg) translateZ(-5px);
+  animation: pinShadow 2s ease-in-out infinite;
+  z-index: 1;
+}
+
+/* تأثير نبض ثلاثي الأبعاد */
+.custom-station-pin::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, rgba(6, 35, 107, 0.2) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) translateZ(-2px);
+  animation: pin3DPulse 3s ease-in-out infinite;
+  z-index: 0;
+}
+
+/* تحريك الظل ثلاثي الأبعاد */
+@keyframes pinShadow {
+  0%, 100% {
+    transform: translate(-50%, -50%) rotateX(75deg) translateZ(-5px) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(-50%, -50%) rotateX(75deg) translateZ(-5px) scale(1.2);
+    opacity: 0.2;
+  }
+}
+
+/* تحريك النبض ثلاثي الأبعاد */
+@keyframes pin3DPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) translateZ(-2px) scale(1) rotateZ(0deg);
+    opacity: 0.3;
+  }
+  33% {
+    transform: translate(-50%, -50%) translateZ(-2px) scale(1.5) rotateZ(120deg);
+    opacity: 0.1;
+  }
+  66% {
+    transform: translate(-50%, -50%) translateZ(-2px) scale(2) rotateZ(240deg);
+    opacity: 0.05;
+  }
 }

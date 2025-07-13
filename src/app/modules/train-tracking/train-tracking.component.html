@@ -1,3 +1,9 @@
+<!-- Success Popup Toast - في أعلى الصفحة -->
+<div *ngIf="showSuccessPopup" class="success-toast">
+  <i class="fas fa-check-circle"></i>
+  <span>{{ successPopupMessage }}</span>
+</div>
+
 <div class="tracking-container">
   <div *ngIf="trainData">
     <!-- Header Section -->
@@ -38,30 +44,30 @@
               <i class="fas fa-map-marker-alt"></i>
             </div>
             <div class="station-content">
-              <div class="station-name">{{ trainData.CurrentStationName }}</div>
-              <div class="station-info">
-                <span class="info-item">
+              <div class="station-header">
+                <div class="station-name">{{ trainData.CurrentStationName }}</div>
+                <div class="station-time">
                   <i class="fas fa-clock"></i>
                   {{ trainData.LastUpdated | egyptTime }}
-                </span>
-
+                </div>
               </div>
-              
+              <div class="station-status">
+                <span class="status-text">متجه إلى</span>
+                <i class="fas fa-arrow-left"></i>
+              </div>
             </div>
-            
-            <span class="info-item">
-              متجه إلى
-              <i class="fas fa-arrow-left"></i>
-            </span>
           </div>
         </div>
-        <!-- Journey Line with Train Icon Above -->
+
+        <!-- Journey Line with Train Icon -->
         <div class="journey-line">
+          <div class="track-line-left"></div>
           <div class="train-icon-centered">
-            <i class="fas fa-subway"></i>
+            <i class="fas fa-subway" title="قطار"></i>
           </div>
-          <div class="track-line"></div>
+          <div class="track-line-right"></div>
         </div>
+
         <!-- Next Station -->
         <div class="station-container next">
           <div class="station-card">
@@ -69,10 +75,13 @@
               <i class="fas fa-flag-checkered"></i>
             </div>
             <div class="station-content">
-              <div class="station-label">المحطة التالية</div>
-              <div class="station-name">{{ trainData.NextStationName }}</div>
-              <div class="station-info">
-                
+              <div class="station-header">
+                <div class="station-label">المحطة التالية</div>
+                <div class="station-name">{{ trainData.NextStationName }}</div>
+              </div>
+              <div class="station-status">
+                <span class="status-text">في الانتظار</span>
+                <i class="fas fa-hourglass-half"></i>
               </div>
             </div>
           </div>
@@ -213,9 +222,4 @@
     </div>
   </div>
 
-  <!-- Success Popup Toast -->
-  <div *ngIf="showSuccessPopup" class="success-toast">
-    <i class="fas fa-check-circle"></i>
-    <span>{{ successPopupMessage }}</span>
-  </div>
 </div>

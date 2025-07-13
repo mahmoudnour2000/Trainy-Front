@@ -91,9 +91,9 @@ body {
 
 
 :root {
-  /* --primary-blue: #2563eb; */
-  --light-blue: #dbeafe;
-  --dark-blue: #1e40af;
+  --primary-blue: #06236b;
+  --light-blue: #e8f0ff;
+  --dark-blue: #0846a0;
   --gray-bg: #f8fafc;
 
 }
@@ -198,6 +198,52 @@ body {
   font-size: 3rem;
   margin-bottom: 1rem;
   color: #d1d5db;
+}
+
+/* Global Button Styles */
+.btn-primary {
+  background-color: var(--primary-button-color) !important;
+  border-color: var(--primary-button-color) !important;
+  color: white !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: white !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(8, 70, 160, 0.3);
+}
+
+.btn-secondary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus,
+.btn-secondary:active {
+  background-color: var(--primary-button-color) !important;
+  border-color: var(--primary-button-color) !important;
+  color: white !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(6, 35, 107, 0.3);
+}
+
+.btn-outline-primary {
+  color: var(--primary-button-color) !important;
+  border-color: var(--primary-button-color) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background-color: var(--primary-button-color) !important;
+  border-color: var(--primary-button-color) !important;
+  color: white !important;
 }
 
 @media (max-width: 768px) {

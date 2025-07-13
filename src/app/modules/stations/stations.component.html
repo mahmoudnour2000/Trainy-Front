@@ -61,7 +61,12 @@
           <h4><i class="fas fa-map-marked-alt me-2"></i>خريطة المحطات</h4>
           <small class="text-muted">انقر على أي علامة لعرض تفاصيل المحطة</small>
         </div>
-        <div id="map" class="map-container"></div>
+        <div id="map" class="map-container">
+          <div class="map-loading" *ngIf="!map">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>جاري تحميل الخريطة...</span>
+          </div>
+        </div>
         <div class="map-legend">
           <div class="legend-item">
             <i class="fas fa-train text-primary"></i>
