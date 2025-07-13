@@ -18,6 +18,18 @@ export class TrainChatService {
   // Connect to the TrainChatHub for a specific train
   connect(trainId: number) {
     const token = this.authService.getToken();
+    
+    console.log('🔑 Token check:', {
+      hasToken: !!token,
+      tokenLength: token?.length,
+      tokenPreview: token ? `${token.substring(0, 20)}...` : 'No token'
+    });
+
+    // Check if user is authenticated
+    if (!token) {
+      console.error('❌ No authentication token found. User must be logged in.');
+      return;
+    }
 
     if (this.currentTrainId === trainId && this.hubConnection && this.hubConnection.state === signalR.HubConnectionState.Connected) {
       console.log(`✅ م already متصل بـ TrainChatHub للقطار ${trainId}`);
@@ -30,14 +42,14 @@ export class TrainChatService {
     }
     
     console.log(`🔌 محاولة الاتصال بـ TrainChatHub للقطار ${trainId}...`);
-    // Use TrainChatHub with trainId as query parameter
+    console.log(`🌐 Hub URL: ${environment.hubUrl}TrainChatHub?trainId=${trainId}`);
+    
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(`${environment.hubUrl}TrainChatHub?trainId=${trainId}`, {
-        accessTokenFactory: () => token || ''
+        accessTokenFactory: () => token
       })
       .build();
      
-      
     this.addListeners();
     
     // Start connection with better error handling
@@ -53,6 +65,11 @@ export class TrainChatService {
       })
       .catch(err => {
         console.error('❌ خطأ في الاتصال:', err);
+        console.error('❌ Error details:', {
+          error: err.message,
+          statusCode: err.statusCode,
+          statusText: err.statusText
+        });
         // Try to reconnect after 5 seconds
         setTimeout(() => {
           if (this.currentTrainId) {
@@ -99,6 +116,14 @@ export class TrainChatService {
   // Send a message to a specific train (matches backend method signature)
   public sendMessage(name: string, message: string, trainId: number) {
     console.log(`📤 إرسال رسالة للقطار ${trainId}:`, { name, message });
+    
+    // Get current user info from AuthService
+    const currentUser = this.authService.getCurrentUser();
+    if (currentUser && name === 'ضيف') {
+      name = currentUser.Name || 'مستخدم';
+      console.log('👤 Using authenticated user name:', name);
+    }
+    
     if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
       // Match the backend method signature: SendMessage(int trainId, string userName, string message)
       this.hubConnection.invoke('SendMessage', trainId, name, message).then(() => {

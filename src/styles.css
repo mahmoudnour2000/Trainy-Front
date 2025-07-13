@@ -4,15 +4,50 @@
 @import 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css';
 @import 'leaflet/dist/leaflet.css';
 
+
+/* Unified Color Palette for Site Identity */
+
+
 :root {
-    --primary-color: #06236b;
-    --primary-button-color: #0846a0;
+  --primary-dark: #06236b;
+  --primary: #0d3d9f;
+  --primary-light: #1e5cc9;
+  --secondary-bg: #f8f9fa;
+  --secondary-text: #6c757d;
+  --main-bg: #ffffff;
+  --main-text: #212529;
+  --border-color: #dee2e6;
+  --shadow: rgba(6, 35, 107, 0.15);
+  --highlight-bg: #e3f2fd;
+  --btn-primary-bg: #0d3d9f;
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #f8f9fa;
+  --btn-secondary-text: #06236b;
+  --btn-hover-bg: #1e5cc9;
+  --btn-disabled-bg: #6c757d;
+  --btn-disabled-text: #ffffff;
+  --success: #28a745;
+  --warning: #ffc107;
+  --error: #dc3545;
+  --info: #17a2b8;
+  --pagination-active-bg: #06236b;
+  --pagination-active-text: #ffffff;
+  --pagination-bg: #f8f9fa;
+  --pagination-text: #06236b;
+  --pagination-hover-bg: #e9ecef;
+  --pagination-hover-text: #0d3d9f;
+}
+
+
+/* :root {
+    --primary-color: #0d6efd;
     --secondary-color: #6c757d;
     --success-color: #28a745;
     --light-bg: #f8f9fa;
     --card-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
     --transition-speed: 0.3s;
-}
+} */
 
 body {
     font-family: 'Rubik', Cairo, Arial, sans-serif !important;
@@ -20,6 +55,7 @@ body {
     direction: rtl;
     text-align: right;
     font-weight: 400;
+
     font-style: normal;
     font-size: 1rem;
 }
@@ -29,8 +65,10 @@ body {
     padding: 1.5rem;
 }
 
+
 .app-content {
     min-height: calc(100vh - 300px);
+
 }
 
 /* Card Styles */
@@ -41,19 +79,23 @@ body {
     overflow: hidden;
     height: 100%;
     margin-bottom: 1.5rem;
+
 }
 
 .card:hover {
     transform: translateY(-5px);
+
 }
 /* Profile style */
 /* src/styles.css */
+
 
 :root {
   --primary-blue: #06236b;
   --light-blue: #e8f0ff;
   --dark-blue: #0846a0;
   --gray-bg: #f8fafc;
+
 }
 
 
@@ -62,25 +104,30 @@ body {
   background: white;
   border-radius: 15px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
   border: none;
   transition: transform 0.3s ease;
 }
 
 .info-card:hover {
+
   transform: translateY(-2px);
 }
 
 .nav-tabs .nav-link {
+
   border: none;
   color: #6b7280;
   font-weight: 500;
   padding: 12px 24px;
   margin: 0 5px;
+
   border-radius: 10px;
   transition: all 0.3s ease;
 }
 
 .nav-tabs .nav-link.active {
+
   background: var(--primary-blue);
   color: white;
 }
@@ -90,13 +137,16 @@ body {
   color: var(--primary-blue);
 }
 
+
 .nav-tabs .nav-link.disabled {
   background: #e5e7eb;
   color: #9ca3af;
+
   cursor: not-allowed;
 }
 
 .status-badge {
+
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 0.8rem;
