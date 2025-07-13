@@ -4,20 +4,11 @@ import { MainLayoutComponent } from './layouts/main-layout/main-layout.component
 import { NotificationsComponent } from './modules/Notifications/notifications-page/notifications-page.component';
 import { TrainListComponent } from './modules/Trains/train-list/train-list.component';
 import { LostAndFoundListComponent } from './modules/Lost-And-Found/lost-and-found-list/lost-and-found-list.component';
-import { AboutUsComponent } from '../app/modules/AboutUs/about-us/about-us.component'; 
-import{ AuthGuard } from './core/guards/auth.guard';
+import { AboutUsComponent } from '../app/modules/AboutUs/about-us/about-us.component';
+import { AuthGuard } from './core/guards/auth.guard';
 import { NotFoundComponent } from './modules/NotFoundPage/not-found/not-found.component';
-import { ActivatedRoute } from '@angular/router';
-import { TrainTrackingService } from './core/services/train-tracking.service';
-import { interval } from 'rxjs';
 
 export const routes: Routes = [
-  // {
-  //   path: '',
-  //   redirectTo: 'auth/login',
-  //   pathMatch: 'full'
-  // },
-
   {
     path: '',
     component: MainLayoutComponent,
@@ -86,7 +77,8 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         component: LostAndFoundListComponent
       },
-      {path: 'stations',
+      {
+        path: 'stations',
         canActivate: [AuthGuard],
         loadComponent: () =>
           import('./modules/stations/stations.component').then(m => m.StationsComponent)
@@ -98,9 +90,9 @@ export const routes: Routes = [
           import('./modules/stationService/stationService.component').then(m => m.ServicesComponent)
       },
       {
-        path: 'chat',
+        path: 'public-chat', // غيّر من 'chat' لـ 'community'
         canActivate: [AuthGuard],
-        loadChildren: () => import('./modules/public-chat/public-chat.module').then(m => m.PublicChatModule)
+        loadComponent: () => import('./modules/public-chat/public-chat.component').then(m => m.PublicChatComponent)
       },
       {
         path: 'offers',
@@ -141,15 +133,18 @@ export const routes: Routes = [
         loadComponent: () => import('./modules/deliveryChatPage/deliveryChatPage').then(m => m.DeliveryChatPageComponent),
         canActivate: [AuthGuard]
       },
+      {
+        path: 'train-chat/:trainId',
+        canActivate: [AuthGuard],
+        loadComponent: () => import('./modules/train-chat/train-chat.component').then(m => m.TrainChatComponent)
+      },
     ]
   },
-
   {
     path: '**',
     component: NotFoundComponent
   }
 ];
-
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { useHash: false })],

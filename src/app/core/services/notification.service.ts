@@ -75,6 +75,8 @@ export class NotificationService {
 
   private updateNotifications(notification: Notification): void {
     const currentNotifications = this.notifications$.value;
+    console.log("Basoom");
+    
     const index = currentNotifications.findIndex(n => n.Id === notification.Id);
     if (index === -1) {
       currentNotifications.unshift(notification); 

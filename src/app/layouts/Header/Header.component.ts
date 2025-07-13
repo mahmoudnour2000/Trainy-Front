@@ -84,6 +84,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.notificationService.getUnreadCount().subscribe({
         next: (count) => {
           this.unreadCount = count;
+          console.log(this.unreadCount);
+          
           this.cdr.detectChanges();
         },
         error: (error) => {
@@ -132,6 +134,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
     }
     this.cdr.detectChanges();
+    console.log(this.notifications);
+    
   }
 
   toggleUserDropdown(): void {

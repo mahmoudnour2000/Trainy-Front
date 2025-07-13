@@ -12,9 +12,10 @@ export interface ChatMessage {
   isSender: boolean;
   isRead: boolean;
   messageType: string;
+  chatId: number;
+  isDeleted: boolean;
   senderName?: string;
   courierName?: string;
-  chatId: number;
 }
 
 export interface DeliveryChat {
@@ -23,9 +24,24 @@ export interface DeliveryChat {
   senderId: string;
   courierId: string;
   createdAt: Date;
-  offer?: any;
-  sender?: any;
-  courier?: any;
+  isDeleted: boolean;
+  
+  // Basic offer info
+  offerDescription: string;
+  offerStatus: string;
+  offerPrice: number;
+  
+  // Basic user info
+  senderName: string;
+  senderImage: string;
+  courierName: string;
+  courierImage: string;
+  
+  // Message info
+  messageCount: number;
+  unreadMessageCount: number;
+  lastMessageTime?: Date;
+  lastMessageText: string;
 }
 
 export interface ChatStatus {
@@ -36,6 +52,34 @@ export interface ChatStatus {
   isCourier: boolean;
   senderName?: string;
   courierName?: string;
+}
+
+export interface ChatDetail {
+  chatId: number;
+  offerId: number;
+  senderId: string;
+  courierId: string;
+  createdAt: Date;
+  
+  // Offer info
+  offerDescription: string;
+  offerStatus: string;
+  offerPrice: number;
+  
+  // User info
+  senderName: string;
+  senderImage: string;
+  courierName: string;
+  courierImage: string;
+  
+  // Messages
+  messages: ChatMessage[];
+  
+  // Chat status
+  isSender: boolean;
+  isCourier: boolean;
+  canSendMessages: boolean;
+  canAcceptRequest: boolean;
 }
 
 export interface ApiResponse<T = any> {
@@ -80,7 +124,7 @@ export class DeliveryChatService {
     }
 
     this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${environment.hubUrl}chatHub`, {
+      .withUrl(`${environment.hubUrl}/chatHub`, {
         accessTokenFactory: () => token
       })
       .withAutomaticReconnect()
@@ -210,7 +254,7 @@ export class DeliveryChatService {
 
   async getUserChats(): Promise<DeliveryChat[]> {
     const response = await this.http.get<ApiResponse<DeliveryChat[]>>(
-      `${this.apiUrl}/DeliveryChat/user-chats`
+      `${this.apiUrl}DeliveryChat/user-chats`
     ).toPromise();
     
     if (response?.success) {
@@ -232,8 +276,8 @@ export class DeliveryChatService {
     throw new Error(response?.message || 'Failed to get chat messages');
   }
 
-  async getChat(chatId: number): Promise<DeliveryChat> {
-    const response = await this.http.get<ApiResponse<DeliveryChat>>(
+  async getChat(chatId: number): Promise<ChatDetail> {
+    const response = await this.http.get<ApiResponse<ChatDetail>>(
       `${this.apiUrl}/DeliveryChat/${chatId}`
     ).toPromise();
     
@@ -241,6 +285,17 @@ export class DeliveryChatService {
       return response.data!;
     }
     throw new Error(response?.message || 'Failed to get chat');
+  }
+
+  async getChatStatus(chatId: number): Promise<ChatStatus> {
+    const response = await this.http.get<ApiResponse<ChatStatus>>(
+      `${this.apiUrl}/DeliveryChat/${chatId}/status`
+    ).toPromise();
+    
+    if (response?.success) {
+      return response.data!;
+    }
+    throw new Error(response?.message || 'Failed to get chat status');
   }
 
   async markMessagesAsReadAPI(chatId: number): Promise<void> {

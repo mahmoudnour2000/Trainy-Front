@@ -5,15 +5,13 @@ import { environment } from '../../../environments/environment';
 import { TrainListViewModel, TrainSearchRequest, PaginatedResponse,TrainWithStations,TrainStation
 , StationServicesResponse, StationService, GuideRoleResponse
  } from '../models/train';
- import { CookieService } from 'ngx-cookie-service';
-import { jwtDecode } from 'jwt-decode';
 @Injectable({
   providedIn: 'root'
 })
 export class TrainService {
   private apiUrl = `${environment.apiUrl}TrainApi`;
 private stationApiUrl = `${environment.apiUrl}Station`;
-  constructor(private http: HttpClient, private cookieService: CookieService, ) { }
+  constructor(private http: HttpClient) { }
  private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
@@ -34,7 +32,7 @@ private stationApiUrl = `${environment.apiUrl}Station`;
   }
 
   //Not used in any component yet
-searchTrains(request: TrainSearchRequest): Observable<PaginatedResponse<TrainListViewModel>> {
+ searchTrains(request: TrainSearchRequest): Observable<PaginatedResponse<TrainListViewModel>> {
     let params = new HttpParams()
       .set('pageNumber', (request.pageNumber ?? 1).toString()) // قيمة افتراضية 1
       .set('pageSize', (request.pageSize ?? 10).toString()); // قيمة افتراضية 10

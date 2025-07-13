@@ -314,26 +314,12 @@ export class OrderCardComponent implements OnInit, OnChanges {
   canEditOrder(): boolean {
     // Simple ownership check - owner can always edit their own offers
     const canEdit = this.authService.isAuthenticated() && this.isOrderOwner;
-           
-    console.log('canEditOrder debug:', {
-      isAuthenticated: this.authService.isAuthenticated(),
-      isOrderOwner: this.isOrderOwner,
-      canEdit: canEdit
-    });
-    
     return canEdit;
   }
 
   canDeleteOrder(): boolean {
     // Simple ownership check - owner can always delete their own offers
     const canDelete = this.authService.isAuthenticated() && this.isOrderOwner;
-           
-    console.log('canDeleteOrder debug:', {
-      isAuthenticated: this.authService.isAuthenticated(),
-      isOrderOwner: this.isOrderOwner,
-      canDelete: canDelete
-    });
-    
     return canDelete;
   }
 
