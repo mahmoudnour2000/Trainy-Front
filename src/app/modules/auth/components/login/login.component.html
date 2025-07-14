@@ -1,106 +1,98 @@
-<body class="bg-light py-1">
-    <!-- Animated train
-    <div class="train-icon">
-        <i class="fas fa-train"></i>
-    </div> -->
-
-    <div class="container">
-        <div class="form-container">
-            <div class="form-header">
-                <h2>
-                    <i class="fas fa-train"></i>
-                    تسجيل الدخول
-                </h2>
-                <p>رحلتك تبدأ معنا... على السكة دائماً</p>
+<div class="login-wrapper">
+    <div class="login-container">
+        <!-- قسم الصورة والشعار -->
+        <div class="image-section">
+            <!-- مكان الشعار -->
+            <div class="logo-container">
+                <img src="../../../../../assets/ع السكة-01.png" alt="شعار ع السكة" />
             </div>
-            
-            <div class="form-body">
-                <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
-                    <div class="row g-3">
-                        <!-- Username or Email -->
-                        <div class="col-12">
-                            <label for="loginMethod" class="form-label required-field">
-                                <i class="fas fa-user"></i>
-                                اسم المستخدم أو البريد الإلكتروني
-                            </label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="loginMethod"
-                                name="LoginMethod"
-                                [(ngModel)]="user.LoginMethod"
-                                required
-                                #loginMethod="ngModel"
-                                placeholder="أدخل اسم المستخدم أو البريد الإلكتروني">
-                            <div class="text-danger" *ngIf="loginMethod.invalid && (loginMethod.dirty || loginMethod.touched)">
-                                اسم المستخدم أو البريد الإلكتروني مطلوب
-                            </div>
-                        </div>
 
-                        <!-- Password -->
-                        <div class="col-12">
-                            <label for="password" class="form-label required-field">
-                                <i class="fas fa-lock"></i>
-                                كلمة المرور
-                            </label>
-                            <div class="position-relative">
-                                <input
-                                    [type]="showPassword ? 'text' : 'password'"
-                                    class="form-control password-input"
-                                    id="password"
-                                    name="Password"
-                                    [(ngModel)]="user.Password"
-                                    required
-                                    minlength="8"
-                                    #password="ngModel"
-                                    placeholder="أدخل كلمة المرور">
-                                <button
-                                    type="button"
-                                    class="btn password-toggle-btn position-absolute top-50 translate-middle-y border-0 bg-transparent p-0 d-flex align-items-center justify-content-center"
-                                    (click)="togglePasswordVisibility()"
-                                    tabindex="-1">
-                                    <i class="bi text-muted" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
-                                </button>
-                            </div>
-                            <div class="text-danger" *ngIf="password.invalid && (password.dirty || password.touched)">
-                                <span *ngIf="password.errors?.['required']">كلمة المرور مطلوبة</span>
-                                <span *ngIf="password.errors?.['minlength']">كلمة المرور يجب أن تكون 6 أحرف على الأقل</span>
-                            </div>
-                        </div>
+            <!-- رسم توضيحي للقطار -->
+            <div class="train-illustration">
+                <div class="welcome-text">مرحباً بك</div>
+                <div class="welcome-subtitle">نظام إدارة قطارات ع السكة</div>
+            </div>
+        </div>
 
-                        <!-- Error Message -->
-                        <div class="col-12 mt-3" *ngIf="errorMessage">
-                            <div class="alert alert-danger">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
-                                {{ errorMessage }}
-                            </div>
-                        </div>
+        <!-- قسم النموذج -->
+        <div class="form-section">
+            <div class="form-title">تسجيل الدخول</div>
+            <div class="form-subtitle">أدخل بياناتك للوصول إلى النظام</div>
 
-                        <!-- Submit Button -->
-                        <div class="col-12 mt-4">
-                            <button
-                                type="submit"
-                                class="btn btn-primary w-100 py-3"
-                                [disabled]="loginForm.invalid || isLoading">
-                                <i class="fas fa-sign-in-alt me-2" *ngIf="!isLoading"></i>
-                                {{ isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول' }}
-                            </button>
-                        </div>
+            <!-- Error Message -->
+            <div class="validation-summary-errors" *ngIf="errorMessage">
+                <ul>
+                    <li>{{ errorMessage }}</li>
+                </ul>
+            </div>
 
-                        <!-- Register Link -->
-                      <div class="col-12 register-link">
-  <p class="mb-0">
-    ليس لديك حساب؟
-    <a [routerLink]="['/auth/register']">
-      <i class="fas fa-user-plus me-1"></i>
-      أنشئ حسابًا جديدًا
-    </a>
-  </p>
-</div>
+            <form #loginForm="ngForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <label for="loginMethod" class="form-label">
+                        البريد الإلكتروني أو اسم المستخدم
+                    </label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="loginMethod"
+                        name="LoginMethod"
+                        [(ngModel)]="user.LoginMethod"
+                        required
+                        #loginMethod="ngModel"
+                        placeholder="أدخل البريد الإلكتروني أو اسم المستخدم">
+                    <span class="field-validation-error" *ngIf="loginMethod.invalid && (loginMethod.dirty || loginMethod.touched)">
+                        اسم المستخدم أو البريد الإلكتروني مطلوب
+                    </span>
+                </div>
 
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        كلمة المرور
+                    </label>
+                    <div style="position: relative;">
+                        <input
+                            [type]="showPassword ? 'text' : 'password'"
+                            class="form-control"
+                            id="password"
+                            name="Password"
+                            [(ngModel)]="user.Password"
+                            required
+                            minlength="8"
+                            #password="ngModel"
+                            placeholder="أدخل كلمة المرور"
+                            style="padding-left: 50px;">
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            (click)="togglePasswordVisibility()">
+                            <i class="fa-solid" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'" id="toggleIcon"></i>
+                        </button>
                     </div>
-                </form>
+                    <span class="field-validation-error" *ngIf="password.invalid && (password.dirty || password.touched)">
+                        <span *ngIf="password.errors?.['required']">كلمة المرور مطلوبة</span>
+                        <span *ngIf="password.errors?.['minlength']">كلمة المرور يجب أن تكون 8 أحرف على الأقل</span>
+                    </span>
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn-login"
+                    [disabled]="loginForm.invalid || isLoading">
+                    <i class="fas fa-sign-in-alt" style="margin-left: 10px;" *ngIf="!isLoading"></i>
+                    {{ isLoading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول' }}
+                </button>
+            </form>
+
+            <!-- Register Link -->
+            <div class="register-link">
+                <p class="mb-0">
+                    ليس لديك حساب؟
+                    <a [routerLink]="['/auth/register']">
+                        <i class="fas fa-user-plus me-1"></i>
+                        أنشئ حسابًا جديدًا
+                    </a>
+                </p>
             </div>
         </div>
     </div>
-</body>
+</div>

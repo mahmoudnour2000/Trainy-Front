@@ -2,7 +2,7 @@
 .footer {
   background: linear-gradient(135deg, #06236b 0%, #1e3a8a 100%);
   color: white;
-  padding: 3rem 0 1.5rem 0;
+  padding: 0rem 0 1.5rem 0;
   margin-top: auto;
   position: relative;
   overflow: hidden;
@@ -33,11 +33,11 @@
 /* شعار الموقع */
 .footer .logo {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 0rem;
 }
 
 .footer .logo img {
-  height: 60px;
+  height: 200px;
   width: auto;
   filter: brightness(1.1);
   transition: transform 0.3s ease;
