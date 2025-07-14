@@ -16,14 +16,18 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
   @Input() chatId: number = 0;
   @Input() requestId: number = 0;
+  @Input() offerId: number = 0;
+  @Input() courierId: string = '';
 
   messages: ChatMessage[] = [];
   newMessage: string = '';
   chatStatus: ChatStatus | null = null;
   isProcessing = false;
   isConnected = false;
-  actionType: 'accept' | 'reject' | 'send' | null = null;
+  actionType: 'accept' | 'reject' | 'send' | 'complete' | null = null;
   currentUserId: string | null = null;
+  isLoadingActions = false;
+  isInitialized = false;
   
   private subscriptions: Subscription[] = [];
   private shouldScrollToBottom = false;
@@ -57,27 +61,60 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
    */
   private async initializeChat(): Promise<void> {
     try {
-      if (!this.chatId) {
-        console.error('Chat ID is required');
+      if (!this.chatId || this.chatId <= 0) {
+        console.error('Chat ID is required, got:', this.chatId);
         return;
       }
 
-      // Start connection and join chat
-      await this.deliveryChatService.startConnection();
-      await this.deliveryChatService.joinChat(this.chatId);
+      console.log('🔄 Initializing chat with ID:', this.chatId);
 
-      // Subscribe to real-time updates
+      // Clear previous state
+      this.messages = [];
+      this.chatStatus = null;
+      this.isInitialized = false;
+
+      // Load chat status first - this is critical for message display
+      await this.loadChatStatus();
+
+      // Subscribe to real-time updates after loading initial status
       this.setupSubscriptions();
 
       // Load initial chat messages
       await this.loadChatMessages();
 
+      // Try to connect to SignalR
+      try {
+        console.log('🔄 Attempting to start SignalR connection...');
+        await this.deliveryChatService.startConnection();
+        console.log('✅ SignalR connection started successfully');
+        
+        console.log('🔄 Attempting to join chat with ID:', this.chatId);
+        await this.deliveryChatService.joinChat(this.chatId);
+        console.log('✅ Connected to chat hub and joined chat');
+
       this.isConnected = true;
+      } catch (connectionError) {
+        console.error('❌ Failed to connect to chat hub:', connectionError);
+        this.isConnected = false;
+        
+        // Add a system message about connection failure
+        this.addSystemMessage('⚠️ لا يمكن الاتصال بالخادم. ستعمل المحادثة في وضع محدود.');
+      }
+
+      // If no messages loaded, add a welcome message
+      if (this.messages.length === 0) {
+        this.addSystemMessage('مرحباً! يمكنك الآن بدء المحادثة.');
+      }
+
+      this.isInitialized = true;
       console.log('✅ Chat initialized successfully');
 
     } catch (error) {
       console.error('❌ Failed to initialize chat:', error);
       this.isConnected = false;
+      // Set some fallback state
+      this.messages = [];
+      this.isInitialized = true;
     }
   }
 
@@ -88,16 +125,20 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
     // Subscribe to messages
     this.subscriptions.push(
       this.deliveryChatService.messages$.subscribe(messages => {
+        if (messages && messages.length > 0) {
         this.messages = messages;
         this.shouldScrollToBottom = true;
+        }
       })
     );
 
     // Subscribe to chat status
     this.subscriptions.push(
       this.deliveryChatService.chatStatus$.subscribe(status => {
+        if (status) {
         this.chatStatus = status;
         console.log('Chat status updated:', status);
+        }
       })
     );
 
@@ -114,10 +155,16 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
    */
   private async loadChatMessages(): Promise<void> {
     try {
-      await this.deliveryChatService.getChatMessages(this.chatId);
+      console.log('🔄 Loading chat messages for chat ID:', this.chatId);
+      const messages = await this.deliveryChatService.getChatMessages(this.chatId);
+      this.messages = messages || [];
       this.shouldScrollToBottom = true;
+      console.log('✅ Chat messages loaded successfully, count:', this.messages.length);
     } catch (error) {
-      console.error('Failed to load chat messages:', error);
+      console.error('❌ Failed to load chat messages:', error);
+      // Initialize with empty messages on error
+      this.messages = [];
+      // Don't throw error, just log it
     }
   }
 
@@ -150,8 +197,6 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-
-
   /**
    * Mark messages as read
    */
@@ -173,8 +218,6 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-
-
   /**
    * Check if current user can send messages
    */
@@ -185,7 +228,58 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
   }
 
   /**
-   * Check if user is authenticated (for template access)
+   * Load chat status - Public method that can be called from parent
+   */
+  async refreshChatStatus(): Promise<void> {
+    await this.loadChatStatus();
+  }
+
+  /**
+   * Load chat status
+   */
+  private async loadChatStatus(): Promise<void> {
+    try {
+      if (this.chatId) {
+        const status = await this.deliveryChatService.getChatStatus(this.chatId);
+        this.chatStatus = status;
+        console.log('✅ Chat status loaded:', status);
+      }
+    } catch (error) {
+      console.error('❌ Failed to load chat status:', error);
+      // Set a fallback status to ensure messages display correctly
+      this.chatStatus = {
+        chatId: this.chatId,
+        offerId: 0,
+        offerStatus: 'Pending',
+        isSender: this.isCurrentUserSender(),
+        isCourier: !this.isCurrentUserSender(),
+        senderName: 'صاحب العرض',
+        courierName: 'الموصل'
+      };
+    }
+  }
+
+  /**
+   * Determine if current user is sender based on context
+   */
+  private isCurrentUserSender(): boolean {
+    const userId = this.authService.getUserId();
+    if (!userId) {
+      return false;
+    }
+    
+    // If we have offerId and courierId, we can determine the role
+    // Current user is sender if they are NOT the courier
+    if (this.courierId && userId !== this.courierId) {
+      return true;
+    }
+    
+    // Default to courier view if we can't determine
+    return false;
+  }
+
+  /**
+   * Check if current user is authenticated
    */
   isAuthenticated(): boolean {
     return this.authService.isAuthenticated();
@@ -195,7 +289,7 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
    * Get status display text
    */
   getStatusText(): string {
-    if (!this.chatStatus) return '';
+    if (!this.chatStatus) return 'غير محدد';
     
     switch (this.chatStatus.offerStatus) {
       case 'Pending':
@@ -235,9 +329,13 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
    * Format message timestamp
    */
   formatTime(timestamp: Date | string): string {
+    try {
     const date = new Date(timestamp);
+      if (isNaN(date.getTime())) {
+        return 'وقت غير صحيح';
+      }
+      
     const now = new Date();
-    
     const isToday = date.toDateString() === now.toDateString();
     
     if (isToday) {
@@ -252,25 +350,50 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
         hour: '2-digit',
         minute: '2-digit'
       });
+      }
+    } catch (error) {
+      console.error('Error formatting time:', error);
+      return 'وقت غير صحيح';
     }
   }
 
   /**
-   * Check if message is from current user
+   * Check if message is from current user - FIXED VERSION
    */
   isMessageFromCurrentUser(message: ChatMessage): boolean {
-    if (this.chatStatus?.isSender) {
+    try {
+      // Ensure we have valid data
+      if (!message || typeof message.isSender !== 'boolean') {
+        console.warn('Invalid message data:', message);
+        return false;
+      }
+
+      // If chat status is not loaded yet, use fallback logic
+      if (!this.chatStatus) {
+        console.warn('Chat status not loaded, using fallback logic');
+        // Fallback: assume current user is courier (most common case)
+        return !message.isSender;
+      }
+
+      // Use chat status to determine message ownership
+      if (this.chatStatus.isSender) {
       return message.isSender;
-    } else if (this.chatStatus?.isCourier) {
+      } else if (this.chatStatus.isCourier) {
       return !message.isSender;
     }
+
+      return false;
+    } catch (error) {
+      console.error('Error determining message ownership:', error);
     return false;
+    }
   }
 
   /**
    * Add system message to chat
    */
   private addSystemMessage(text: string): void {
+    try {
     const systemMessage: ChatMessage = {
       id: Date.now(),
       message: text,
@@ -282,9 +405,20 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
       chatId: this.chatId
     };
     
+      // Add to current messages array directly
+      this.messages = [...this.messages, systemMessage];
+      this.shouldScrollToBottom = true;
+      
+      // Also update the service if available
+      try {
     const currentMessages = this.deliveryChatService.getCurrentMessages();
     this.deliveryChatService['messagesSubject'].next([...currentMessages, systemMessage]);
-    this.shouldScrollToBottom = true;
+      } catch (serviceError) {
+        console.warn('Could not update service messages:', serviceError);
+      }
+    } catch (error) {
+      console.error('Error adding system message:', error);
+    }
   }
 
   /**
@@ -319,6 +453,6 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
    * Track function for message list
    */
   trackByMessageId(index: number, message: ChatMessage): number {
-    return message.id;
+    return message.id || index;
   }
 }

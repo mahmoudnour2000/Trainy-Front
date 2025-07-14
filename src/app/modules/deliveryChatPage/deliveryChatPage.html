@@ -13,11 +13,11 @@
             محادثة التوصيل
           </h4>
         </div>
-        <div class="page-info" *ngIf="request">
+        <!-- <div class="page-info" *ngIf="request">
           <small class="text-muted">
             طلب رقم: {{requestId}}
           </small>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -68,11 +68,11 @@
                   [showActions]="false">
                 </app-request-card>
                 <!-- Debug info -->
-                <div *ngIf="request" class="p-3 bg-light border-top">
+                <!-- <div *ngIf="request" class="p-3 bg-light border-top">
                   <small class="text-muted">
-                    Debug: Request ID: {{request.id}}, Offer ID: {{request.offerId}}, Status: {{request.status}}
+                    Debug: Request ID: {{request.id}}, Offer ID: {{request.offerId}}, Status: {{request.status}}, Chat ID: {{chatId}}
                   </small>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -84,7 +84,9 @@
                 <ng-container *ngIf="chatId && chatId > 0; else chatLoading">
                   <app-delivery-chat 
                     [chatId]="chatId"
-                    [requestId]="requestId">
+                    [requestId]="requestId"
+                    [offerId]="offerId"
+                    [courierId]="courierId">
                   </app-delivery-chat>
                 </ng-container>
                 <ng-template #chatLoading>
@@ -100,7 +102,7 @@
           </div>
 
           <!-- Action Buttons Section (for offer owners) -->
-          <div class="action-buttons-section" *ngIf="canAcceptOrReject()">
+          <div class="action-buttons-section" *ngIf="isOfferOwner()">
             <div class="card shadow-sm">
               <div class="card-header bg-light">
                 <h6 class="mb-0">
@@ -109,7 +111,8 @@
                 </h6>
               </div>
               <div class="card-body">
-                <div class="row g-3">
+                <!-- Accept/Reject buttons when request is pending -->
+                <div class="row g-3" *ngIf="canAcceptOrReject()">
                   <div class="col-6">
                     <button 
                       type="button" 
@@ -132,12 +135,41 @@
                       رفض الطلب
                     </button>
                   </div>
+                  <div class="col-12">
+                    <small class="text-muted">
+                      <i class="fas fa-info-circle me-1"></i>
+                      بقبول الطلب سيتم تحويل حالة الطلب إلى "قيد التنفيذ"
+                    </small>
+                  </div>
                 </div>
-                <div class="mt-3">
+
+                <!-- Complete delivery button when request is accepted -->
+                <div class="row g-3" *ngIf="canCompleteDelivery()">
+                  <div class="col-12">
+                    <button 
+                      type="button" 
+                      class="btn btn-primary w-100" 
+                      (click)="showCompletionConfirmation()"
+                      [disabled]="isProcessing">
+                      <span *ngIf="isProcessing && actionType === 'complete'" class="spinner-border spinner-border-sm me-2"></span>
+                      <i class="fas fa-check-circle me-2" *ngIf="!(isProcessing && actionType === 'complete')"></i>
+                      تم التوصيل بنجاح
+                    </button>
+                  </div>
+                  <div class="col-12">
                   <small class="text-muted">
                     <i class="fas fa-info-circle me-1"></i>
-                    بقبول الطلب سيتم تحويل الأموال للموصل وتأكيد العملية
+                      سيتم تحويل الأموال للموصل فور التأكيد ولن يمكن التراجع عن هذا الإجراء
                   </small>
+                  </div>
+                </div>
+
+                <!-- Status message for completed delivery -->
+                <div class="text-center" *ngIf="isDeliveryCompleted()">
+                  <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    تم اكتمال التوصيل بنجاح
+                  </div>
                 </div>
               </div>
             </div>
@@ -156,6 +188,42 @@
         <div class="mt-3">
           <button class="btn btn-primary btn-sm" routerLink="/auth/login">
             تسجيل الدخول
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Completion Confirmation Modal -->
+  <div class="modal fade" id="completionModal" tabindex="-1" aria-labelledby="completionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="completionModalLabel">تأكيد اكتمال التوصيل</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" [disabled]="isProcessing"></button>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>تنبيه مهم:</strong>
+          </div>
+          <p class="mb-3">
+            بهذا التأكيد على عملية التوصيل فإنه ليس من حقك الشكوى على أي شيء يخص عملية التوصيل 
+            ويجب التأكد بشكل كامل من صحة الشيء الذي تم توصيله.
+          </p>
+          <p class="text-muted mb-0">
+            <i class="fas fa-info-circle me-1"></i>
+            سيتم تحويل الأموال للموصل فور التأكيد ولن يمكن التراجع عن هذا الإجراء.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" [disabled]="isProcessing">
+            إلغاء
+          </button>
+          <button type="button" class="btn btn-primary" (click)="completeDelivery()" [disabled]="isProcessing">
+            <span class="spinner-border spinner-border-sm me-2" *ngIf="isProcessing && actionType === 'complete'"></span>
+            <i class="fas fa-check me-2" *ngIf="!(isProcessing && actionType === 'complete')"></i>
+            موافق - تأكيد التوصيل
           </button>
         </div>
       </div>

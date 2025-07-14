@@ -13,6 +13,11 @@
     </div>
   </div>
   <div class="request-body">
+    <!-- <div class="request-status mb-2">
+      <span class="badge" [ngClass]="getStatusClass()">
+        {{getStatusText()}}
+      </span>
+    </div> -->
     <div class="request-message">
       <i class="fa fa-commenting-o" aria-hidden="true" style="color:#0d6efd;margin-left:6px;"></i>
       {{request.message}}
@@ -22,19 +27,43 @@
         <i class="fa fa-map-marker" aria-hidden="true"></i>
         من محطة: {{request.PickupStationName || request.pickupStationName || 'غير محدد'}}
       </div>
+      <!-- <div class="info-item" *ngIf="request.offerDescription">
+        <i class="fa fa-file-text" aria-hidden="true"></i>
+        وصف العرض: {{request.offerDescription}}
+      </div> -->
+      <!-- <div class="info-item">
+        <i class="fa fa-hashtag" aria-hidden="true"></i>
+        رقم العرض: {{request.offerId}}
+      </div> -->
     </div>
   </div>
   <div class="request-actions" *ngIf="showActions && !isViewOnly">
-    <!-- Contact button - Only visible for offer owner -->
+    <!-- Loading indicator while checking chat existence -->
+    <div *ngIf="isLoadingChats" class="text-center py-2">
+      <small class="text-muted">
+        <i class="fas fa-spinner fa-spin"></i>
+        جاري التحقق من المحادثة...
+      </small>
+    </div>
+
+    <!-- Contact button - Visible only when chat exists (created by offer owner) -->
     <button 
       class="btn btn-primary btn-sm" 
-      *ngIf="canContact()"
+      *ngIf="!isLoadingChats && canShowContactButton()"
       (click)="onContact()"
       [disabled]="isActionInProgress">
-      <i class="fas fa-comments"></i> تواصل
+      <i class="fas fa-comments" *ngIf="!isActionInProgress"></i>
+      <i class="fas fa-spinner fa-spin" *ngIf="isActionInProgress"></i>
+      {{ isOfferOwner ? 'تواصل مع الموصل' : 'تواصل مع صاحب العرض' }}
     </button>
     
-
+    <!-- رسالة تفسيرية إذا لم يكن هناك شات متاح -->
+    <small 
+      *ngIf="!isLoadingChats && !canShowContactButton() && isCurrentUserRequestOwner() && !isOfferOwner" 
+      class="text-muted d-block mt-2">
+      <i class="fas fa-info-circle"></i>
+      سيظهر زر التواصل عندما يبدأ صاحب العرض المحادثة
+    </small>
     
     <ng-content></ng-content>
   </div>

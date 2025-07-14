@@ -62,7 +62,7 @@ export interface Request {
   Message: string;
   CreatedAt: string;
   UpdatedAt: string;
-  SenderId?: string;
+  SenderId: string; // Made required to match backend RequestViewModelForUserProfile
   FromStationId: number;
   PickupStationName?: string; // Added to match backend response
   ReqTime: string;
