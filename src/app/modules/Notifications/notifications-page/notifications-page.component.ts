@@ -19,7 +19,7 @@ export class NotificationsComponent implements OnInit {
   ngOnInit(): void {
     this.notificationService.getAllNotifications().subscribe(notifications => {
       this.notifications = notifications;
-      console.log('Fetched notifications in component:', notifications);
+      // console.log('Fetched notifications in component:', notifications);
     });
     this.notificationService.fetchNotifications(); 
   }

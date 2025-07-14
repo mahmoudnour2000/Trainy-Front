@@ -40,7 +40,7 @@ public authStateChanged$ = this.authStateSubject.asObservable();
         localStorage.setItem('token', response.token);
         this.cookieService.set('auth_token', response.token);
         this.rolesSubject.next(response.Role || []);
-         console.log('Login successful, Roles:', response.Role );
+        //  console.log('Login successful, Roles:', response.Role );
         this.updateAuthState();
       }
     }),
@@ -143,7 +143,7 @@ public authStateChanged$ = this.authStateSubject.asObservable();
         CreatedAt: decoded['created_at'] || '',
         Balance: decoded['balance'] ? parseFloat(decoded['balance']) : 0
       };
-      console.log('👤 Current user:', user);
+      // console.log('👤 Current user:', user);
       return user;
     } catch (error) {
       console.error('❌ Error decoding token:', error);
@@ -157,12 +157,12 @@ public authStateChanged$ = this.authStateSubject.asObservable();
   const isAuth = this.isAuthenticated();
   const user = this.getCurrentUser();
 
-  console.log('🔄 Auth state updated:', {
-    isAuthenticated: isAuth,
-    user: user,
-    token: !!this.getToken(),
-    roles: this.rolesSubject.value
-  });
+  // console.log('🔄 Auth state updated:', {
+  //   isAuthenticated: isAuth,
+  //   user: user,
+  //   token: !!this.getToken(),
+  //   roles: this.rolesSubject.value
+  // });
 
   this.authStateSubject.next(isAuth);
   this.currentUserSubject.next(user);

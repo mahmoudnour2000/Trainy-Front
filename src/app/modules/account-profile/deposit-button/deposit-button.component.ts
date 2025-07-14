@@ -25,7 +25,7 @@ export class DepositButtonComponent {
   constructor(private userService: UserService) {}
 
   onDeposit(): void {
-    console.log('Deposit initiated with amount:', this.amount, 'and payment method:', this.selectedPaymentMethod);
+    // console.log('Deposit initiated with amount:', this.amount, 'and payment method:', this.selectedPaymentMethod);
     
     if (this.isSubmitting) return;
     if (!this.amount || this.amount <= 0) {
@@ -44,7 +44,7 @@ export class DepositButtonComponent {
       next: (response) => {
         this.isSubmitting = false;
         this.errorMessage = null;
-        console.log('Deposit response:', response);
+        // console.log('Deposit response:', response);
         if (this.selectedPaymentMethod === paymentMethod.Stripe) {
           alert(`يرجى تأكيد الدفعة باستخدام الـ Client Secret: ${response.PaymentToken}`);
         } else if (this.selectedPaymentMethod === paymentMethod.PayPal) {

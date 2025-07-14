@@ -34,7 +34,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
-    private notificationService: NotificationService,
+    public notificationService: NotificationService,
     private loaderService: LoaderService,
     private eRef: ElementRef,
     private cdr: ChangeDetectorRef
@@ -46,7 +46,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.userService.getUserProfile().subscribe({
         next: (user: User) => {
           this.authService.LoggedUser.next(user);
-          console.log('User profile fetched successfully', user);
+          // console.log('User profile fetched successfully', user);
         },
         error: (error) => {
           this.authService.LoggedUser.next(null);
@@ -57,7 +57,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.authService.LoggedUser.subscribe({
         next: (user) => {
           this.user = user;
-          console.log('User in header:', this.user);
+          // console.log('User in header:', this.user);
           if (this.user) {
             this.isLoggedIn = true;
             this.profileImage = this.user.Image;
@@ -71,7 +71,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.notificationSub = this.notificationService.getAllNotifications().subscribe({
         next: (notifications) => {
           this.notifications = notifications;
-          console.log('Notifications in header:', notifications);
+          // console.log('Notifications in header:', notifications);
           this.cdr.detectChanges();
         },
         error: (error) => {
@@ -84,7 +84,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.notificationService.getUnreadCount().subscribe({
         next: (count) => {
           this.unreadCount = count;
-          console.log(this.unreadCount);
+          // console.log(this.unreadCount);
           
           this.cdr.detectChanges();
         },
@@ -134,7 +134,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       });
     }
     this.cdr.detectChanges();
-    console.log(this.notifications);
+    // console.log(this.notifications);
     
   }
 

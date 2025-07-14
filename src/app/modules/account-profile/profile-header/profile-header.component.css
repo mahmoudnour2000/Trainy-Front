@@ -197,7 +197,7 @@
 
 /* Edit Button Section */
 .profile-header .btn {
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%);
+  background: #0d3d9f;
   color: #ffffff;
   border: none;
   border-radius: 16px;
@@ -255,7 +255,7 @@
 }
 
 .profile-header .btn:hover {
-  background: linear-gradient(135deg, #2529ae 0%, #262b89 50%, #1e206b 100%);
+  background: #0d3d9f;
   transform: translateY(-4px) scale(1.02);
   box-shadow: 
     0 16px 40px rgba(38, 43, 137, 0.35),

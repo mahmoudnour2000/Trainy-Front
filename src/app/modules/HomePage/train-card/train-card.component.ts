@@ -33,7 +33,7 @@ export class TrainCardComponent {
       this.isLoadingStations = true;
       this.trainService.getTrainStations(this.train.ID).subscribe({
         next: (response: any) => {
-          console.log(response);
+          // console.log(response);
           this.stations = response.Data;
           this.isLoadingStations = false;
           this.showStations = true;

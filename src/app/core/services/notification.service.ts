@@ -35,34 +35,89 @@ export class NotificationService {
     });
   }
 
-
-
-  private initHubConnection(): void {
-    const token = this.authService.getToken();
-    if (!token) {
-      console.error('لا يوجد توكن متاح لاتصال SignalR');
-      return;
-    }
-
-    if (this.hubConnection && this.hubConnection.state === 'Connected') {
-      return;
-    }
-
-    this.hubConnection = new HubConnectionBuilder()
-      .withUrl(`${environment.hubUrl}OurtrainTrackingHub`, {
-        accessTokenFactory: () => token
-      })
-      .build();
-
-
-    this.hubConnection.start()
-      .then(() => {
-        console.log('SignalR connected at', new Date())
-       
-      })
-      .catch(err => console.error('SignalR connection error:', err));
-
+ private initHubConnection(): void {
+  const token = this.authService.getToken();
+  if (!token) {
+    console.error('لا يوجد توكن متاح لاتصال SignalR');
+    return;
   }
+
+  if (this.hubConnection && this.hubConnection.state === HubConnectionState.Connected) {
+    return;
+  }
+
+  this.hubConnection = new HubConnectionBuilder()
+    .withUrl(`${environment.hubUrl}OurtrainTrackingHub`, {
+      accessTokenFactory: () => token
+    })
+    .withAutomaticReconnect() // إضافة إعادة الاتصال التلقائي
+    .build();
+
+this.hubConnection.on('ReceiveTrainUpdate', (data: any) => {
+  console.log('📩 SignalR message received:', data);
+
+  // لو جاي فيه Message اعتبريه إشعار
+  if (data.Message && data.NotificationTime) {
+    const notification: Notification = {
+      Id: data.Id || Date.now(),
+      Message: data.Message,
+      NotificationTime: data.NotificationTime,
+      IsRead: false,
+      TrainId: data.TrainId,
+      UserName: data.UserName || ''
+    };
+    console.log('📨 إشعار جديد:', notification);
+    this.updateNotifications(notification);
+    if (!notification.IsRead) {
+      this.hasNewNotification$.next(true);
+    }
+  } else {
+    // غير كده، ممكن يكون مجرد تحديث مكان القطار
+    console.log('📍 تحديث مكان القطار:', data);
+  }
+});
+
+
+  // التعامل مع إعادة الاتصال
+  this.hubConnection.onreconnected(() => {
+    console.log('SignalR reconnected at', new Date());
+    this.LoadNotifications(); // إعادة تحميل الإشعارات بعد إعادة الاتصال
+  });
+
+  this.hubConnection.onclose(err => {
+    console.error('SignalR connection closed:', err);
+    // محاولة إعادة الاتصال
+    setTimeout(() => this.initHubConnection(), 5000);
+  });
+}
+
+joinTrainGroup(trainId: number): void {
+  if (!this.authService.isAuthenticated()) {
+    console.error('المستخدم غير مصادق عليه');
+    return;
+  }
+  if (this.hubConnection.state !== HubConnectionState.Connected) {
+    console.error('SignalR غير متصل. جاري المحاولة...');
+    this.initHubConnection();
+    return;
+  }
+  this.hubConnection.invoke('JoinTrainGroup', trainId)
+    .then(() => console.log(`Joined train group ${trainId}`))
+    .catch(err => console.error('خطأ في الانضمام لمجموعة القطار:', err));
+}
+
+leaveTrainGroup(trainId: number): void {
+  if (!this.authService.isAuthenticated()) {
+    console.error('المستخدم غير مصادق عليه');
+    return;
+  }
+  if (this.hubConnection.state !== HubConnectionState.Connected) {
+    console.error('SignalR غير متصل. لا يمكن مغادرة المجموعة.');
+    return;
+  }
+  this.hubConnection.invoke('LeaveTrainGroup', trainId)
+    .catch(err => console.error('خطأ في مغادرة مجموعة القطار:', err));
+}
 
   private stopHubConnection(): void {
     if (this.hubConnection) {
@@ -159,13 +214,13 @@ export class NotificationService {
     console.log('---------------------------------------------------------');
      if (this.hubConnection && this.hubConnection.state === HubConnectionState.Connected) {
       console.log('✅ متصل بـ OurtrainTrackingHub');
-      this.hubConnection.on('ReceiveNotification', (notification: Notification) => {
-        console.log('📨 إشعار جديد:', notification);
-        this.updateNotifications(notification);
-        if (!notification.IsRead) {
-          this.hasNewNotification$.next(true);
-        }
-      });
+      // this.hubConnection.on('ReceiveTrainUpdate', (notification: Notification) => {
+      //   console.log('📨 إشعار جديد:', notification);
+      //   this.updateNotifications(notification);
+      //   if (!notification.IsRead) {
+      //     this.hasNewNotification$.next(true);
+      //   }
+      // });
       this.hubConnection.invoke('LoadNotifications').then(
         (notification: any) => {
         console.log('Received notification:', notification);
@@ -185,24 +240,24 @@ export class NotificationService {
     this.unreadCount$.next(unread);
   }
 
-  joinTrainGroup(trainId: number): void {
-    if (!this.authService.isAuthenticated()) {
-      console.error('المستخدم غير مصادق عليه');
-      return;
-    }
-    this.hubConnection.invoke('JoinTrainGroup', trainId)
-      .then(() => console.log(`Joined train group ${trainId}`))
-      .catch(err => console.error('خطأ في الانضمام لمجموعة القطار:', err));
-  }
+  // joinTrainGroup(trainId: number): void {
+  //   if (!this.authService.isAuthenticated()) {
+  //     console.error('المستخدم غير مصادق عليه');
+  //     return;
+  //   }
+  //   this.hubConnection.invoke('JoinTrainGroup', trainId)
+  //     .then(() => console.log(`Joined train group ${trainId}`))
+  //     .catch(err => console.error('خطأ في الانضمام لمجموعة القطار:', err));
+  // }
 
-  leaveTrainGroup(trainId: number): void {
-    if (!this.authService.isAuthenticated()) {
-      console.error('المستخدم غير مصادق عليه');
-      return;
-    }
-    this.hubConnection.invoke('LeaveTrainGroup', trainId)
-      .catch(err => console.error('خطأ في مغادرة مجموعة القطار:', err));
-  }
+  // leaveTrainGroup(trainId: number): void {
+  //   if (!this.authService.isAuthenticated()) {
+  //     console.error('المستخدم غير مصادق عليه');
+  //     return;
+  //   }
+  //   this.hubConnection.invoke('LeaveTrainGroup', trainId)
+  //     .catch(err => console.error('خطأ في مغادرة مجموعة القطار:', err));
+  // }
 
   enableNotification(trainId: number): Observable<void> {
     if (!this.authService.isAuthenticated()) {

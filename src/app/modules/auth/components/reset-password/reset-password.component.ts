@@ -31,8 +31,8 @@ export class ResetPasswordComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.token = params['token'] || '';
       this.email = params['email'] || '';
-      console.log('Token:', this.token); // للتصحيح
-      console.log('Email:', this.email); // للتصحيح
+      // console.log('Token:', this.token); // للتصحيح
+      // console.log('Email:', this.email); // للتصحيح
 
       if (!this.token || !this.email) {
         this.showMessage('رابط استعادة كلمة المرور غير صحيح أو منتهي الصلاحية', 'error');

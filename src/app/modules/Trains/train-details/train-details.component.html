@@ -1,28 +1,29 @@
 <div class="train-details" *ngIf="!isLoading; else loading">
-  <h2>تفاصيل قطر {{ train.No }}</h2>
+  <h2>تفاصيل القطار: {{ train.No }}</h2>
   <div class="route-info">
     <div class="route-card">
       <p>من: {{ train.Route_From }}</p>
     </div>
     <div class="route-card">
-      <p>🚩 الموقع الحالي: {{ train.Current_Location }}</p>
+      <p><i class="bi bi-geo-alt-fill" style="color: #dc3545;"></i> الموقع الحالي: {{ train.Current_Location }}</p>
     </div>
     <div class="route-card">
       <p>إلى: {{ train.Route_To }}</p>
     </div>
   </div>
-  
+ 
   <div class="actions">
-    <button class="btn btn-primary" (click)="openChat()">💬 شات القطار</button>
+    <button (click)="openChat()"><i class="bi bi-chat-dots"></i> الشات</button>
     <ng-container *ngIf="train.ID">
-      <button (click)="toggleNotification()" *ngIf="isNotificationEnabledValue !== null">
-        {{ isNotificationEnabledValue ? '🔕 تعطيل الإشعارات' : '🔔 تفعيل الإشعارات' }}
-      </button>
+    <button (click)="toggleNotification()" *ngIf="isNotificationEnabledValue !== null">
+      <i [ngClass]="isNotificationEnabledValue ? 'bi bi-bell-slash' : 'bi bi-bell'" style="margin-left: 5px;"></i>
+      {{ isNotificationEnabledValue ? 'تعطيل الإشعارات' : 'تفعيل الإشعارات' }}
+    </button>
     </ng-container>
-    <button class="btn btn-primary" (click)="goToLostAndFound()">المفقودات</button>
+    <button class="btn btn-primary btn-danger" (click)="goToLostAndFound()"><i class="bi bi-search"></i> المفقودات</button>
     <ng-container *ngIf="isGuide !== null">
-      <button *ngIf="!isGuide" class="btn btn-success" (click)="openGuideModal()">كن قائد الرحلة 🚂</button>
-      <button *ngIf="isGuide" class="btn btn-success" (click)="updateTrainLocation()">تحديث مكان القطار 📍</button>
+    <button *ngIf="!isGuide" class="btn btn-success" (click)="openGuideModal()"><i class="bi bi-person-badge"></i> كن قائد الرحلة</button>
+    <button *ngIf="isGuide" class="btn btn-success" (click)="updateTrainLocation()"><i class="bi bi-geo-alt"></i> تحديث مكان القطار</button>
     </ng-container>
   </div>
   
@@ -36,7 +37,10 @@
     <!-- Stations List -->
     <div class="stations-list" *ngIf="!isLoadingStations; else loadingStations">
       <div *ngFor="let station of stations" class="station-item">
-        <p>{{ station.StationName }} - الوصول: {{ station.ArrivalTime }}</p>
+        <div class="station-info-row" style="display: flex; justify-content: space-between; align-items: center;">
+          <div>{{ station.StationName }}</div>
+          <div>الوصول: {{ station.ArrivalTime }}</div>
+        </div>
         <button (click)="goToStationServices(station.StationId)">خدمات المحطة</button>
       </div>
       <p *ngIf="stations.length === 0">لا توجد محطات مطابقة</p>
@@ -45,7 +49,7 @@
     <!-- Loading Stations -->
     <ng-template #loadingStations>
       <div class="stations-loading">
-        <div class="loading-spinner"></div>
+        <div class="loading-spinner">⏳</div>
         <p>جاري تحميل المحطات...</p>
       </div>
     </ng-template>

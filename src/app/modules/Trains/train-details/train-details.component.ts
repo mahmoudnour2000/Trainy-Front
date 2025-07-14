@@ -6,11 +6,13 @@ import { TrainListViewModel, TrainStation, StationServicesResponse, GuideRoleRes
 import { AuthService } from '../../../core/services/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   standalone: true,
   selector: 'app-train-details',
   imports: [CommonModule, FormsModule],  
+  providers: [CookieService],
   templateUrl: './train-details.component.html',
   styleUrls: ['./train-details.component.css']
 })
@@ -37,6 +39,7 @@ export class TrainDetailsComponent implements OnInit {
     private trainService: TrainService,
     public notificationService: NotificationService,
     public authService: AuthService,
+    private cookieService: CookieService,
     private router: Router
   ) {
     const idParam = this.route.snapshot.paramMap.get('trainId');
@@ -186,25 +189,55 @@ export class TrainDetailsComponent implements OnInit {
     });
   }
 
-  toggleNotification(): void {
-    if (this.isNotificationEnabledValue === null) return;
+  // toggleNotification(): void {
+  //   if (this.isNotificationEnabledValue === null) return;
 
-    if (this.isNotificationEnabledValue) {
-      this.notificationService.leaveTrainGroup(this.trainId);
-      this.notificationService.disableNotification(this.trainId).subscribe(() => {
+  //   if (this.isNotificationEnabledValue) {
+  //     this.notificationService.leaveTrainGroup(this.trainId);
+  //     this.notificationService.disableNotification(this.trainId).subscribe(() => {
+  //       console.log(`Notification disabled for train ${this.trainId}`);
+  //       this.isNotificationEnabledValue = false;
+  //     });
+  //   } else {
+  //     this.notificationService.joinTrainGroup(this.trainId);
+  //     this.notificationService.enableNotification(this.trainId).subscribe(() => {
+  //       console.log(`Notification enabled for train ${this.trainId}`);
+  //       this.isNotificationEnabledValue = true;
+  //     });
+  //   }
+  // }
+
+  toggleNotification(): void {
+  if (this.isNotificationEnabledValue === null) return;
+
+  if (this.isNotificationEnabledValue) {
+    this.notificationService.disableNotification(this.trainId).subscribe({
+      next: () => {
         console.log(`Notification disabled for train ${this.trainId}`);
         this.isNotificationEnabledValue = false;
-      });
-    } else {
-      this.notificationService.joinTrainGroup(this.trainId);
-      this.notificationService.enableNotification(this.trainId).subscribe(() => {
+        this.notificationService.leaveTrainGroup(this.trainId); // حاول مغادرة المجموعة
+      },
+      error: (error) => {
+        console.error('Error disabling notification:', error);
+        alert('حدث خطأ أثناء تعطيل الإشعارات');
+      }
+    });
+  } else {
+    this.notificationService.enableNotification(this.trainId).subscribe({
+      next: () => {
         console.log(`Notification enabled for train ${this.trainId}`);
         this.isNotificationEnabledValue = true;
-      });
-    }
+        this.notificationService.joinTrainGroup(this.trainId); // حاول الانضمام للمجموعة
+      },
+      error: (error) => {
+        console.error('Error enabling notification:', error);
+        alert('حدث خطأ أثناء تفعيل الإشعارات');
+      }
+    });
   }
+}
 
-  openChat(): void {
+   openChat(): void {
     console.log('Opening chat for train', this.trainId);
     if (this.authService.isAuthenticated()) {
       this.router.navigate([`/train-chat/${this.trainId}`]);
@@ -213,7 +246,6 @@ export class TrainDetailsComponent implements OnInit {
       this.router.navigate(['/auth/login']);
     }
   }
-
   goToLostAndFound(): void {
     this.router.navigate([`/traindetails/${this.trainId}/lost-and-found`]);
   }
@@ -231,27 +263,23 @@ export class TrainDetailsComponent implements OnInit {
     this.isModalOpen = false;
   }
 
- requestGuideRole(): void {
+  requestGuideRole(): void {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log('Location access granted:', position.coords);
+        // console.log('Location access granted:', position.coords);
         this.trainService.requestGuideRole().subscribe({
           next: (response) => {
-            console.log(response.message);
-            // حفظ مسار الصفحة الحالية
-            localStorage.setItem('redirectAfterLogin', `/traindetails/${this.trainId}`);
-            // تسجيل الخروج
-            this.authService.LogOut().subscribe({
-              next: () => {
-                this.isGuide = true;
-                this.closeGuideModal();
-                this.router.navigate(['/auth/login']);
-              },
-              error: (error) => {
-                console.error('Error during logout:', error);
-                alert('حدث خطأ أثناء تسجيل الخروج');
-              }
+            // console.log(response.message);
+            this.cookieService.set('auth_token', response.refreshToken, {
+              expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+              path: '/',
+              secure: true,
+              sameSite: 'Strict' as 'Strict'
             });
+            localStorage.setItem('token', response.refreshToken);
+            this.isGuide = true;
+            this.closeGuideModal();
+            this.router.navigate(['/train-tracking', this.trainId]);
           },
           error: (error) => {
             console.error('Error requesting guide role:', error);

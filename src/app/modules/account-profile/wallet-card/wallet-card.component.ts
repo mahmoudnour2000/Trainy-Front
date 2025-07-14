@@ -71,7 +71,7 @@ export class WalletCardComponent {
       next: (response) => {
         this.isSubmitting = false;
         this.errorMessage = null;
-        console.log('Deposit response:', response);
+        // console.log('Deposit response:', response);
         if (this.selectedPaymentMethod === paymentMethod.Stripe) {
           alert(`يرجى تأكيد الدفعة باستخدام الـ Client Secret: ${response.PaymentToken}`);
         } else if (this.selectedPaymentMethod === paymentMethod.PayPal) {
@@ -113,7 +113,7 @@ export class WalletCardComponent {
     this.response$.subscribe({
       next: (response) => {
         this.errorMessage = null;
-        console.log('Withdraw response:', response);
+        // console.log('Withdraw response:', response);
         alert(response.message);
         this.showModal = false;
       },

@@ -23,7 +23,7 @@ export class WithdrawButtonComponent {
   constructor(private userService: UserService) {}
 
   onWithdraw(): void {
-    console.log('Withdraw initiated with amount:', this.amount, 'payment method:', this.selectedPaymentMethod, 'account number:', this.accountNumber);
+    // console.log('Withdraw initiated with amount:', this.amount, 'payment method:', this.selectedPaymentMethod, 'account number:', this.accountNumber);
     
     if (!this.amount || this.amount <= 0) {
       this.errorMessage = 'المبلغ يجب أن يكون أكبر من صفر.';
@@ -43,7 +43,7 @@ export class WithdrawButtonComponent {
     this.response$.subscribe({
       next: (response) => {
         this.errorMessage = null;
-        console.log('Withdraw response:', response);
+        // console.log('Withdraw response:', response);
         alert(response.message);
       },
       error: (err) => {
