@@ -88,15 +88,23 @@
                         </div>
 
                         <!-- Register Link -->
-                      <div class="col-12 register-link">
-  <p class="mb-0">
-    ليس لديك حساب؟
-    <a [routerLink]="['/auth/register']">
-      <i class="fas fa-user-plus me-1"></i>
-      أنشئ حسابًا جديدًا
-    </a>
-  </p>
-</div>
+                        <div class="col-12 register-link">
+                            <p class="mb-0">
+                                ليس لديك حساب؟
+                                <a [routerLink]="['/auth/register']">
+                                    <i class="fas fa-user-plus me-1"></i>
+                                    أنشئ حسابًا جديدًا
+                                </a>
+                            </p>
+                        </div>
+
+                        <!-- Forgot Password Link -->
+                        <div class="col-12 text-center mt-2">
+                            <a [routerLink]="['/auth/forget-password']" class="text-primary text-decoration-underline fw-medium">
+                                <i class="bi bi-key me-1"></i>
+                                نسيت كلمة المرور؟
+                            </a>
+                        </div>
 
                     </div>
                 </form>

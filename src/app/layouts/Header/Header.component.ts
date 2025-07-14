@@ -37,10 +37,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
     public notificationService: NotificationService,
     private loaderService: LoaderService,
     private eRef: ElementRef,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    
   ) {}
 
   ngOnInit(): void {
+    
     this.isLoggedIn = this.authService.isAuthenticated();
     if (this.isLoggedIn) {
       this.userService.getUserProfile().subscribe({
@@ -71,7 +73,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       this.notificationSub = this.notificationService.getAllNotifications().subscribe({
         next: (notifications) => {
           this.notifications = notifications;
-          // console.log('Notifications in header:', notifications);
+   
           this.cdr.detectChanges();
         },
         error: (error) => {

@@ -138,6 +138,10 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         loadComponent: () => import('./modules/train-chat/train-chat.component').then(m => m.TrainChatComponent)
       },
+      {
+        path: 'forget-password',
+        loadComponent: () => import('./modules/auth/components/forget-password/forget-password.component').then(m => m.ForgotPasswordComponent)
+      }
     ]
   },
   {

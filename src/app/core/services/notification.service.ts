@@ -15,6 +15,8 @@ export class NotificationService {
   private notifications$ = new BehaviorSubject<Notification[]>([]);
   private unreadCount$ = new BehaviorSubject<number>(0);
   private hasNewNotification$ = new BehaviorSubject<boolean>(false);
+  showSuccessPopup = false;
+  successPopupMessage = '';
 
   constructor(
     private http: HttpClient,
@@ -25,7 +27,7 @@ export class NotificationService {
         this.initHubConnection();
         this.fetchNotifications();
         this.LoadNotifications();
-      } 
+      }
       else {
         this.stopHubConnection();
         this.notifications$.next([]);
@@ -34,90 +36,104 @@ export class NotificationService {
       }
     });
   }
-
- private initHubConnection(): void {
-  const token = this.authService.getToken();
-  if (!token) {
-    console.error('لا يوجد توكن متاح لاتصال SignalR');
-    return;
+  showSuccessToast(message: string) {
+    (window as any).lastSuccessToastTimeout && clearTimeout((window as any).lastSuccessToastTimeout);
+    this.successPopupMessage = message;
+    this.showSuccessPopup = true;
+    (window as any).lastSuccessToastTimeout = setTimeout(() => {
+      this.showSuccessPopup = false;
+    }, 3000);
   }
-
-  if (this.hubConnection && this.hubConnection.state === HubConnectionState.Connected) {
-    return;
-  }
-
-  this.hubConnection = new HubConnectionBuilder()
-    .withUrl(`${environment.hubUrl}OurtrainTrackingHub`, {
-      accessTokenFactory: () => token
-    })
-    .withAutomaticReconnect() // إضافة إعادة الاتصال التلقائي
-    .build();
-
-this.hubConnection.on('ReceiveTrainUpdate', (data: any) => {
-  console.log('📩 SignalR message received:', data);
-
-  // لو جاي فيه Message اعتبريه إشعار
-  if (data.Message && data.NotificationTime) {
-    const notification: Notification = {
-      Id: data.Id || Date.now(),
-      Message: data.Message,
-      NotificationTime: data.NotificationTime,
-      IsRead: false,
-      TrainId: data.TrainId,
-      UserName: data.UserName || ''
-    };
-    console.log('📨 إشعار جديد:', notification);
-    this.updateNotifications(notification);
-    if (!notification.IsRead) {
-      this.hasNewNotification$.next(true);
+  private initHubConnection(): void {
+    const token = this.authService.getToken();
+    if (!token) {
+      console.error('لا يوجد توكن متاح لاتصال SignalR');
+      return;
     }
-  } else {
-    // غير كده، ممكن يكون مجرد تحديث مكان القطار
-    console.log('📍 تحديث مكان القطار:', data);
+
+    if (this.hubConnection && this.hubConnection.state === HubConnectionState.Connected) {
+      return;
+    }
+
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl(`${environment.hubUrl}OurtrainTrackingHub`, {
+        accessTokenFactory: () => token
+      })
+      .withAutomaticReconnect() // إضافة إعادة الاتصال التلقائي
+      .build();
+
+    console.log('Initializing SignalR connection...');
+    this.hubConnection.on('ReceiveTrainUpdate', (data: any) => {
+      console.log('📩 SignalR message received:', data);
+      if (!data) {
+        console.warn('Received empty data from SignalR');
+        return;
+      }
+      this.showSuccessToast(`${data.Message || 'إشعار جديد'}`);
+
+      // لو جاي فيه Message اعتبريه إشعار
+      if (data.Message && data.NotificationTime) {
+        const notification: Notification = {
+          Id: data.Id || Date.now(),
+          Message: data.Message,
+          NotificationTime: data.NotificationTime,
+          IsRead: false,
+          TrainId: data.TrainId,
+          UserName: data.UserName || ''
+        };
+        console.log('📨 إشعار جديد:', notification);
+        this.updateNotifications(notification);
+        if (!notification.IsRead) {
+          this.hasNewNotification$.next(true);
+        }
+
+      } else {
+        // غير كده، ممكن يكون مجرد تحديث مكان القطار
+        console.log('📍 تحديث مكان القطار:', data);
+      }
+    });
+
+
+    // التعامل مع إعادة الاتصال
+    this.hubConnection.onreconnected(() => {
+      console.log('SignalR reconnected at', new Date());
+      this.LoadNotifications(); // إعادة تحميل الإشعارات بعد إعادة الاتصال
+    });
+
+    this.hubConnection.onclose(err => {
+      console.error('SignalR connection closed:', err);
+      // محاولة إعادة الاتصال
+      setTimeout(() => this.initHubConnection(), 5000);
+    });
   }
-});
 
-
-  // التعامل مع إعادة الاتصال
-  this.hubConnection.onreconnected(() => {
-    console.log('SignalR reconnected at', new Date());
-    this.LoadNotifications(); // إعادة تحميل الإشعارات بعد إعادة الاتصال
-  });
-
-  this.hubConnection.onclose(err => {
-    console.error('SignalR connection closed:', err);
-    // محاولة إعادة الاتصال
-    setTimeout(() => this.initHubConnection(), 5000);
-  });
-}
-
-joinTrainGroup(trainId: number): void {
-  if (!this.authService.isAuthenticated()) {
-    console.error('المستخدم غير مصادق عليه');
+  joinTrainGroup(trainId: number): void {
+    if (!this.authService.isAuthenticated()) {
+      console.error('المستخدم غير مصادق عليه');
+      return;
+    }
+    if (this.hubConnection.state !== HubConnectionState.Connected) {
+      // console.error('SignalR غير متصل. جاري المحاولة...');
+      this.initHubConnection();
+    }
+    this.hubConnection.invoke('JoinTrainGroup', trainId)
+      .then(() => console.log(`Joined train group ${trainId}`))
+      .catch(err => console.error('خطأ في الانضمام لمجموعة القطار:', err));
     return;
   }
-  if (this.hubConnection.state !== HubConnectionState.Connected) {
-    console.error('SignalR غير متصل. جاري المحاولة...');
-    this.initHubConnection();
-    return;
-  }
-  this.hubConnection.invoke('JoinTrainGroup', trainId)
-    .then(() => console.log(`Joined train group ${trainId}`))
-    .catch(err => console.error('خطأ في الانضمام لمجموعة القطار:', err));
-}
 
-leaveTrainGroup(trainId: number): void {
-  if (!this.authService.isAuthenticated()) {
-    console.error('المستخدم غير مصادق عليه');
-    return;
+  leaveTrainGroup(trainId: number): void {
+    if (!this.authService.isAuthenticated()) {
+      console.error('المستخدم غير مصادق عليه');
+      return;
+    }
+    if (this.hubConnection.state !== HubConnectionState.Connected) {
+      console.error('SignalR غير متصل. لا يمكن مغادرة المجموعة.');
+      return;
+    }
+    this.hubConnection.invoke('LeaveTrainGroup', trainId)
+      .catch(err => console.error('خطأ في مغادرة مجموعة القطار:', err));
   }
-  if (this.hubConnection.state !== HubConnectionState.Connected) {
-    console.error('SignalR غير متصل. لا يمكن مغادرة المجموعة.');
-    return;
-  }
-  this.hubConnection.invoke('LeaveTrainGroup', trainId)
-    .catch(err => console.error('خطأ في مغادرة مجموعة القطار:', err));
-}
 
   private stopHubConnection(): void {
     if (this.hubConnection) {
@@ -138,6 +154,7 @@ leaveTrainGroup(trainId: number): void {
       currentNotifications[index] = notification;
     }
     this.notifications$.next([...currentNotifications]);
+
     this.updateUnreadCount();
   }
 
@@ -212,25 +229,25 @@ leaveTrainGroup(trainId: number): void {
 
   LoadNotifications(): void {
     console.log('---------------------------------------------------------');
-     if (this.hubConnection && this.hubConnection.state === HubConnectionState.Connected) {
+    if (this.hubConnection && this.hubConnection.state === HubConnectionState.Connected) {
       console.log('✅ متصل بـ OurtrainTrackingHub');
-      // this.hubConnection.on('ReceiveTrainUpdate', (notification: Notification) => {
-      //   console.log('📨 إشعار جديد:', notification);
-      //   this.updateNotifications(notification);
-      //   if (!notification.IsRead) {
-      //     this.hasNewNotification$.next(true);
-      //   }
-      // });
+      this.hubConnection.on('ReceiveTrainUpdate', (notification: Notification) => {
+        console.log('📨 إشعار جديد:', notification);
+        this.updateNotifications(notification);
+        if (!notification.IsRead) {
+          this.hasNewNotification$.next(true);
+        }
+      });
       this.hubConnection.invoke('LoadNotifications').then(
         (notification: any) => {
-        console.log('Received notification:', notification);
-        // this.updateNotifications(notification);
-        // if (!notification.IsRead) {
-        //   this.hasNewNotification$.next(true); 
-        // }
-      }).catch(err => {
-        console.error('Error loading notifications:', err)    
-      });
+          console.log('Received notification:', notification);
+          // this.updateNotifications(notification);
+          // if (!notification.IsRead) {
+          //   this.hasNewNotification$.next(true); 
+          // }
+        }).catch(err => {
+          console.error('Error loading notifications:', err)
+        });
     }
 
   }
