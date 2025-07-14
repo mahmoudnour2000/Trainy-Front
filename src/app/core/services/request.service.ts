@@ -21,6 +21,9 @@ export interface Request {
   fromStationId?: number;
   pickupStationName?: string;
   PickupStationName?: string; // Added for backend compatibility
+  senderId?: string;
+  offerDescription?: string;
+  updatedAt?: Date;
 }
 
 export enum RequestStatus {
@@ -67,13 +70,42 @@ export class RequestService {
   
   // GET /api/Request/{id}
   getRequestById(id: number): Observable<Request> {
-    return this.http.get<Request>(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map(response => this.mapBackendResponseToRequest(response))
+    );
+  }
+
+  // Helper method to map backend response to frontend Request model
+  private mapBackendResponseToRequest(backendResponse: any): Request {
+    return {
+      id: backendResponse.id || backendResponse.Id,
+      offerId: backendResponse.offerId || backendResponse.OfferId,
+      courierId: backendResponse.courierId || backendResponse.CourierId,
+      CourierId: backendResponse.courierId || backendResponse.CourierId,
+      courierName: backendResponse.courierName || backendResponse.CourierName,
+      courierImage: backendResponse.courierImage || backendResponse.CourierImage,
+      CourierName: backendResponse.courierName || backendResponse.CourierName,
+      CourierImage: backendResponse.courierImage || backendResponse.CourierImage,
+      message: backendResponse.message || backendResponse.Message,
+      status: backendResponse.status !== undefined ? backendResponse.status : backendResponse.Status,
+      Status: backendResponse.status !== undefined ? backendResponse.status : backendResponse.Status,
+      createdAt: new Date(backendResponse.createdAt || backendResponse.CreatedAt),
+      fromStationId: backendResponse.fromStationId || backendResponse.FromStationId,
+      pickupStationName: backendResponse.pickupStationName || backendResponse.PickupStationName,
+      PickupStationName: backendResponse.pickupStationName || backendResponse.PickupStationName,
+      senderId: backendResponse.senderId || backendResponse.SenderId,
+      offerDescription: backendResponse.offerDescription || backendResponse.OfferDescription,
+      updatedAt: backendResponse.updatedAt ? new Date(backendResponse.updatedAt) : 
+                  backendResponse.UpdatedAt ? new Date(backendResponse.UpdatedAt) : undefined
+    };
   }
   
   // POST /api/Request
   createRequest(requestData: RequestCreateModel): Observable<Request> {
     return this.http.post<Request>(`${this.apiUrl}`, requestData);
   }
+
+
   
   // PUT /api/Request/{id}
   updateRequest(id: number, requestData: Partial<RequestCreateModel>): Observable<Request> {
