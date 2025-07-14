@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { IUserLogin } from '../../../../core/models/auth';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -10,8 +10,9 @@ import { AuthResponse } from '../../../../core/models/auth';
   standalone: false,
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
-}) 
+  styleUrl: './login.component.css',
+  encapsulation: ViewEncapsulation.None
+})
 export class LoginComponent implements OnInit {
   user: IUserLogin = {
     LoginMethod: '',
