@@ -26,8 +26,18 @@
     </div>
   </div>
 
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="!isInitialized">
+    <div class="text-center py-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">جاري تحميل المحادثة...</span>
+      </div>
+      <p class="mt-3 text-muted">جاري تحميل المحادثة...</p>
+    </div>
+  </div>
+
   <!-- Chat Messages Area -->
-  <div class="chat-messages" #messagesContainer>
+  <div class="chat-messages" #messagesContainer *ngIf="isInitialized">
     <div class="message-wrapper" 
          *ngFor="let message of messages; trackBy: trackByMessageId" 
          [ngClass]="{'sent': isMessageFromCurrentUser(message), 'received': !isMessageFromCurrentUser(message)}">
@@ -53,17 +63,19 @@
     </div>
   </div>
 
-  <!-- Message Input Area -->
-  <div class="message-input-area" *ngIf="canSendMessages()">
-    <!-- Debug Info -->
-    <div class="debug-info mb-2" style="font-size: 0.8rem; color: #666;">
-      <small>
-        متصل: {{isConnected ? 'نعم' : 'لا'}} | 
-        مصادق: {{isAuthenticated() ? 'نعم' : 'لا'}} | 
-        Chat ID: {{chatId}}
-      </small>
+  <!-- Chat Actions Area (Only Status Messages) -->
+  <div class="chat-actions" *ngIf="chatStatus && isInitialized && !isLoadingActions">
+    <!-- Status message for completed delivery -->
+    <div class="status-message" *ngIf="chatStatus.offerStatus === 'Completed'">
+      <div class="alert alert-success text-center">
+        <i class="fas fa-check-circle me-2"></i>
+        تم اكتمال التوصيل بنجاح
+      </div>
     </div>
-    
+  </div>
+
+  <!-- Message Input Area -->
+  <div class="message-input-area" *ngIf="canSendMessages() && isInitialized">
     <div class="input-group">
       <input 
         type="text" 
@@ -89,10 +101,8 @@
     </div>
   </div>
 
-
-
   <!-- Connection Error -->
-  <div class="connection-error" *ngIf="!isConnected && chatId">
+  <div class="connection-error" *ngIf="!isConnected && chatId && isInitialized">
     <div class="alert alert-warning text-center mb-0">
       <i class="fas fa-exclamation-triangle me-2"></i>
       لا يوجد اتصال بالخادم. جاري المحاولة...
@@ -100,32 +110,10 @@
   </div>
 
   <!-- Chat Not Available -->
-  <div class="chat-unavailable" *ngIf="chatStatus?.offerStatus === 'Completed' || chatStatus?.offerStatus === 'Cancelled'">
+  <div class="chat-unavailable" *ngIf="chatStatus && (chatStatus.offerStatus === 'Cancelled') && isInitialized">
     <div class="alert alert-info text-center mb-0">
       <i class="fas fa-info-circle me-2"></i>
       هذه المحادثة غير متاحة حالياً
-    </div>
-  </div>
-
-  <!-- Fallback Message Input (for debugging) -->
-  <div class="fallback-message-input" *ngIf="!canSendMessages() && isAuthenticated()">
-    <div class="alert alert-warning">
-      <h6>رسالة تجريبية (للتصحيح)</h6>
-      <div class="input-group">
-        <input 
-          type="text" 
-          class="form-control" 
-          [(ngModel)]="newMessage"
-          placeholder="اكتب رسالة تجريبية..."
-          maxlength="500">
-        <button 
-          class="btn btn-warning" 
-          (click)="sendMessage()"
-          [disabled]="!newMessage.trim()">
-          إرسال تجريبي
-        </button>
-      </div>
-      <small class="text-muted">هذا الإدخال يظهر فقط للتصحيح عندما لا يعمل الإدخال الرئيسي</small>
     </div>
   </div>
 </div>

@@ -113,6 +113,7 @@ export const routes: Routes = [
           }
         ]
       },
+      
       {
         path: 'userProfile',
         canActivate: [AuthGuard],

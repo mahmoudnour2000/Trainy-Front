@@ -112,7 +112,7 @@
 }
 
 .info-item {
-  width: 33.33%;
+  width: 100%;
   display: flex;
   align-items: center;
   margin-bottom: 5px;
