@@ -55,6 +55,7 @@ export class NotificationService {
       return;
     }
 
+    
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.hubUrl}OurtrainTrackingHub`, {
         accessTokenFactory: () => token
