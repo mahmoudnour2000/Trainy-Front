@@ -22,7 +22,10 @@ export class TrainChatComponent implements OnInit, OnDestroy {
   currentUserId: string = '';
   newMessage: string = '';
   messages: any[] = [];
+  chatStatus: string = ''; // To display chat status message
   private authSubscription?: Subscription;
+  private chatClosedSubscription?: Subscription;
+  private statusUpdateSubscription?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
@@ -50,6 +53,7 @@ export class TrainChatComponent implements OnInit, OnDestroy {
       this.chatService.connect(this.trainId);
     });
 
+    // Subscribe to messages
     this.chatService.messages$.subscribe((data: any) => {
       if (data && data.messages) {
         this.messages = [...data.messages].reverse().slice(0, 10);
@@ -59,12 +63,28 @@ export class TrainChatComponent implements OnInit, OnDestroy {
       }
       this.scrollToLatest();
     });
+
+    // Subscribe to chat closed status
+    this.chatClosedSubscription = this.chatService.chatClosed$.subscribe(() => {
+      this.chatStatus = 'الشات غير متاح حاليًا لوصوله لمحطة الوصول النهائية';
+      this.messages = []; // Clear messages when chat is closed
+      this.scrollToLatest();
+    });
+
+    // Subscribe to status updates
+    this.statusUpdateSubscription = this.chatService.statusUpdate$.subscribe((message: string) => {
+      this.chatStatus = message; // Update chat status
+      if (message.includes('غير متاح')) {
+        this.messages = []; // Clear messages when chat is closed
+        this.scrollToLatest();
+      }
+    });
   }
 
   ngOnDestroy() {
-    if (this.authSubscription) {
-      this.authSubscription.unsubscribe();
-    }
+    if (this.authSubscription) this.authSubscription.unsubscribe();
+    if (this.chatClosedSubscription) this.chatClosedSubscription.unsubscribe();
+    if (this.statusUpdateSubscription) this.statusUpdateSubscription.unsubscribe();
   }
 
   sendMessage() {
@@ -73,6 +93,12 @@ export class TrainChatComponent implements OnInit, OnDestroy {
     // Check if user is authenticated
     if (!this.authService.isAuthenticated()) {
       alert('يجب تسجيل الدخول أولاً لإرسال الرسائل');
+      return;
+    }
+    
+    // Check if chat is closed
+    if (this.chatStatus.includes('غير متاح')) {
+      alert(this.chatStatus);
       return;
     }
     
@@ -101,23 +127,18 @@ export class TrainChatComponent implements OnInit, OnDestroy {
   }
 
   private extractCurrentUserInfo() {
-    // Get current user from AuthService
     const currentUser = this.authService.getCurrentUser();
     if (currentUser) {
       this.currentUser = currentUser.Name || 'مستخدم';
       this.currentUserId = currentUser.Id || '';
-      console.log('👤 Current user info:', { name: this.currentUser, id: this.currentUserId });
     } else {
-      console.warn('⚠️ No authenticated user found');
       this.currentUser = 'ضيف';
       this.currentUserId = '';
     }
   }
 
   private loadTrainNo() {
-    // This method should load the train number based on trainId
-    // For now, we'll set a default value or you can implement the actual logic
-    // this.trainNo = `Train-${this.trainId}`;
-    this.trainNo = this.trainNo;
+    // Placeholder implementation for fetching train number
+    this.trainNo = `Train-${this.trainId}`;
   }
 }

@@ -11,11 +11,15 @@ export class TrainChatService {
   private hubConnection!: signalR.HubConnection;
   private messagesSubject = new Subject<any>();
   public messages$ = this.messagesSubject.asObservable();
+  private chatClosedSubject = new Subject<any>();
+  public chatClosed$ = this.chatClosedSubject.asObservable();
+  private statusUpdateSubject = new Subject<string>();
+  public statusUpdate$ = this.statusUpdateSubject.asObservable();
   private currentTrainId?: number;
+  private isChatClosed: boolean = false;
 
   constructor(private authService: AuthService) {}
 
-  // Connect to the TrainChatHub for a specific train
   connect(trainId: number) {
     const token = this.authService.getToken();
     
@@ -25,15 +29,14 @@ export class TrainChatService {
       tokenPreview: token ? `${token.substring(0, 20)}...` : 'No token'
     });
 
-    // Check if user is authenticated
     if (!token) {
       console.error('❌ No authentication token found. User must be logged in.');
       return;
     }
 
     if (this.currentTrainId === trainId && this.hubConnection && this.hubConnection.state === signalR.HubConnectionState.Connected) {
-      console.log(`✅ م already متصل بـ TrainChatHub للقطار ${trainId}`);
-      return; // Already connected to this train
+      console.log(`✅ Already connected to TrainChatHub for train ${trainId}`);
+      return;
     }
     this.currentTrainId = trainId;
     
@@ -41,7 +44,7 @@ export class TrainChatService {
       this.hubConnection.stop();
     }
     
-    console.log(`🔌 محاولة الاتصال بـ TrainChatHub للقطار ${trainId}...`);
+    console.log(`🔌 Attempting to connect to TrainChatHub for train ${trainId}...`);
     console.log(`🌐 Hub URL: ${environment.hubUrl}TrainChatHub?trainId=${trainId}`);
     
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -52,25 +55,22 @@ export class TrainChatService {
      
     this.addListeners();
     
-    // Start connection with better error handling
     this.hubConnection.start()
       .then(() => {
-        console.log(`✅ تم الاتصال بـ TrainChatHub للقطار ${trainId} بنجاح`);
-        // Join the train group
+        console.log(`✅ Successfully connected to TrainChatHub for train ${trainId}`);
+        this.isChatClosed = false; // Reset chat closed status on new connection
         this.joinTrainGroup(trainId);
-        // Load messages after successful connection
         setTimeout(() => {
           this.loadRecentMessages(trainId);
-        }, 1000); // Wait a bit before loading messages
+        }, 1000);
       })
       .catch(err => {
-        console.error('❌ خطأ في الاتصال:', err);
+        console.error('❌ Connection error:', err);
         console.error('❌ Error details:', {
           error: err.message,
           statusCode: err.statusCode,
           statusText: err.statusText
         });
-        // Try to reconnect after 5 seconds
         setTimeout(() => {
           if (this.currentTrainId) {
             this.connect(this.currentTrainId);
@@ -80,44 +80,64 @@ export class TrainChatService {
   }
 
   private addListeners() {
-    // Listen for messages specific to this train
     this.hubConnection.on('ReceiveMessage', (data: any) => {
-      console.log('📨 رسالة جديدة في شات القطار:', data);
-      this.messagesSubject.next(data);
+      console.log('📨 New message in train chat:', data);
+      if (!this.isChatClosed) {
+        this.messagesSubject.next(data);
+      }
     });
     
-    // Listen for loading messages specific to this train
     this.hubConnection.on('LoadMessages', (messages: any[]) => {
-      console.log(`📋 تم تحميل ${messages.length} رسالة للقطار ${this.currentTrainId}:`, messages);
-      this.messagesSubject.next({ messages });
+      console.log(`📋 Loaded ${messages.length} messages for train ${this.currentTrainId}:`, messages);
+      if (!this.isChatClosed) {
+        this.messagesSubject.next({ messages });
+      }
+    });
+
+    this.hubConnection.on('CloseTrainChat', (data: any) => {
+      console.log('🚫 Chat closed for train:', data);
+      this.isChatClosed = true;
+      this.chatClosedSubject.next(data);
+      this.statusUpdateSubject.next('لم يعد الشات متاحا، لقد وصل القطار إلى آخر محطة');
+    });
+    
+    this.hubConnection.on('ReceiveStatusUpdate', (message: string) => {
+      console.log('📢 Chat status update:', message);
+      this.statusUpdateSubject.next(message);
+      if (message.includes('غير متاح')) {
+        this.isChatClosed = true;
+        this.chatClosedSubject.next(null);
+      }
     });
     
     this.hubConnection.onclose(async () => {
-      console.log('✅ الاتصال انقطع، محاولة إعادة الاتصال...');
+      console.log('✅ Connection closed, attempting to reconnect...');
       if (this.currentTrainId) {
         await this.connect(this.currentTrainId);
       }
     });
   }
 
-  // Join train group
   private joinTrainGroup(trainId: number) {
     if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
       this.hubConnection.invoke('JoinTrainGroup', trainId)
-        .then(() => console.log(`✅ انضممت لمجموعة القطار ${trainId}`))
+        .then(() => console.log(`✅ Joined train group ${trainId}`))
         .catch(err => {
-          console.error('❌ خطأ في الانضمام للمجموعة:', err);
-          // Try to reconnect if there's an error
+          console.error('❌ Error joining group:', err);
           this.connect(trainId);
         });
     }
   }
 
-  // Send a message to a specific train (matches backend method signature)
   public sendMessage(name: string, message: string, trainId: number) {
-    console.log(`📤 إرسال رسالة للقطار ${trainId}:`, { name, message });
+    console.log(`📤 Sending message for train ${trainId}:`, { name, message });
     
-    // Get current user info from AuthService
+    if (this.isChatClosed) {
+      console.warn('🚫 Chat is closed, cannot send message');
+      this.statusUpdateSubject.next('لم يعد الشات متاحا، لقد وصل القطار إلى آخر محطة');
+      return;
+    }
+    
     const currentUser = this.authService.getCurrentUser();
     if (currentUser && name === 'ضيف') {
       name = currentUser.Name || 'مستخدم';
@@ -125,38 +145,35 @@ export class TrainChatService {
     }
     
     if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
-      // Match the backend method signature: SendMessage(int trainId, string userName, string message)
-      this.hubConnection.invoke('SendMessage', trainId, name, message).then(() => {
-        console.log('✅ الرسالة ارسلت بنجاح للقطار');
-      })
+      this.hubConnection.invoke('SendMessage', trainId, name, message)
+        .then(() => console.log('✅ Message sent successfully'))
         .catch(err => {
-          console.error('❌ خطأ في الإرسال:', err);
-          // Try to reconnect if there's an error
+          console.error('❌ Send error:', err);
           this.connect(trainId);
         });
     } else {
-      console.error('❌ الاتصال غير متصل، محاولة إعادة الاتصال...');
+      console.error('❌ Connection not established, attempting to reconnect...');
       this.connect(trainId);
     }
   }
 
-  // Load recent messages for a specific train (matches backend method signature)
   public loadRecentMessages(trainId: number) {
-    console.log(`📥 تحميل الرسائل للقطار ${trainId}...`);
+    console.log(`📥 Loading messages for train ${trainId}...`);
+    if (this.isChatClosed) {
+      console.warn('🚫 Chat is closed, cannot load messages');
+      this.statusUpdateSubject.next('لم يعد الشات متاحا، لقد وصل القطار إلى آخر محطة');
+      return;
+    }
     if (this.hubConnection?.state === signalR.HubConnectionState.Connected) {
-      // Match the backend method signature: LoadRecentMessages(int trainId)
       this.hubConnection.invoke('LoadRecentMessages', trainId)
-        .then(() => {
-          console.log('✅ تم طلب تحميل الرسائل بنجاح');
-        })
+        .then(() => console.log('✅ Requested messages successfully'))
         .catch(err => {
-          console.error('❌ خطأ في تحميل الرسايل:', err);
-          // Try to reconnect if there's an error
+          console.error('❌ Load messages error:', err);
           this.connect(trainId);
         });
     } else {
-      console.error('❌ الاتصال غير متصل، محاولة إعادة الاتصال...');
+      console.error('❌ Connection not established, attempting to reconnect...');
       this.connect(trainId);
     }
   }
-} 
+}
