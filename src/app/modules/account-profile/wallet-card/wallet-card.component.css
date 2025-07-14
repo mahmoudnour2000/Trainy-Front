@@ -19,7 +19,7 @@
 }
 /* Modal Action Buttons: Deposit/Withdraw & Close */
 .modal .btn-action {
-  background: #2529ae !important;
+  background: #0d3d9f !important;
   color: #ecf3ff !important;
   border: 1.5px solid #dde8ff !important;
   font-weight: 700;
@@ -60,7 +60,7 @@
 }
 /* Force modal buttons to use palette colors */
 .modal .btn-success {
-  background: #2529ae !important;
+  background: #0d3d9f !important;
   color: #ecf3ff !important;
   border: 1.5px solid #dde8ff !important;
   font-weight: 700;
@@ -72,7 +72,7 @@
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 .modal .btn-success:hover {
-  background: #1e206b !important;
+  background: #0d3d9f !important;
   color: #dde8ff !important;
   border-color: #9db7ff !important;
 }
@@ -89,7 +89,7 @@
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
 .modal .btn-danger:hover {
-  background: #262b89 !important;
+  background: #0d3d9f !important;
   color: #fff !important;
   border-color: #cf9f3f !important;
 }
@@ -441,7 +441,7 @@
 }
 
 .wallet-card .btn-success {
-  background: #2529ae;
+  background: #0d3d9f;
   color: #ecf3ff;
   border: 1.5px solid #dde8ff;
 }

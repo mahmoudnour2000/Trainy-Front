@@ -90,7 +90,7 @@ private getUserRole(): string{
     return this.http.get<Offer | { message: string }>(`${this.apiUrl}UserProfile/GetOfferById/${offerId}`, { withCredentials: true });
   }
   deposit(Amount: number, PaymentMethod: paymentMethod): Observable<{ PaymentToken: string, PaymentId: number, PaymentMethod: string }> {
-    console.log('Sending deposit request:', { Amount, PaymentMethod });
+    // console.log('Sending deposit request:', { Amount, PaymentMethod });
     return this.http.post<{ PaymentToken: string, PaymentId: number, PaymentMethod: string }>(
       `${this.apiUrl}UserProfile/Deposit`,
       { Amount, PaymentMethod },
@@ -99,7 +99,7 @@ private getUserRole(): string{
   }
 
   withdraw(Amount: number, PaymentMethod: paymentMethod, AccountNumber: string): Observable<{ message: string }> {
-    console.log('Sending withdraw request:', { Amount, PaymentMethod, AccountNumber });
+    // console.log('Sending withdraw request:', { Amount, PaymentMethod, AccountNumber });
     return this.http.post<{ message: string }>(
       `${this.apiUrl}UserProfile/Withdraw`,
       { Amount, PaymentMethod, AccountNumber },

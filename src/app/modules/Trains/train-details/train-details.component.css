@@ -1,6 +1,6 @@
-/* Enhanced Train Details Component - Modern Arabic Design */
+/* Enhanced Train Details Component - Updated Colors */
 .train-details {
-  color: #2529ae; /* لون الخط المطلوب */
+  color: #212529; /* لون الخط الأساسي */
   padding: 2rem;
   min-height: 100vh;
   position: relative;
@@ -18,9 +18,9 @@
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 20% 20%, rgba(29, 55, 223, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(25, 60, 177, 0.06) 0%, transparent 50%),
-    linear-gradient(45deg, transparent 0%, rgba(25, 60, 177, 0.02) 50%, transparent 100%);
+    radial-gradient(circle at 20% 20%, rgba(13, 61, 159, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(6, 35, 107, 0.06) 0%, transparent 50%),
+    linear-gradient(45deg, transparent 0%, rgba(13, 61, 159, 0.02) 50%, transparent 100%);
   pointer-events: none;
 }
 
@@ -31,7 +31,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle at center, rgba(29, 55, 223, 0.03) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(13, 61, 159, 0.03) 0%, transparent 70%);
   animation: rotate 60s linear infinite;
   pointer-events: none;
 }
@@ -40,6 +40,7 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
 /* Route Info Section */
 .route-info {
   display: grid;
@@ -55,14 +56,14 @@
   padding: 1.8rem 2.5rem;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
   border-radius: 16px;
-  border: 1px solid rgba(25, 60, 177, 0.12);
+  border: 1px solid rgba(13, 61, 159, 0.12);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  color: #2529ae; /* لون الخط المطلوب */
+  color: #212529;
   font-weight: 600;
   text-align: center;
   animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -79,7 +80,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(25, 60, 177, 0.08), transparent);
+  background: linear-gradient(90deg, transparent, rgba(13, 61, 159, 0.08), transparent);
   transition: left 0.6s ease;
 }
 
@@ -90,26 +91,27 @@
 .route-card:hover {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 16px 48px rgba(25, 60, 177, 0.12);
-  border-color: rgba(25, 60, 177, 0.2);
+  box-shadow: 0 16px 48px rgba(13, 61, 159, 0.12);
+  border-color: rgba(13, 61, 159, 0.2);
 }
 
 .route-card p {
   margin: 0;
   font-size: 1.3rem;
   font-weight: 600;
-  color: #2529ae; /* لون الخط المطلوب */
+  color: #212529;
   line-height: 1.6;
 }
+
 /* Header Section */
 .train-details h2 {
   font-size: 3.2rem;
   font-weight: 900;
   margin-bottom: 2rem;
   text-align: center;
-  color: #2529ae; /* لون الخط المطلوب */
+  color: #06236b; /* لون الخط الثانوي للعناوين */
   letter-spacing: -0.02em;
-  text-shadow: 0 8px 16px rgba(25, 60, 177, 0.15);
+  text-shadow: 0 8px 16px rgba(6, 35, 107, 0.15);
   position: relative;
   z-index: 1;
   animation: slideInDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -123,9 +125,9 @@
   transform: translateX(-50%);
   width: 100px;
   height: 4px;
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%); /* لون خلفية الأزرار المطلوب */
+  background: #0d3d9f;
   border-radius: 2px;
-  box-shadow: 0 4px 12px rgba(25, 60, 177, 0.3);
+  box-shadow: 0 4px 12px rgba(13, 61, 159, 0.3);
 }
 
 /* Info Cards */
@@ -135,14 +137,14 @@
   padding: 1.8rem 2.5rem;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
   border-radius: 16px;
-  border: 1px solid rgba(25, 60, 177, 0.12);
+  border: 1px solid rgba(13, 61, 159, 0.12);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  color: #2529ae; /* لون الخط المطلوب */
+  color: #212529;
   font-weight: 600;
   text-align: center;
   animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -160,7 +162,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(25, 60, 177, 0.08), transparent);
+  background: linear-gradient(90deg, transparent, rgba(13, 61, 159, 0.08), transparent);
   transition: left 0.6s ease;
 }
 
@@ -171,8 +173,8 @@
 .train-details > p:hover {
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 16px 48px rgba(25, 60, 177, 0.12);
-  border-color: rgba(25, 60, 177, 0.2);
+  box-shadow: 0 16px 48px rgba(13, 61, 159, 0.12);
+  border-color: rgba(13, 61, 159, 0.2);
 }
 
 /* Actions Section */
@@ -186,8 +188,8 @@
 }
 
 .actions button {
-  background: #0d3d9f; /* لون خلفية الأزرار المطلوب */
-  color: #fff;
+  background: #0d3d9f;
+  color: #ffffff;
   border: none;
   padding: 1.2rem 2rem;
   border-radius: 12px;
@@ -195,11 +197,28 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 8px 24px rgba(37, 41, 174, 0.25);
+  box-shadow: 0 8px 24px rgba(13, 61, 159, 0.25);
   text-transform: none;
   letter-spacing: 0.3px;
   animation: fadeInScale 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.actions button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.actions button:hover::before {
+  left: 100%;
 }
 
 .actions button:nth-child(1) { animation-delay: 0.1s; }
@@ -208,9 +227,9 @@
 .actions button:nth-child(4) { animation-delay: 0.4s; }
 
 .actions button:hover {
-  background: #2529ae; /* لون هوفر الأزرار المطلوب */
+  background: #0d3d9f;
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 12px 36px rgba(37, 41, 174, 0.35);
+  box-shadow: 0 12px 36px rgba(13, 61, 159, 0.35);
 }
 
 .actions button:active {
@@ -219,22 +238,22 @@
 
 /* Button Variants */
 .actions .btn-primary {
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%); /* لون خلفية الأزرار المطلوب */
+  background: #0d3d9f;
 }
 
 .actions .btn-primary:hover {
-  background: #2529ae; /* لون هوفر الأزرار المطلوب */
-  box-shadow: 0 12px 36px rgba(37, 41, 174, 0.35);
+  background: #0d3d9f;
+  box-shadow: 0 12px 36px rgba(13, 61, 159, 0.35);
 }
 
 .actions .btn-success {
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%); /* لون خلفية الأزرار المطلوب */
-  box-shadow: 0 8px 24px rgba(37, 41, 174, 0.25);
+  background: #0d3d9f;
+  box-shadow: 0 8px 24px rgba(13, 61, 159, 0.25);
 }
 
 .actions .btn-success:hover {
-  background: #2529ae; /* لون هوفر الأزرار المطلوب */
-  box-shadow: 0 12px 36px rgba(37, 41, 174, 0.35);
+  background: #0d3d9f;
+  box-shadow: 0 12px 36px rgba(13, 61, 159, 0.35);
 }
 
 /* Stations Section */
@@ -243,7 +262,7 @@
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
   padding: 2.5rem;
   border-radius: 20px;
-  border: 1px solid rgba(25, 60, 177, 0.12);
+  border: 1px solid rgba(13, 61, 159, 0.12);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   position: relative;
@@ -260,7 +279,7 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%); /* لون خلفية الأزرار المطلوب */
+  background: linear-gradient(135deg, #06236b, #0846a0);
   border-radius: 20px 20px 0 0;
 }
 
@@ -269,8 +288,8 @@
   font-weight: 900;
   margin-bottom: 2rem;
   text-align: center;
-  color: #2529ae; /* لون الخط المطلوب */
-  text-shadow: 0 4px 15px rgba(25, 60, 177, 0.15);
+  color: #06236b;
+  text-shadow: 0 4px 15px rgba(6, 35, 107, 0.15);
   position: relative;
   letter-spacing: -0.01em;
 }
@@ -283,7 +302,7 @@
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%); /* لون خلفية الأزرار المطلوب */
+  background: linear-gradient(135deg, #0d3d9f 0%, #06236b 50%, #0d3d9f 100%);
   border-radius: 2px;
 }
 
@@ -302,10 +321,10 @@
 .search-bar input {
   flex: 1;
   padding: 1rem 1.5rem;
-  border: 1px solid rgba(25, 60, 177, 0.15);
+  border: 1px solid rgba(13, 61, 159, 0.15);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.95);
-  color: #2529ae; /* لون الخط المطلوب */
+  color: #212529;
   font-size: 1rem;
   backdrop-filter: blur(10px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -321,14 +340,14 @@
 }
 
 .search-bar input:focus {
-  border-color: #2529ae; /* لون هوفر الأزرار المطلوب */
+  border-color: #0d3d9f;
   background: rgba(255, 255, 255, 1);
-  box-shadow: 0 8px 24px rgba(37, 41, 174, 0.15);
+  box-shadow: 0 8px 24px rgba(13, 61, 159, 0.15);
   transform: scale(1.02);
 }
 
 .search-bar button {
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%); /* لون خلفية الأزرار المطلوب */
+  background:#525e70;
   color: white;
   border: none;
   padding: 1rem 1.5rem;
@@ -337,14 +356,31 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 16px rgba(37, 41, 174, 0.25);
+  box-shadow: 0 4px 16px rgba(13, 61, 159, 0.25);
   min-width: 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.search-bar button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.search-bar button:hover::before {
+  left: 100%;
 }
 
 .search-bar button:hover {
-  background: #2529ae; /* لون هوفر الأزرار المطلوب */
+  background:#6a7380;
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 24px rgba(37, 41, 174, 0.35);
+  box-shadow: 0 8px 24px rgba(13, 61, 159, 0.35);
 }
 
 /* Stations List - Grid Layout for 2 Cards per Row */
@@ -360,7 +396,7 @@
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
   padding: 1.8rem;
   border-radius: 16px;
-  border: 1px solid rgba(25, 60, 177, 0.1);
+  border: 1px solid rgba(13, 61, 159, 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(15px);
   display: flex;
@@ -386,7 +422,7 @@
   right: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%); /* لون خلفية الأزرار المطلوب */
+  background:#0d3d9f;
   transform: scaleY(0);
   transition: transform 0.3s ease;
 }
@@ -398,22 +434,22 @@
 .station-item:hover {
   background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(248, 250, 252, 0.98) 100%);
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 16px 40px rgba(25, 60, 177, 0.12);
-  border-color: rgba(25, 60, 177, 0.2);
+  box-shadow: 0 16px 40px rgba(13, 61, 159, 0.12);
+  border-color: rgba(13, 61, 159, 0.2);
 }
 
 .station-item p {
   margin: 0;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2529ae; /* لون الخط المطلوب */
+  color: #212529;
   line-height: 1.6;
   text-align: right;
   flex: 1;
 }
 
 .station-item button {
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%); /* لون خلفية الأزرار المطلوب */
+  background: #0d3d9f;
   color: white;
   border: none;
   padding: 0.8rem 1.5rem;
@@ -422,15 +458,32 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 16px rgba(37, 41, 174, 0.25);
+  box-shadow: 0 4px 16px rgba(13, 61, 159, 0.25);
   align-self: flex-end;
   text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.station-item button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.station-item button:hover::before {
+  left: 100%;
 }
 
 .station-item button:hover {
-  background: #2529ae; /* لون هوفر الأزرار المطلوب */
+  background: #0d3d9f;
   transform: scale(1.05);
-  box-shadow: 0 8px 24px rgba(37, 41, 174, 0.35);
+  box-shadow: 0 8px 24px rgba(13, 61, 159, 0.35);
 }
 
 /* No Results Message */
@@ -438,11 +491,11 @@
   grid-column: 1 / -1;
   text-align: center;
   font-size: 1.2rem;
-  color: #2529ae; /* لون الخط المطلوب */
+  color: #212529;
   padding: 2.5rem 2rem;
   background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.6) 100%);
   border-radius: 16px;
-  border: 2px dashed rgba(25, 60, 177, 0.2);
+  border: 2px dashed rgba(13, 61, 159, 0.2);
   font-weight: 500;
   backdrop-filter: blur(10px);
   margin: 2rem 0;
@@ -450,7 +503,7 @@
 }
 
 .stations-list > p::before {
-  content: '🚂';
+  content: '';
   display: block;
   font-size: 2.5rem;
   margin-bottom: 1rem;
@@ -482,7 +535,7 @@
   width: 90%;
   text-align: center;
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(25, 60, 177, 0.12);
+  border: 1px solid rgba(13, 61, 159, 0.12);
   position: relative;
   overflow: hidden;
   animation: slideInModal 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -496,7 +549,9 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%); /* لون خلفية الأزرار المطلوب */
+  background: #0d3d9f;
+  color: #fff;
+  border: none;
   border-radius: 20px 20px 0 0;
 }
 
@@ -504,14 +559,14 @@
   font-size: 2rem;
   font-weight: 900;
   margin-bottom: 1.5rem;
-  color: #2529ae; /* لون الخط المطلوب */
+  color: #06236b;
   letter-spacing: -0.01em;
 }
 
 .modal-content p {
   margin-bottom: 1.2rem;
   font-size: 1.1rem;
-  color: #2529ae; /* لون الخط المطلوب */
+  color: #212529;
   line-height: 1.7;
   font-weight: 500;
   text-align: right;
@@ -527,7 +582,7 @@
 .modal-content ul li {
   position: relative;
   padding: 0.6rem 0;
-  color: #2529ae; /* لون الخط المطلوب */
+  color: #212529;
   font-size: 1rem;
   font-weight: 500;
   line-height: 1.6;
@@ -535,7 +590,7 @@
 }
 
 .modal-content ul li::before {
-  content: '🚂';
+  content: '';
   position: absolute;
   right: 0;
   top: 50%;
@@ -560,18 +615,34 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   min-width: 120px;
+  position: relative;
+  overflow: hidden;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%); /* لون خلفية الأزرار المطلوب */
-  color: white;
-  box-shadow: 0 4px 16px rgba(37, 41, 174, 0.25);
+  background: #0d3d9f !important;
+  color: #fff !important;
+  box-shadow: 0 4px 16px rgba(13, 61, 159, 0.25);
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  transition: left 0.6s ease;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
 }
 
 .btn-primary:hover {
-  background: #2529ae; /* لون هوفر الأزرار المطلوب */
+  background: #0d3d9f;
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 24px rgba(37, 41, 174, 0.35);
+  box-shadow: 0 8px 24px rgba(13, 61, 159, 0.35);
 }
 
 .btn-secondary {
@@ -580,10 +651,25 @@
   box-shadow: 0 4px 16px rgba(100, 116, 139, 0.25);
 }
 
+.btn-secondary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.6s ease;
+}
+
+.btn-secondary:hover::before {
+  left: 100%;
+}
+
 .btn-secondary:hover {
-  background: #2529ae; /* لون هوفر الأزرار المطلوب */
+  background: #0d3d9f;
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 8px 24px rgba(37, 41, 174, 0.35);
+  box-shadow: 0 8px 24px rgba(13, 61, 159, 0.35);
 }
 
 /* Loading Template */
@@ -594,14 +680,14 @@
   align-items: center;
   min-height: 100vh;
   font-size: 1.6rem;
-  color: #2529ae; /* لون الخط المطلوب */
+  color: #06236b;
   font-weight: 700;
   background: linear-gradient(135deg, #f8fbff 0%, #e8f2ff 100%);
   animation: pulse 2s infinite;
 }
 
 .loading-container::before {
-  content: '🚂';
+  content: '';
   font-size: 3rem;
   margin-bottom: 1rem;
   animation: bounce 2s infinite;
@@ -682,117 +768,6 @@
   }
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .train-details {
-    padding: 1.5rem;
-  }
-  
-  .train-details h2 {
-    font-size: 2.2rem;
-  }
-  
-  .train-details > p {
-    font-size: 1.1rem;
-    padding: 1.5rem 2rem;
-  }
-  
-  .actions {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .stations-section {
-    padding: 2rem 1.5rem;
-  }
-  
-  .stations-section h3 {
-    font-size: 2rem;
-  }
-  
-  .search-bar {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .search-bar input,
-  .search-bar button {
-    width: 100%;
-  }
-  
-  .stations-list {
-    grid-template-columns: 1fr;
-  }
-  
-  .modal-content {
-    padding: 2rem;
-    margin: 1rem;
-  }
-  
-  .modal-content h3 {
-    font-size: 1.8rem;
-  }
-  
-  .modal-actions {
-    flex-direction: column;
-  }
-  
-  .btn-primary, .btn-secondary {
-    width: 100%;
-  }
-}
-
-@media (max-width: 576px) {
-  .train-details {
-    padding: 1rem;
-  }
-  
-  .train-details h2 {
-    font-size: 1.8rem;
-  }
-  
-  .train-details > p {
-    font-size: 1rem;
-    padding: 1.2rem 1.5rem;
-  }
-  
-  .stations-section {
-    padding: 1.5rem 1rem;
-  }
-  
-  .stations-section h3 {
-    font-size: 1.6rem;
-  }
-  
-  .station-item {
-    padding: 1.5rem;
-  }
-  
-  .station-item p {
-    font-size: 1rem;
-  }
-  
-  .modal-content {
-    padding: 1.5rem;
-  }
-  
-  .modal-content h3 {
-    font-size: 1.5rem;
-  }
-}
-
-/* Large screens - 2 cards per row */
-@media (min-width: 1200px) {
-  .stations-list {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-  }
-  
-  .station-item {
-    padding: 2rem;
-  }
-}
-
 /* Pagination Styles */
 .pagination {
   margin-top: 2rem;
@@ -803,23 +778,21 @@
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
   padding: 2rem;
   border-radius: 16px;
-  border: 1px solid rgba(25, 60, 177, 0.12);
+  border: 1px solid rgba(13, 61, 159, 0.12);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
   animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .pagination-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   font-size: 1rem;
-  color: #2529ae;
+  color: #212529;
   font-weight: 600;
-  flex-wrap: wrap;
-  gap: 1rem;
+  padding: 0 1rem;
 }
 
 .pagination-info span {
@@ -841,7 +814,7 @@
 }
 
 .pagination-btn {
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%);
+  background: #06236b;
   color: white;
   border: none;
   padding: 0.8rem 1.5rem;
@@ -899,7 +872,7 @@
 }
 
 .pagination-number.active {
-  background: linear-gradient(135deg, #262b89 0%, #1e206b 50%, #2529ae 100%);
+  background: #06236b;
   color: white;
   border-color: #2529ae;
   box-shadow: 0 6px 20px rgba(37, 41, 174, 0.3);

@@ -44,7 +44,7 @@ export class LostAndFoundListComponent implements OnInit {
       return;
     }
     this.currentUserId = this.authService.getCurrentUserId();
-    console.log('currentUserId:', this.currentUserId);
+    // console.log('currentUserId:', this.currentUserId);
 
     this.loadPosts();
   }
@@ -62,9 +62,9 @@ export class LostAndFoundListComponent implements OnInit {
           this.totalPages = Math.ceil(this.totalCount / this.pageSize);
           this.errorMessage = this.posts.length === 0 ? 'لا توجد مفقودات مطابقة' : '';
           this.loading = false;
-          for (let post of this.posts) {
-            console.log(`Post LfId=${post.LfId} - UserId=${post.UserId} - isUserPost=${this.isUserPost(post)}`);
-          }
+          // for (let post of this.posts) {
+          //   console.log(`Post LfId=${post.LfId} - UserId=${post.UserId} - isUserPost=${this.isUserPost(post)}`);
+          // }
         },
         error: (error) => {
           this.errorMessage = 'حدث خطأ أثناء تحميل المفقودات';
@@ -83,9 +83,9 @@ export class LostAndFoundListComponent implements OnInit {
           this.totalPages = Math.ceil(this.totalCount / this.pageSize);
           this.errorMessage = this.posts.length === 0 ? 'لا توجد مفقودات مطابقة' : '';
           this.loading = false;
-          for (let post of this.posts) {
-            console.log(`Post LfId=${post.LfId} - UserId=${post.UserId} - isUserPost=${this.isUserPost(post)}`);
-          }
+          // for (let post of this.posts) {
+          //   console.log(`Post LfId=${post.LfId} - UserId=${post.UserId} - isUserPost=${this.isUserPost(post)}`);
+          // }
         },
         error: (error) => {
           this.errorMessage = 'حدث خطأ أثناء تحميل المفقودات';

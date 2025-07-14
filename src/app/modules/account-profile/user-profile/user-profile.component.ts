@@ -37,7 +37,7 @@ export class UserProfileComponent implements OnInit {
       requests: this.userService.getUserRequests()
     }).subscribe({
       next: (result) => {
-        console.log('User data loaded successfully:', result);
+        // console.log('User data loaded successfully:', result);
         this.user = result.user;
 
         if ('message' in result.offers) {
@@ -135,7 +135,7 @@ export class UserProfileComponent implements OnInit {
         next: (response) => {
           if (this.user) {
             this.user.Image = response.imageUrl;
-            console.log('تم تحديث صورة الملف الشخصي بنجاح');
+            // console.log('تم تحديث صورة الملف الشخصي بنجاح');
           }
         },
         error: (err) => {
@@ -162,7 +162,7 @@ export class UserProfileComponent implements OnInit {
           this.user = { ...this.user, ...updatedUserResponse };
           this.personalInfoEditMode = false;
           this.errorMessage = null;
-          console.log('User updated successfully:', this.user);
+          // console.log('User updated successfully:', this.user);
         },
         error: (err) => {
           console.error('Error updating user:', err);

@@ -18,14 +18,14 @@ export const authInterceptor: HttpInterceptorFn = (
   // Check if request body is FormData
   const isFormData = req.body instanceof FormData;
   
-  console.log('🔄 Auth Interceptor:', {
-    url: req.url,
-    method: req.method,
-    hasToken: !!token,
-    isFormData: isFormData,
-    contentType: req.headers.get('Content-Type'),
-    token: token ? `${token.substring(0, 20)}...` : 'No token'
-  });
+  // console.log('🔄 Auth Interceptor:', {
+  //   url: req.url,
+  //   method: req.method,
+  //   hasToken: !!token,
+  //   isFormData: isFormData,
+  //   contentType: req.headers.get('Content-Type'),
+  //   token: token ? `${token.substring(0, 20)}...` : 'No token'
+  // });
   
   let clonedRequest = req;
   if (token) {
@@ -36,14 +36,14 @@ export const authInterceptor: HttpInterceptorFn = (
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('✅ Authorization header added to FormData request (no Content-Type set)');
+      // console.log('✅ Authorization header added to FormData request (no Content-Type set)');
     } else {
       clonedRequest = req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log('✅ Authorization header added to regular request');
+      // console.log('✅ Authorization header added to regular request');
     }
   } else {
     console.log('❌ No token available, request sent without authorization');

@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
           this.UserSrv.getUserProfile().subscribe({
             next: (user: User) => {
               this.accountSrv.LoggedUser.next(user);
-              console.log('User profile fetched successfully:', user);
+              // console.log('User profile fetched successfully:', user);
               // التحقق من وجود مسار للرجوع إليه
               const redirectUrl = localStorage.getItem('redirectAfterLogin') || '/';
               localStorage.removeItem('redirectAfterLogin'); // حذف المسار بعد استخدامه

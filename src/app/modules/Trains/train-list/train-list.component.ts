@@ -42,7 +42,7 @@ Math = Math;
     this.trains = [];
     this.trainService.getAllTrains(this.pageNumber, this.pageSize).subscribe({
       next: (response: PaginatedResponse<TrainListViewModel>) => {
-        console.log('Trains loaded successfully:', response);
+        // console.log('Trains loaded successfully:', response);
         this.trains = response.Data;
         this.totalItems = response.TotalCount || 0;
         this.totalPages = response.TotalPages || 0;

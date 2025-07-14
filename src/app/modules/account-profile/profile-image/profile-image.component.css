@@ -18,9 +18,9 @@
   position: absolute;
   bottom: 0;
   right: 0;
-  background: var(--primary-blue);
-  color: #1e206b;
-  border: 2px solid #1e206b;
+  /* background: var(--primary-blue); */
+  color: #0d3d9f;
+  border: 2px solid #0d3d9f;
   width: 35px;
   height: 35px;
   border-radius: 50%;
