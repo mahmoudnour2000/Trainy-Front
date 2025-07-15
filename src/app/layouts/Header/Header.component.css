@@ -78,18 +78,19 @@
   font-size: 1.1rem;
   font-weight: 500;
   border-radius: 4px;
-  /* transition: all 0.3s ease; */
   text-decoration: none;
-
   position: relative;
+  transition: all 0.3s ease;
+
   &:hover {
     color: white !important;
     background: rgba(255, 255, 255, 0.1);
-    /* transform: translateY(-2px); */
   }
+
   &:hover::before {
     width: 100%;
   }
+
   &::before {
     content: '';
     position: absolute;
@@ -100,6 +101,34 @@
     background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
     transition: all 0.3s ease;
     transform: translateX(-50%);
+  }
+
+  /* Active state styling */
+  &.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: white !important;
+    font-weight: 600;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  &.active::before {
+    width: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,1), transparent);
+    height: 3px;
+  }
+
+  &.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+    border-radius: 4px;
+    z-index: -1;
   }
 
   @media (max-width: 767.98px) {
@@ -510,6 +539,14 @@
     padding: 0.8rem 1.2rem !important;
     border-radius: 8px;
     margin-bottom: 2px;
+
+    /* Mobile active state */
+    &.active {
+      background: rgba(255, 255, 255, 0.25);
+      border-left: 4px solid white;
+      margin-right: 8px;
+      transform: translateX(-4px);
+    }
   }
 
   .navbar .d-flex.align-items-center {
@@ -524,6 +561,11 @@
 @media (max-width: 767.98px) {
   .navbar {
     padding: 0.3rem 0.5rem;
+  }
+
+  .nav-link.active {
+    border-left: 3px solid white;
+    margin-right: 6px;
   }
 }
 
@@ -545,6 +587,11 @@
   .navbar-brand {
     font-size: 0.9rem;
   }
+
+  .nav-link.active {
+    border-left: 2px solid white;
+    margin-right: 4px;
+  }
 }
 
 /* Animation for smooth transitions */
@@ -556,5 +603,61 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Additional active state improvements */
+.nav-link.active {
+  position: relative;
+  overflow: hidden;
+}
+
+.nav-link.active::before {
+  animation: activeGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes activeGlow {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* Ensure proper RTL support for active states */
+[dir="rtl"] .nav-link.active {
+  border-right: 4px solid white;
+  border-left: none;
+  margin-left: 8px;
+  margin-right: 0;
+  transform: translateX(4px);
+}
+
+@media (max-width: 991.98px) {
+  [dir="rtl"] .nav-link.active {
+    border-right: 4px solid white;
+    border-left: none;
+    margin-left: 8px;
+    margin-right: 0;
+    transform: translateX(4px);
+  }
+}
+
+@media (max-width: 767.98px) {
+  [dir="rtl"] .nav-link.active {
+    border-right: 3px solid white;
+    border-left: none;
+    margin-left: 6px;
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 575.98px) {
+  [dir="rtl"] .nav-link.active {
+    border-right: 2px solid white;
+    border-left: none;
+    margin-left: 4px;
+    margin-right: 0;
   }
 }

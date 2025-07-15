@@ -14,20 +14,20 @@
     <div class="collapse navbar-collapse order-3 order-lg-2" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <a class="nav-link active" routerLink="/">الرئيسية</a>
+          <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">الرئيسية</a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <a class="nav-link" routerLink="/about-us">من نحن</a>
+        </li> -->
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/stations" routerLinkActive="active">خدماتنا</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" routerLink="/stations">خدماتنا</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/offers">التوصيل</a>
+          <a class="nav-link" routerLink="/offers" routerLinkActive="active">التوصيل</a>
         </li>
         
         <li class="nav-item">
-          <a class="nav-link" routerLink="/public-chat">المجتمع</a>
+          <a class="nav-link" routerLink="/public-chat" routerLinkActive="active">المجتمع</a>
         </li>
       </ul>
 
