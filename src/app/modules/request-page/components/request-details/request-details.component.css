@@ -87,14 +87,18 @@ textarea.form-control {
   background-color: #e9ecef;
 }
 
+
 .btn-primary {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+    background: linear-gradient(135deg, rgba(37, 41, 174, 0.9), rgba(13, 61, 159, 0.9));
+
+  border-color: #0d6efd !important;
+  color: #fff !important;
 }
 
 .btn-primary:hover {
-  background-color: #0b5ed7;
-  border-color: #0b5ed7;
+  background-color: #0b5ed7 !important;
+  border-color: #0b5ed7 !important;
+  color: #fff !important;
 }
 
 input[type="number"] {
