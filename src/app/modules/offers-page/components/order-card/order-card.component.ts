@@ -32,13 +32,7 @@ export class OrderCardComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit(): void {
-    // this.currentUserId = this.authService.getUserId();
-    // console.log('OrderCard ngOnInit debug:', {
-    //   currentUserId: this.currentUserId,
-    //   order: this.order,
-    //   orderSenderId: this.order?.senderId,
-    //   orderUserId: this.order?.userId
-    // });
+
     
     // Initial check
     this.checkOrderOwnership();
@@ -48,12 +42,7 @@ export class OrderCardComponent implements OnInit, OnChanges {
       this.isCourierVerified = status.courierStatus === 'Accepted';
       this.isSenderVerified = status.senderStatus === 'Accepted';
       
-      console.log('OrderCard verification status updated:', {
-        courierStatus: status.courierStatus,
-        senderStatus: status.senderStatus,
-        isCourierVerified: this.isCourierVerified,
-        isSenderVerified: this.isSenderVerified
-      });
+
     });
     
     // Listen to auth state changes and re-check ownership
@@ -61,23 +50,17 @@ export class OrderCardComponent implements OnInit, OnChanges {
       if (isAuth) {
         this.currentUserId = this.authService.getUserId();
         this.checkOrderOwnership();
-        console.log('Auth state changed, rechecking ownership:', {
-          isAuth,
-          currentUserId: this.currentUserId,
-          isOrderOwner: this.isOrderOwner
-        });
+
       }
     });
   }
 
   private checkOrderOwnership(): void {
     if (!this.order) {
-      console.log('checkOrderOwnership: No order data available');
       return;
     }
     
     if (!this.currentUserId) {
-      console.log('checkOrderOwnership: No current user ID available');
       this.isOrderOwner = false;
       return;
     }
@@ -103,16 +86,7 @@ export class OrderCardComponent implements OnInit, OnChanges {
       return idStr === userIdStr || id === this.currentUserId;
     });
     
-    console.log('checkOrderOwnership debug:', {
-      currentUserId: this.currentUserId,
-      currentUserIdType: typeof this.currentUserId,
-      possibleSenderIds: possibleSenderIds,
-      possibleSenderIdsTypes: possibleSenderIds.map(id => typeof id),
-      isOrderOwner: this.isOrderOwner,
-      order: this.order,
-      authIsAuthenticated: this.authService.isAuthenticated(),
-      authIsSender: this.authService.isSender()
-    });
+
   }
 
   isOwner(senderId: string): boolean {
@@ -153,7 +127,7 @@ export class OrderCardComponent implements OnInit, OnChanges {
       return;
     }
     
-    console.log('View requests clicked for order:', this.order.id);
+
     
     // Navigate to the request page to view offer details and requests
     // Available for all authenticated users
@@ -183,16 +157,7 @@ export class OrderCardComponent implements OnInit, OnChanges {
       isVerified = this.isCourierVerified;
     }
     
-    // For debugging - let's log the current state
-    console.log('canViewRequests debug:', {
-      isAuthenticated: this.authService.isAuthenticated(),
-      isSender: isSender,
-      isCourier: isCourier,
-      isSenderVerified: this.isSenderVerified,
-      isCourierVerified: this.isCourierVerified,
-      isVerified: isVerified,
-      isOrderOwner: this.isOrderOwner
-    });
+
     
     // Show button for all authenticated senders and couriers (including offer owners)
     // Offer owners should also be able to view requests for their own offers
@@ -244,7 +209,7 @@ export class OrderCardComponent implements OnInit, OnChanges {
         return;
       }
       
-      console.log('Send request clicked for order:', this.order);
+
       
       // Ensure the order has an ID
       if (!this.order.id) {
@@ -278,7 +243,7 @@ export class OrderCardComponent implements OnInit, OnChanges {
       return;
     }
     
-    console.log('Edit clicked for order:', this.order);
+
     this.router.navigate(['/offers/add-offer', this.order.id]);
   }
 
@@ -295,12 +260,12 @@ export class OrderCardComponent implements OnInit, OnChanges {
       return;
     }
     
-    console.log('Delete clicked for order:', this.order);
+
     if (confirm('هل أنت متأكد من حذف هذا العرض؟')) {
       // Use the API to delete the offer
       this.offerService.deleteOffer(this.order.id).subscribe({
         next: (response) => {
-          console.log('Offer deleted successfully:', response);
+
           this.deleteOrder.emit(this.order.id);
         },
         error: (error) => {
@@ -331,11 +296,7 @@ export class OrderCardComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['order']) {
-      // console.log('OrderCard ngOnChanges - order changed:', {
-      //   previousValue: changes['order'].previousValue,
-      //   currentValue: changes['order'].currentValue,
-      //   firstChange: changes['order'].firstChange
-      // });
+
       
       if (changes['order'].currentValue) {
         this.currentUserId = this.authService.getUserId();

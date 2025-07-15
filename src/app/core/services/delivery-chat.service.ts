@@ -142,8 +142,6 @@ export class DeliveryChatService {
       throw new Error('No authentication token available');
     }
 
-    console.log('🔄 Starting SignalR connection to:', `${environment.hubUrl}chatHub`);
-
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${environment.hubUrl}chatHub`, {
         accessTokenFactory: () => token,
@@ -159,7 +157,6 @@ export class DeliveryChatService {
     this.isConnected = true;
     this.connectionStatusSubject.next(true);
     this.setupEventHandlers();
-    console.log('✅ Connected to DeliveryChat Hub');
     } catch (error) {
       console.error('❌ Failed to connect to DeliveryChat Hub:', error);
       this.isConnected = false;
@@ -173,7 +170,6 @@ export class DeliveryChatService {
       await this.hubConnection.stop();
       this.isConnected = false;
       this.connectionStatusSubject.next(false);
-      console.log('❌ Disconnected from DeliveryChat Hub');
     }
   }
 
@@ -182,7 +178,6 @@ export class DeliveryChatService {
 
     // Connection events
     this.hubConnection.on('Connected', (data) => {
-      console.log('🔗 Connected:', data);
       this.isConnected = true;
       this.connectionStatusSubject.next(true);
     });
@@ -193,19 +188,16 @@ export class DeliveryChatService {
 
     // Connection state change handlers
     this.hubConnection.onreconnecting(() => {
-      console.log('🔄 SignalR reconnecting...');
       this.isConnected = false;
       this.connectionStatusSubject.next(false);
     });
 
     this.hubConnection.onreconnected(() => {
-      console.log('✅ SignalR reconnected');
       this.isConnected = true;
       this.connectionStatusSubject.next(true);
     });
 
     this.hubConnection.onclose(() => {
-      console.log('❌ SignalR connection closed');
       this.isConnected = false;
       this.connectionStatusSubject.next(false);
     });
@@ -225,13 +217,11 @@ export class DeliveryChatService {
     });
 
     this.hubConnection.on('NewMessageNotification', (notification) => {
-      console.log('📨 New message notification:', notification);
       // Update unread count
       this.getUnreadMessageCount();
     });
 
     this.hubConnection.on('MessagesRead', (data) => {
-      console.log('👁️ Messages read:', data);
       // Update messages as read in UI
       const currentMessages = this.messagesSubject.value;
       const updatedMessages = currentMessages.map(msg => 
@@ -242,17 +232,14 @@ export class DeliveryChatService {
 
     // Request events
     this.hubConnection.on('RequestAccepted', (data) => {
-      console.log('✅ Request accepted:', data);
       // Handle request acceptance
     });
 
     this.hubConnection.on('RequestRejected', (data) => {
-      console.log('❌ Request rejected:', data);
       // Handle request rejection
     });
 
     this.hubConnection.on('OfferStatusChanged', (data) => {
-      console.log('🔄 Offer status changed:', data);
       // Update offer status in UI
       const currentStatus = this.chatStatusSubject.value;
       if (currentStatus && currentStatus.offerId === data.OfferId) {
@@ -265,11 +252,9 @@ export class DeliveryChatService {
 
     // User events
     this.hubConnection.on('UserJoinedChat', (data) => {
-      console.log('👋 User joined chat:', data);
     });
 
     this.hubConnection.on('UserLeftChat', (data) => {
-      console.log('👋 User left chat:', data);
     });
 
     // Utility events
@@ -282,47 +267,36 @@ export class DeliveryChatService {
     });
 
     this.hubConnection.on('JoinedChat', (data) => {
-      console.log('✅ Successfully joined chat:', data);
     });
 
     this.hubConnection.on('LeftChat', (data) => {
-      console.log('👋 Successfully left chat:', data);
     });
   }
 
   // REST API Methods
   async createChat(offerId: number, courierId: string): Promise<DeliveryChat> {
     try {
-      console.log('🔄 Creating chat with offerId:', offerId, 'courierId:', courierId);
-      console.log('🔄 API URL:', `${this.apiUrl}DeliveryChat/create/${offerId}/${courierId}`);
-      
       const response = await this.http.post<ApiResponse<any>>(
       `${this.apiUrl}DeliveryChat/create/${offerId}/${courierId}`, 
       {}
     ).toPromise();
     
-      console.log('📥 Create chat API response:', response);
-      
       if (response?.success && response.data) {
-        console.log('✅ Raw chat data from API:', response.data);
-        
         // Handle both camelCase and PascalCase responses
         const chatData = this.normalizeChatResponse(response.data);
-        console.log('✅ Normalized chat data:', chatData);
-        console.log('✅ Chat ID from normalized data:', chatData.id);
         
         // Validate that the response has the required id property
         if (!chatData.id || chatData.id <= 0) {
           console.error('❌ Invalid chat ID in response:', chatData.id);
           console.error('❌ Original response data:', response.data);
           throw new Error('Invalid chat ID received from server');
-        }
+    }
         
         return chatData;
       }
       
       console.error('❌ API response indicates failure:', response);
-      throw new Error(response?.message || 'Failed to create chat');
+    throw new Error(response?.message || 'Failed to create chat');
     } catch (error) {
       console.error('❌ Error creating chat:', error);
       console.error('❌ Error details:', error);
@@ -378,13 +352,9 @@ export class DeliveryChatService {
    */
   async checkChatExists(offerId: number, courierId: string): Promise<boolean> {
     try {
-      console.log('🔄 Checking if chat exists for offerId:', offerId, 'courierId:', courierId);
-      
       const response = await this.http.get<ApiResponse<boolean>>(
         `${this.apiUrl}DeliveryChat/exists/${offerId}/${courierId}`
       ).toPromise();
-      
-      console.log('📥 Chat exists response:', response);
       
       if (response?.success) {
         return response.data || false;
@@ -404,21 +374,15 @@ export class DeliveryChatService {
    */
   async getExistingChatId(offerId: number, userId: string): Promise<number | null> {
     try {
-      console.log('🔄 Getting existing chat ID for offerId:', offerId, 'userId:', userId);
-      
       const response = await this.http.get<ApiResponse<DeliveryChat>>(
         `${this.apiUrl}DeliveryChat/get-existing/${offerId}/${userId}`
       ).toPromise();
       
-      console.log('📥 Get existing chat response:', response);
-      
       if (response?.success && response.data) {
         const chat = this.normalizeChatResponse(response.data);
-        console.log('✅ Existing chat ID retrieved:', chat.id);
         return chat.id;
       }
       
-      console.log('❌ No existing chat found');
       return null;
     } catch (error) {
       console.error('❌ Error getting existing chat ID:', error);
@@ -432,13 +396,10 @@ export class DeliveryChatService {
    */
   async getOrCreateChatId(offerId: number, courierId: string): Promise<number> {
     try {
-      console.log('🔄 Getting or creating chat ID for offerId:', offerId, 'courierId:', courierId);
-      
       // Use createChat method which returns existing chat if it exists
       const chat = await this.createChat(offerId, courierId);
       
       if (chat && chat.id) {
-        console.log('✅ Chat ID retrieved/created:', chat.id);
         return chat.id;
       }
       
@@ -451,21 +412,16 @@ export class DeliveryChatService {
 
   async getChatMessages(chatId: number): Promise<ChatMessage[]> {
     try {
-      console.log('🔄 Loading chat messages for chat ID:', chatId);
     const response = await this.http.get<ApiResponse<ChatMessage[]>>(
         `${this.apiUrl}DeliveryChat/${chatId}/messages`
     ).toPromise();
-      
-      console.log('📥 Get chat messages response:', response);
     
     if (response?.success) {
-        console.log('✅ Chat messages loaded successfully:', response.data);
         this.messagesSubject.next(response.data || []);
         return response.data || [];
-      }
+    }
       
       // If no success but no error, return empty array
-      console.warn('⚠️ No success in response, returning empty messages');
       this.messagesSubject.next([]);
       return [];
     } catch (error) {
@@ -497,9 +453,9 @@ export class DeliveryChatService {
         // Update the subject with the new status
         this.chatStatusSubject.next(response.data);
         return response.data;
-      }
+    }
       
-      throw new Error(response?.message || 'Failed to get chat status');
+    throw new Error(response?.message || 'Failed to get chat status');
     } catch (error) {
       console.error('Error getting chat status:', error);
       throw error;
@@ -539,9 +495,7 @@ export class DeliveryChatService {
     }
     
     try {
-      console.log('🔄 Joining chat via SignalR:', chatId);
       await this.hubConnection.invoke('JoinChatAsync', chatId);
-      console.log('✅ Joined chat successfully via SignalR');
     } catch (error) {
       console.error('❌ Failed to join chat via SignalR:', error);
       throw error;
@@ -559,9 +513,7 @@ export class DeliveryChatService {
     }
     
     try {
-      console.log('🔄 Sending message via SignalR:', { chatId, message });
       await this.hubConnection.invoke('SendMessageAsync', chatId, message);
-      console.log('✅ Message sent successfully via SignalR');
     } catch (error) {
       console.error('❌ Failed to send message via SignalR:', error);
       throw error;
@@ -598,16 +550,10 @@ export class DeliveryChatService {
 
   async completeDelivery(chatId: number): Promise<void> {
     try {
-      console.log('🔄 DeliveryChat Service: Calling complete-delivery for chatId:', chatId);
-      console.log('🔄 API URL:', `${this.apiUrl}DeliveryChat/${chatId}/complete-delivery`);
-      console.log('🔄 Current user ID:', this.authService.getUserId());
-      
       const response = await this.http.post<ApiResponse>(
         `${this.apiUrl}DeliveryChat/${chatId}/complete-delivery`, 
         {}
       ).toPromise();
-      
-      console.log('📥 Complete delivery response:', response);
       
       if (!response) {
         console.error('❌ No response received from server');
@@ -620,7 +566,6 @@ export class DeliveryChatService {
         throw new Error(errorMsg);
       }
       
-      console.log('✅ Delivery completed successfully via API');
     } catch (error: any) {
       console.error('❌ Error completing delivery:', error);
       

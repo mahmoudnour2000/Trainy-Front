@@ -90,26 +90,20 @@ export class FilterAndContainerComponent implements OnInit {
 
   private checkVerificationStatus(): void {
     this.verificationService.verificationStatus$.subscribe(status => {
-      console.log('🔍 Verification status in offers page:', status);
       this.isSenderVerified = status.senderStatus === 'Accepted';
-      console.log('🔐 Is sender verified:', this.isSenderVerified);
     });
   }
 
   // New method to handle verification check button click
   checkVerification(): void {
     this.verificationService.verificationStatus$.subscribe(status => {
-      console.log('🔍 Checking verification status for navigation:', status);
-      
       // If user is already accepted, no action needed (button should be hidden)
       if (status.senderStatus === 'Accepted') {
-        console.log('✅ User is already verified as sender');
         return;
       }
       
       // If status is NotSubmitted or Rejected, navigate to verification images
       if (status.senderStatus === 'NotSubmitted' || status.senderStatus === 'Rejected') {
-        console.log('📝 Navigating to verification images for status:', status.senderStatus);
         this.router.navigate(['/verification'], {
           queryParams: { 
             returnUrl: '/offers',
@@ -120,7 +114,6 @@ export class FilterAndContainerComponent implements OnInit {
       
       // If status is Pending, navigate to verification status
       if (status.senderStatus === 'Pending') {
-        console.log('⏳ Navigating to verification status (pending)');
         this.router.navigate(['/verification/status'], {
           queryParams: { 
             message: 'طلب التحقق الخاص بك قيد المراجعة من قبل فريقنا'
@@ -131,8 +124,7 @@ export class FilterAndContainerComponent implements OnInit {
   }
 
   loadOrders(): void {
-    console.log('🔄 Loading orders...');
-    console.log('🔑 Is authenticated:', this.isAuthenticated);
+
     
     this.isLoading = true;
     this.error = null;
@@ -150,11 +142,9 @@ export class FilterAndContainerComponent implements OnInit {
         })
       )
       .subscribe((response: any) => {
-        console.log('✅ Offers API response:', response);
         // Support both direct and wrapped (Data) responses
         const offersArray = response.items || response.Data || [];
         this.orders = Array.isArray(offersArray) ? offersArray.map(offer => this.transformOfferToOrder(offer)) : [];
-        console.log('🔄 Transformed orders:', this.orders);
         this.hasOrders = this.orders.length > 0;
         this.applyFilters();
       });
@@ -183,12 +173,7 @@ export class FilterAndContainerComponent implements OnInit {
       isBreakable: offer.IsBreakable
     };
     
-    console.log('transformOfferToOrder debug:', {
-      originalCategory: offer.Category,
-      transformedCategory: transformedOrder.category,
-      categoryDisplay: transformedOrder.categoryDisplay,
-      offer: offer
-    });
+
     
     return transformedOrder;
   }
@@ -245,8 +230,7 @@ export class FilterAndContainerComponent implements OnInit {
   }
 
   applyFilters(): void {
-    console.log('🔍 Applying filters:', this.filters);
-    console.log('📦 Total orders before filtering:', this.orders.length);
+
     
     this.filteredOrders = this.orders.filter(order => {
       // Search text filter
@@ -258,7 +242,6 @@ export class FilterAndContainerComponent implements OnInit {
       // Category filter - convert API category to frontend category ID for comparison
       if (this.filters.category) {
         const orderCategoryId = this.mapCategoryToId(order.category);
-        console.log(`🔍 Category filter: order.category="${order.category}" -> orderCategoryId="${orderCategoryId}" vs filter="${this.filters.category}"`);
         if (orderCategoryId !== this.filters.category) {
           return false;
         }
@@ -293,7 +276,6 @@ export class FilterAndContainerComponent implements OnInit {
       // From location filter - compare station IDs
       if (this.filters.fromLocation) {
         const orderFromStationId = order.from?.toString();
-        console.log(`🔍 Location filter: order.from="${order.from}" -> orderFromStationId="${orderFromStationId}" vs filter="${this.filters.fromLocation}"`);
         if (orderFromStationId !== this.filters.fromLocation) {
           return false;
         }
@@ -302,7 +284,7 @@ export class FilterAndContainerComponent implements OnInit {
       return true;
     });
     
-    console.log('✅ Filtered orders count:', this.filteredOrders.length);
+
     
     // Apply sorting if needed
     if (this.filters.date === 'newest') {
@@ -361,7 +343,7 @@ export class FilterAndContainerComponent implements OnInit {
     // The delete functionality is now handled directly in the order card component
     // This method is kept for backward compatibility but the actual deletion
     // happens in the order card component with proper API calls
-    console.log('Order deletion requested for ID:', orderId);
+
     
     // Remove the order from the local array
     this.orders = this.orders.filter(order => order.id !== orderId);
@@ -436,23 +418,11 @@ export class FilterAndContainerComponent implements OnInit {
   }
 
   private debugAPIs(): void {
-    console.log('🔍 DEBUG: Testing API endpoints...');
-    
-    // Test authentication
-    console.log('🔑 Token:', this.authService.getToken());
-    console.log('🔐 Is authenticated:', this.authService.isAuthenticated());
-    console.log('👤 Current user:', this.authService.getCurrentUser());
-    
     // Test verification API manually
     this.verificationService.getMyVerificationStatus().subscribe({
       next: (data) => {
-        console.log('✅ Verification API Response:', data);
       },
       error: (error) => {
-        console.error('❌ Verification API Error:', error);
-        console.error('❌ Error Status:', error.status);
-        console.error('❌ Error Message:', error.message);
-        console.error('❌ Error URL:', error.url);
       }
     });
   }

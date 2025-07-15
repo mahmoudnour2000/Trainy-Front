@@ -139,8 +139,6 @@ export class AddOfferComponent implements OnInit {
   }
 
   private initForm(): void {
-    console.log('Initializing form...');
-    
     this.offerForm = this.fb.group({
       description: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(100)]],
       category: ['', Validators.required],
@@ -153,8 +151,7 @@ export class AddOfferComponent implements OnInit {
       image: [null]
     });
 
-    console.log('Form initialized:', this.offerForm);
-    console.log('Form controls:', Object.keys(this.offerForm.controls));
+
 
     // Listen for weight changes to update suggested price
     this.offerForm.get('weight')?.valueChanges.subscribe(() => {
@@ -174,12 +171,10 @@ export class AddOfferComponent implements OnInit {
   private checkEditMode(): void {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
-      console.log('checkEditMode - Route params:', { id });
       if (id) {
         this.editMode = true;
         this.orderId = +id;
         this.pageTitle = 'تعديل الطلب';
-        console.log('Edit mode enabled for order ID:', this.orderId);
         
         // تأخير إضافي لضمان أن النموذج جاهز قبل تحميل البيانات
         setTimeout(() => {
@@ -190,7 +185,7 @@ export class AddOfferComponent implements OnInit {
           }
         }, 100);
       } else {
-        console.log('Create mode - no ID parameter found');
+
         this.editMode = false;
         this.orderId = null;
         this.pageTitle = 'إضافة طلب جديد';
@@ -202,11 +197,8 @@ export class AddOfferComponent implements OnInit {
     this.isLoading = true;
     this.disableFormControls();
     
-    console.log('Loading order data for ID:', orderId);
-    
     this.offerService.getOfferById(orderId).subscribe({
       next: (offer) => {
-        console.log('Received offer data:', offer);
         
         if (!offer) {
           console.error('No offer data received');
@@ -255,8 +247,7 @@ export class AddOfferComponent implements OnInit {
         formData.paymentMethod = paymentMethod !== undefined && paymentMethod !== null ? 
                                 this.mapPaymentMethodFromApi(paymentMethod) : '0';
         
-        console.log('Form data to be patched:', formData);
-        console.log('Original offer data for debugging:', offer);
+
         
         // تفعيل النموذج أولاً ثم تحميل البيانات
         this.enableFormControls();
@@ -264,23 +255,10 @@ export class AddOfferComponent implements OnInit {
         // تأخير أطول لضمان أن النموذج جاهز
         setTimeout(() => {
           try {
-            console.log('Patching form with data:', formData);
             this.offerForm.patchValue(formData, { emitEvent: false });
             
             // تحديث السعر المقترح
             this.updateSuggestedPrice();
-            
-            console.log('Form values after patching:', this.offerForm.value);
-            console.log('Form controls state:', {
-              description: this.offerForm.get('description')?.value,
-              category: this.offerForm.get('category')?.value,
-              from: this.offerForm.get('from')?.value,
-              to: this.offerForm.get('to')?.value,
-              weight: this.offerForm.get('weight')?.value,
-              price: this.offerForm.get('price')?.value,
-              isBreakable: this.offerForm.get('isBreakable')?.value,
-              paymentMethod: this.offerForm.get('paymentMethod')?.value
-            });
             
             // تحميل الصورة إذا كانت موجودة
             const image = offer.image || offerAny.Picture || offerAny.image || null;
@@ -342,7 +320,7 @@ export class AddOfferComponent implements OnInit {
     }
 
     // Log all FormData entries for debugging
-    console.log([...payload.entries()]);
+
 
     if (this.editMode && this.orderId) {
       this.offerService.updateOffer(this.orderId, payload).subscribe({
@@ -521,7 +499,7 @@ export class AddOfferComponent implements OnInit {
     };
     
     const mappedCategory = categoryMap[category];
-    console.log(`Mapping category: "${category}" to "${mappedCategory}"`);
+
     return mappedCategory || 'other';
   }
 
@@ -562,8 +540,6 @@ export class AddOfferComponent implements OnInit {
   }
 
   private disableFormControls(): void {
-    console.log('Disabling form controls...');
-    
     const controls = [
       'description',
       'from',
@@ -579,18 +555,11 @@ export class AddOfferComponent implements OnInit {
       const control = this.offerForm.get(controlName);
       if (control) {
         control.disable();
-        console.log(`Disabled control: ${controlName}, Value: ${control.value}`);
-      } else {
-        console.warn(`Control not found: ${controlName}`);
       }
     });
-    
-    console.log('Form controls disabled');
   }
 
   private enableFormControls(): void {
-    console.log('Enabling form controls...');
-    
     const controls = [
       'description',
       'from',
@@ -606,16 +575,8 @@ export class AddOfferComponent implements OnInit {
       const control = this.offerForm.get(controlName);
       if (control) {
         control.enable();
-        console.log(`Enabled control: ${controlName}, Value: ${control.value}`);
-      } else {
-        console.warn(`Control not found: ${controlName}`);
       }
     });
-    
-    console.log('Form controls enabled. Form valid:', this.offerForm.valid);
-    console.log('Form dirty:', this.offerForm.dirty);
-    console.log('Form touched:', this.offerForm.touched);
-    console.log('Form pristine:', this.offerForm.pristine);
   }
 
   private mapPaymentMethodToValue(paymentMethod: any): number {
@@ -648,7 +609,7 @@ export class AddOfferComponent implements OnInit {
   }
 
   private mapPaymentMethodFromApi(apiPaymentMethod: string | number): string {
-    console.log('Mapping payment method from API:', apiPaymentMethod, 'Type:', typeof apiPaymentMethod);
+
     
     // Convert to number if it's a string
     let paymentMethodNumber: number;
@@ -684,7 +645,7 @@ export class AddOfferComponent implements OnInit {
     }
     
     const result = paymentMethodNumber.toString();
-    console.log('Mapped payment method to:', result);
+
     return result;
   }
 }

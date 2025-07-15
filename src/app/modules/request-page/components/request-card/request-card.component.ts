@@ -39,7 +39,7 @@ export class RequestCardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log('🚀 RequestCardComponent initialized with request:', this.request);
+
     this.truncateMessageIfNeeded();
     
     // Check if the current user is the offer owner
@@ -80,12 +80,7 @@ export class RequestCardComponent implements OnInit {
             return idStr === userIdStr || id === currentUserId;
           });
           
-          console.log('👤 RequestCard checkIfOfferOwner:', {
-            currentUserId: currentUserId,
-            possibleSenderIds: possibleSenderIds,
-            isOfferOwner: this.isOfferOwner,
-            offerId: this.request.offerId
-          });
+
         }
       },
       error: (err) => console.error('❌ Error checking offer ownership:', err)
@@ -102,12 +97,7 @@ export class RequestCardComponent implements OnInit {
     const requestCourierId = this.request.courierId || this.request.CourierId;
     this.isRequestOwner = requestCourierId === currentUserId;
     
-    console.log('👤 RequestCard checkIfRequestOwner:', {
-      currentUserId: currentUserId,
-      requestCourierId: requestCourierId,
-      isRequestOwner: this.isRequestOwner,
-      requestId: this.request.id
-    });
+
   }
   
   private async checkChatExistsForRequest(): Promise<void> {
@@ -128,15 +118,7 @@ export class RequestCardComponent implements OnInit {
       
       this.chatExistsMap[offerId] = chatExists;
       
-      console.log('💬 Chat existence check:', {
-        offerId,
-        currentUserId,
-        requestCourierId,
-        chatExists,
-        existingChatId,
-        isOfferOwner: this.isOfferOwner,
-        isRequestOwner: this.isRequestOwner
-      });
+
       
     } catch (err) {
       console.error('❌ Error checking chat existence:', err);
@@ -157,7 +139,7 @@ export class RequestCardComponent implements OnInit {
   async onContact(): Promise<void> {
     // تحقق من الصلاحية قبل التنفيذ
     if (!this.canShowContactButton()) {
-      console.log('❌ Contact button should not be visible');
+
       return;
     }
     
@@ -167,13 +149,7 @@ export class RequestCardComponent implements OnInit {
       const currentUserId = this.authService.getUserId();
       const requestCourierId = this.request.courierId || this.request.CourierId;
       
-      console.log('🚀 onContact started:', {
-        currentUserId,
-        requestCourierId,
-        isOfferOwner: this.isOfferOwner,
-        isRequestOwner: this.isRequestOwner,
-        offerId: this.request.offerId
-      });
+
     
     this.contact.emit(this.request.id);
       
@@ -186,16 +162,14 @@ export class RequestCardComponent implements OnInit {
       
       // إذا كان صاحب العرض، يمكنه إنشاء محادثة جديدة أو الانضمام لموجودة
       if (this.isOfferOwner) {
-        console.log('🔄 Offer owner creating/getting chat...');
         chatId = await this.deliveryChatService.getOrCreateChatId(this.request.offerId, requestCourierId);
-        console.log('✅ Chat ID for offer owner:', chatId);
         
         // تحديث حالة وجود الشات بعد الإنشاء
         this.chatExistsMap[this.request.offerId] = true;
         
       } else {
         // إذا كان صاحب الطلب، يمكنه فقط الانضمام لمحادثة موجودة
-        console.log('🔄 Request owner joining existing chat...');
+
         
         if (!currentUserId) {
           alert('يجب تسجيل الدخول أولاً');
@@ -210,11 +184,9 @@ export class RequestCardComponent implements OnInit {
         }
         
         chatId = existingChatId as number;
-        console.log('✅ Existing chat ID for request owner:', chatId);
       }
       
       // Navigate to delivery chat page with chatId
-      console.log('🔄 Navigating to delivery chat...');
     this.router.navigate(['/delivery-chat', this.request.id], {
       queryParams: {
         offerId: this.request.offerId,
@@ -262,15 +234,7 @@ export class RequestCardComponent implements OnInit {
       return chatExists;
     }
     
-    console.log('🔍 canContact debug:', {
-      currentUserId,
-      isOfferOwner: this.isOfferOwner,
-      isRequestOwner,
-      requestCourierId: this.request.courierId || this.request.CourierId,
-      chatExists: this.chatExistsMap[this.request.offerId] || false,
-      canContact: false,
-      offerId: this.request.offerId
-    });
+
     
     return false;
   }

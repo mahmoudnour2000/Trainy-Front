@@ -59,8 +59,6 @@ export class VerificationService {
     private http: HttpClient,
     private authService: AuthService
   ) {
-    console.log('Verification Service initialized. API URL:', this.apiUrl);
-
     this.authService.authStateChanged$.subscribe((isLoggedIn: boolean) => {
       if (isLoggedIn) {
         this.refreshVerificationStatus();
@@ -121,7 +119,6 @@ export class VerificationService {
     if (requestedRole) {
       params = params.set('requestedRole', requestedRole);
     }
-    console.log(`Fetching verification status from: ${this.apiUrl}/my-status`, { params });
     return this.http.get<VerificationRequest[]>(`${this.apiUrl}/my-status`, { params }).pipe(
       catchError(this.handleError)
     );
@@ -129,19 +126,12 @@ export class VerificationService {
   
   refreshVerificationStatus(): void {
     if (!this.authService.isAuthenticated()) {
-      console.log('❌ User not authenticated, skipping verification status refresh.');
       this.verificationStatusSubject.next({ isVerified: false, senderStatus: 'NotSubmitted', courierStatus: 'NotSubmitted', verificationRequests: [] });
       return;
     }
-    console.log('🔄 Refreshing verification status...');
-    console.log('🔑 API URL:', `${this.apiUrl}/my-status`);
-    console.log('🔑 Token present:', !!this.authService.getToken());
-    
     this.getMyVerificationStatus().subscribe({
       next: (requests) => {
-        console.log('✅ Raw verification requests from API:', requests);
         const combinedStatus = this.processVerificationRequests(requests);
-        console.log('🔄 Processed verification status:', combinedStatus);
         this.verificationStatusSubject.next(combinedStatus);
       },
       error: (err) => {
@@ -176,10 +166,8 @@ export class VerificationService {
     formData.append('Photo1', data.photo1, data.photo1.name);
     formData.append('Photo2', data.photo2, data.photo2.name);
 
-    console.log(`Submitting verification to: ${this.apiUrl}/submit`);
     return this.http.post<any>(`${this.apiUrl}/submit`, formData).pipe(
       tap(response => {
-        console.log('Verification submission successful:', response);
         this.refreshVerificationStatus(); // Refresh status after successful submission
       }),
       catchError(this.handleError)

@@ -34,7 +34,6 @@ export class RequestsContainerComponent implements OnInit {
   ) { }
   
   ngOnInit(): void {
-    console.log('RequestsContainerComponent initialized with offerId:', this.offerId);
     if (this.offerId) {
       this.loadRequests();
     } else {
@@ -47,8 +46,6 @@ export class RequestsContainerComponent implements OnInit {
     this.loading = true;
     this.error = null;
     this.requests = [];
-    
-    console.log('Loading requests for offer:', this.offerId);
     
     this.requestService.getRequestsForOffer(this.offerId, this.currentPage, this.pageSize).subscribe({
       next: (response) => {
@@ -66,7 +63,6 @@ export class RequestsContainerComponent implements OnInit {
           } as Request;
           return mapped;
         });
-        console.log('Final mapped requests:', this.requests); // Debug log
         this.totalRequests = response.totalCount || 0;
         this.loading = false;
       },
