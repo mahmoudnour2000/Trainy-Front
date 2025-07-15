@@ -51,8 +51,6 @@ export class VerificationImagesComponent implements OnInit {
       idImage: [null, Validators.required],
       selfieImage: [null, Validators.required]
     });
-    
-    console.log('Verification Images Component initialized');
   }
   
   ngOnInit(): void {
@@ -63,7 +61,6 @@ export class VerificationImagesComponent implements OnInit {
     });
     
     this.verificationService.verificationStatus$.subscribe((status: CombinedVerificationStatus) => {
-      console.log('Current verification status in ImagesComponent:', status);
       this.currentSenderStatus = status.senderStatus;
       this.currentCourierStatus = status.courierStatus;
 
@@ -89,14 +86,12 @@ export class VerificationImagesComponent implements OnInit {
       const hasAnySubmittedVerification = status.verificationRequests.length > 0;
       
       if (bothRolesBlocked && hasAnySubmittedVerification) {
-         console.log('User has pending/approved verification. Redirecting to status page.');
          this.router.navigate(['/verification/status'], { 
            queryParams: { 
              message: 'لديك طلب تحقق قيد المراجعة أو مُوافق عليه بالفعل' 
            } 
          });
       } else if (!this.canSubmitSender && !this.canSubmitCourier && hasAnySubmittedVerification) {
-         console.log('No available roles for submission. Redirecting to status page.');
          this.router.navigate(['/verification/status'], { 
            queryParams: { 
              message: 'يرجى مراجعة حالة التحقق الخاصة بك' 
@@ -131,7 +126,7 @@ export class VerificationImagesComponent implements OnInit {
       reader.onload = () => { this.idImagePreview = reader.result; };
       reader.readAsDataURL(file);
       this.errorMessage = '';
-      console.log('ID image selected:', file.name, 'Size:', this.formatFileSize(file.size));
+
     }
   }
   
@@ -151,7 +146,7 @@ export class VerificationImagesComponent implements OnInit {
       reader.onload = () => { this.selfieImagePreview = reader.result; };
       reader.readAsDataURL(file);
       this.errorMessage = '';
-      console.log('Selfie image selected:', file.name, 'Size:', this.formatFileSize(file.size));
+
     }
   }
   
@@ -202,11 +197,6 @@ export class VerificationImagesComponent implements OnInit {
       photo2: formValue.selfieImage
     };
 
-    console.log('Submitting verification for role:', submissionData.requestedRole);
-    console.log('National ID:', submissionData.nationalId);
-    console.log('Photo 1:', submissionData.photo1.name, 'Size:', this.formatFileSize(submissionData.photo1.size));
-    console.log('Photo 2:', submissionData.photo2.name, 'Size:', this.formatFileSize(submissionData.photo2.size));
-        
     this.verificationService.submitVerification(submissionData)
       .pipe(
         finalize(() => {
@@ -215,7 +205,6 @@ export class VerificationImagesComponent implements OnInit {
       )
       .subscribe({
         next: (response: any) => {
-          console.log('Verification submission successful:', response);
           this.successMessage = 'تم رفع المستندات بنجاح! جاري التوجيه إلى صفحة الحالة...';
           
           // Reset form after successful submission

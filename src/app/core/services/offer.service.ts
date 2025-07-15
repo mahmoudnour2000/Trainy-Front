@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 export interface PaginatedResponse<T> {
@@ -131,6 +132,11 @@ export class OfferService {
   // DELETE /api/Offer/{id}
   deleteOffer(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  // POST /api/Offer/{offerId}/confirm-delivery
+  confirmDelivery(offerId: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${offerId}/confirm-delivery`, {});
   }
 
   // GET /api/Offer/sender/{senderId}

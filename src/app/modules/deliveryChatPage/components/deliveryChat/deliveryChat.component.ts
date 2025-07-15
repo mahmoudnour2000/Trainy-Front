@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewChecked, Input} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -62,11 +62,11 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
   private async initializeChat(): Promise<void> {
     try {
       if (!this.chatId || this.chatId <= 0) {
-        console.error('Chat ID is required, got:', this.chatId);
+
         return;
       }
 
-      console.log('🔄 Initializing chat with ID:', this.chatId);
+
 
       // Clear previous state
       this.messages = [];
@@ -84,17 +84,12 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
 
       // Try to connect to SignalR
       try {
-        console.log('🔄 Attempting to start SignalR connection...');
         await this.deliveryChatService.startConnection();
-        console.log('✅ SignalR connection started successfully');
-        
-        console.log('🔄 Attempting to join chat with ID:', this.chatId);
         await this.deliveryChatService.joinChat(this.chatId);
-        console.log('✅ Connected to chat hub and joined chat');
 
       this.isConnected = true;
       } catch (connectionError) {
-        console.error('❌ Failed to connect to chat hub:', connectionError);
+
         this.isConnected = false;
         
         // Add a system message about connection failure
@@ -107,10 +102,10 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
       }
 
       this.isInitialized = true;
-      console.log('✅ Chat initialized successfully');
+
 
     } catch (error) {
-      console.error('❌ Failed to initialize chat:', error);
+
       this.isConnected = false;
       // Set some fallback state
       this.messages = [];
@@ -137,7 +132,7 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
       this.deliveryChatService.chatStatus$.subscribe(status => {
         if (status) {
         this.chatStatus = status;
-        console.log('Chat status updated:', status);
+
         }
       })
     );
@@ -155,13 +150,11 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
    */
   private async loadChatMessages(): Promise<void> {
     try {
-      console.log('🔄 Loading chat messages for chat ID:', this.chatId);
       const messages = await this.deliveryChatService.getChatMessages(this.chatId);
       this.messages = messages || [];
       this.shouldScrollToBottom = true;
-      console.log('✅ Chat messages loaded successfully, count:', this.messages.length);
     } catch (error) {
-      console.error('❌ Failed to load chat messages:', error);
+
       // Initialize with empty messages on error
       this.messages = [];
       // Don't throw error, just log it
@@ -178,7 +171,7 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
 
     // For debugging, allow sending even when not connected
     if (!this.isConnected) {
-      console.warn('⚠️ Attempting to send message while not connected');
+
     }
 
     this.isProcessing = true;
@@ -187,9 +180,9 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
     try {
       await this.deliveryChatService.sendMessage(this.chatId, this.newMessage.trim());
       this.newMessage = '';
-      console.log('✅ Message sent successfully');
+
     } catch (error) {
-      console.error('❌ Failed to send message:', error);
+
       this.addSystemMessage('فشل في إرسال الرسالة. حاول مرة أخرى.');
     } finally {
       this.isProcessing = false;
@@ -204,7 +197,7 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
     try {
       await this.deliveryChatService.markMessagesAsRead(this.chatId);
     } catch (error) {
-      console.error('Failed to mark messages as read:', error);
+
     }
   }
 
@@ -242,10 +235,10 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
       if (this.chatId) {
         const status = await this.deliveryChatService.getChatStatus(this.chatId);
         this.chatStatus = status;
-        console.log('✅ Chat status loaded:', status);
+
       }
     } catch (error) {
-      console.error('❌ Failed to load chat status:', error);
+
       // Set a fallback status to ensure messages display correctly
       this.chatStatus = {
         chatId: this.chatId,
@@ -352,7 +345,6 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
       });
       }
     } catch (error) {
-      console.error('Error formatting time:', error);
       return 'وقت غير صحيح';
     }
   }
@@ -364,13 +356,13 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
     try {
       // Ensure we have valid data
       if (!message || typeof message.isSender !== 'boolean') {
-        console.warn('Invalid message data:', message);
+
         return false;
       }
 
       // If chat status is not loaded yet, use fallback logic
       if (!this.chatStatus) {
-        console.warn('Chat status not loaded, using fallback logic');
+
         // Fallback: assume current user is courier (most common case)
         return !message.isSender;
       }
@@ -384,7 +376,7 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
 
       return false;
     } catch (error) {
-      console.error('Error determining message ownership:', error);
+
     return false;
     }
   }
@@ -414,10 +406,10 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
     const currentMessages = this.deliveryChatService.getCurrentMessages();
     this.deliveryChatService['messagesSubject'].next([...currentMessages, systemMessage]);
       } catch (serviceError) {
-        console.warn('Could not update service messages:', serviceError);
+
       }
     } catch (error) {
-      console.error('Error adding system message:', error);
+
     }
   }
 
@@ -431,7 +423,7 @@ export class DeliveryChatComponent implements OnInit, OnDestroy, AfterViewChecke
         element.scrollTop = element.scrollHeight;
       }
     } catch (err) {
-      console.error('Error scrolling to bottom:', err);
+
     }
   }
 

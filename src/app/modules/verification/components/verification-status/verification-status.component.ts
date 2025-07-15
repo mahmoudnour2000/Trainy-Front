@@ -36,8 +36,6 @@ export class VerificationStatusComponent implements OnInit {
   }
   
   ngOnInit(): void {
-    console.log('Verification Status Component initialized');
-    
     // Check for redirect message
     this.route.queryParams.subscribe(params => {
       if (params['message']) {
@@ -47,7 +45,6 @@ export class VerificationStatusComponent implements OnInit {
     
     this.currentStatus$.subscribe(
       status => {
-        console.log('Verification status received in StatusComponent:', status);
         this.verificationStatus = status;
         this.loading = false;
         if (!status || status.verificationRequests.length === 0) {

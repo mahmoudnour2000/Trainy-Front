@@ -64,8 +64,6 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.filteredFromStations = [...this.stations];
     
-    console.log('RequestDetailsComponent initialized with offerId:', this.offerId);
-    
     // Check if user is authenticated
     if (!this.authService.isAuthenticated()) {
       this.errorMessage = 'يجب تسجيل الدخول أولاً قبل إرسال الطلب';
@@ -88,7 +86,7 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
           .pipe(take(1))
           .subscribe(offer => {
             if (offer) {
-              console.log('Request details received offer:', offer);
+
               this.currentOffer = offer;
               this.offerId = offer.id;
               this.checkIfOfferOwner();
@@ -114,7 +112,7 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
           }
         },
         error: (error) => {
-          console.log('No profile image found, using default');
+
           // Keep default image
         }
       })
@@ -155,13 +153,6 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
     ].filter(id => id != null);
     
     this.isOfferOwner = possibleSenderIds.some(id => currentUserId === String(id));
-    
-    console.log('checkIfOfferOwner debug:', {
-      currentUserId: currentUserId,
-      possibleSenderIds: possibleSenderIds,
-      isOfferOwner: this.isOfferOwner,
-      currentOffer: this.currentOffer
-    });
     
     // If user is the owner of the offer, they can't send a request to themselves
     if (this.isOfferOwner) {
@@ -235,11 +226,8 @@ export class RequestDetailsComponent implements OnInit, OnDestroy {
       courierAge: this.age
     };
     
-    console.log('Submitting request:', requestData);
-    
     this.requestService.createRequest(requestData).subscribe({
       next: (createdRequest) => {
-        console.log('Request created successfully:', createdRequest);
         this.isSubmitting = false;
         this.requestCreated.emit(createdRequest);
         this.resetForm();

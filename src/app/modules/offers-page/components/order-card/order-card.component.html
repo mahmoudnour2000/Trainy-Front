@@ -41,11 +41,11 @@
             
             <!-- Edit and Delete buttons - Only for offer owner (sender) -->
             <div class="action-buttons" *ngIf="canEditOrder() || canDeleteOrder()">
-                <button class="btn btn-edit" 
+                <!-- <button class="btn btn-edit" 
                         *ngIf="canEditOrder()"
                         (click)="onEdit()">
                     <i class="fas fa-edit"></i> تعديل
-                </button>
+                </button> -->
                 <button class="btn btn-delete" 
                         *ngIf="canDeleteOrder()"
                         (click)="onDelete()">

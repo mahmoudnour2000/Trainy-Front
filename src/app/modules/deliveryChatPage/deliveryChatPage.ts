@@ -145,7 +145,7 @@ export class DeliveryChatPageComponent implements OnInit, OnDestroy {
               console.log('✅ ChatId already provided from query params:', this.chatId);
             } else {
               console.log('🔄 About to call initializeChat()');
-              await this.initializeChat();
+            await this.initializeChat();
               console.log('✅ initializeChat() completed, chatId:', this.chatId);
             }
           } else {
@@ -317,12 +317,15 @@ export class DeliveryChatPageComponent implements OnInit, OnDestroy {
    * Check if current user can complete delivery
    */
   canCompleteDelivery(): boolean {
-    const canComplete = this.isOfferOwner() && this.request?.status === RequestStatus.Accepted;
+    const hasValidOfferId = !!(this.offerId && this.offerId > 0);
+    const canComplete = this.isOfferOwner() && this.request?.status === RequestStatus.Accepted && hasValidOfferId;
     
     console.log('🔍 canCompleteDelivery check:');
     console.log('  - isOfferOwner:', this.isOfferOwner());
     console.log('  - request status:', this.request?.status);
     console.log('  - RequestStatus.Accepted:', RequestStatus.Accepted);
+    console.log('  - hasValidOfferId:', hasValidOfferId);
+    console.log('  - offerId:', this.offerId);
     console.log('  - Can complete:', canComplete);
     
     return canComplete;
@@ -339,17 +342,26 @@ export class DeliveryChatPageComponent implements OnInit, OnDestroy {
    * Show completion confirmation modal
    */
   showCompletionConfirmation(): void {
+    console.log('🔄 showCompletionConfirmation() called');
+    console.log('📊 Current offerId:', this.offerId);
+    console.log('📊 Current user:', this.authService.getUserId());
+    console.log('📊 Can complete delivery:', this.canCompleteDelivery());
+    
     try {
       const modalElement = document.getElementById('completionModal');
+      console.log('📊 Modal element found:', !!modalElement);
+      
       if (modalElement) {
         const modal = new (window as any).bootstrap.Modal(modalElement);
+        console.log('✅ Bootstrap modal created, showing...');
         modal.show();
       } else {
+        console.warn('⚠️ Modal element not found, using browser confirm');
         // If modal element not found, use browser confirm
         this.showBrowserConfirmation();
       }
     } catch (error) {
-      console.error('Error showing completion modal:', error);
+      console.error('❌ Error showing completion modal:', error);
       // Fallback to confirm dialog
       this.showBrowserConfirmation();
     }
@@ -359,8 +371,17 @@ export class DeliveryChatPageComponent implements OnInit, OnDestroy {
    * Show browser confirmation dialog
    */
   private showBrowserConfirmation(): void {
-    if (confirm('بهذا التأكيد على عملية التوصيل فإنه ليس من حقك الشكوى على أي شيء يخص عملية التوصيل ويجب التأكد بشكل كامل من صحة الشيء الذي تم توصيله. هل تريد المتابعة؟')) {
+    console.log('🔄 showBrowserConfirmation() called');
+    
+    const confirmed = confirm('بهذا التأكيد على عملية التوصيل فإنه ليس من حقك الشكوى على أي شيء يخص عملية التوصيل ويجب التأكد بشكل كامل من صحة الشيء الذي تم توصيله. هل تريد المتابعة؟');
+    
+    console.log('📊 User confirmed:', confirmed);
+    
+    if (confirmed) {
+      console.log('✅ User confirmed, calling completeDelivery()');
       this.completeDelivery();
+    } else {
+      console.log('❌ User cancelled confirmation');
     }
   }
 
@@ -368,8 +389,15 @@ export class DeliveryChatPageComponent implements OnInit, OnDestroy {
    * Complete delivery (called from modal confirmation)
    */
   async completeDelivery(): Promise<void> {
-    if (this.isProcessing || !this.chatId) {
-      console.warn('⚠️ Cannot complete delivery: already processing or no chatId');
+    console.log('🚀 completeDelivery() method called!');
+    console.log('📊 isProcessing:', this.isProcessing);
+    console.log('📊 offerId:', this.offerId);
+    console.log('📊 Current User ID:', this.authService.getUserId());
+    console.log('📊 Auth token exists:', !!this.authService.getToken());
+    
+    if (this.isProcessing || !this.offerId) {
+      console.warn('⚠️ Cannot complete delivery: already processing or no offerId');
+      console.warn('⚠️ isProcessing:', this.isProcessing, 'offerId:', this.offerId);
       return;
     }
     
@@ -377,15 +405,17 @@ export class DeliveryChatPageComponent implements OnInit, OnDestroy {
     this.actionType = 'complete';
     
     try {
-      console.log('🔄 Attempting to complete delivery with chatId:', this.chatId);
+      console.log('🔄 Attempting to complete delivery with offerId:', this.offerId);
       console.log('📊 Current user ID:', this.authService.getUserId());
       console.log('📊 Request status:', this.request?.status);
       console.log('📊 Request details:', this.request);
       
-      // Use delivery chat service to complete delivery
-      await this.deliveryChatService.completeDelivery(this.chatId);
+      // Use offer service to confirm delivery completion
+      console.log('🔄 Calling OfferService.confirmDelivery with offerId:', this.offerId);
+      const response = await this.offerService.confirmDelivery(this.offerId).toPromise();
+      console.log('📥 OfferController confirm-delivery response:', response);
       
-      console.log('✅ Delivery completed successfully via API');
+      console.log('✅ Delivery completed successfully via OfferController API');
       
       // Hide modal if it exists
       this.hideCompletionModal();
@@ -417,7 +447,7 @@ export class DeliveryChatPageComponent implements OnInit, OnDestroy {
       
       if (error?.status) {
         console.error('HTTP Status:', error.status);
-        console.error('Full error response:', error);
+        console.error('Full error response:', error.status);
       }
       
       // Hide modal on error

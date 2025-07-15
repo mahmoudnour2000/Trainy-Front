@@ -60,12 +60,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy, OnChanges {
                 category: offer.category || offerAny.Category
               };
               
-              console.log('offer-details debug:', {
-                originalCategory: offerAny.Category,
-                transformedCategory: this.offer?.category,
-                categoryDisplay: this.getCategoryDisplayName(this.offer?.category || ''),
-                offer: this.offer
-              });
+
               this.requestService.setOfferDetails(this.offer);
             } else {
               this.error = 'لم يتم العثور على تفاصيل العرض';
@@ -99,12 +94,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy, OnChanges {
         category: offer.category || offerAny.Category
       };
       
-      console.log('offer-details ngOnChanges debug:', {
-        originalCategory: offerAny.Category,
-        transformedCategory: this.offer?.category,
-        categoryDisplay: this.getCategoryDisplayName(this.offer?.category || ''),
-        offer: this.offer
-      });
+
       this.isLoading = false;
       this.error = null;
       this.requestService.setOfferDetails(this.offer);
