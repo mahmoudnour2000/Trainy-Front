@@ -571,7 +571,7 @@
 }
 
 /* Dark mode support */
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   .request-card {
     background: linear-gradient(135deg, 
       rgba(30, 41, 59, 0.95) 0%, 
@@ -595,7 +595,7 @@
     background: rgba(30, 41, 59, 0.7);
     color: #e2e8f0;
   }
-}
+} */
 
 /* High contrast mode support */
 @media (prefers-contrast: high) {

@@ -1,3 +1,23 @@
+/* Modal footer buttons custom style */
+.modal-footer .btn-primary {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+  color: #fff !important;
+  border: none !important;
+}
+.modal-footer .btn-secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+  color: #fff !important;
+  border: none !important;
+}
+/* Force white text and remove border for action buttons */
+.action-buttons-section .btn-success,
+.action-buttons-section .btn-danger,
+.action-buttons-section .btn-primary {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%) !important;
+  color: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+}
 .delivery-chat-page {
   min-height: 100vh;
   background-color: #f8f9fa;
