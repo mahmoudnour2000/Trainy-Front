@@ -42,7 +42,7 @@
     position: absolute;
     left: 0;
     bottom: 0;
-    background-color: #0d6efd;
+    background: linear-gradient(135deg, #2529ae 0%, #0d3d9f 100%);
     color: white;
     padding: 5px 15px;
     border-radius: 0 5px 0 0;
@@ -110,7 +110,7 @@
 
 .info-item i {
     margin-left: 8px;
-    color: #0d6efd;
+    color: #2529ae;
     width: 15px;
     text-align: center;
 }
@@ -148,14 +148,14 @@
 }
 
 .btn-edit {
-    background-color: rgba(13, 110, 253, 0.1);
-    color: #0d6efd;
+    background-color: rgba(37, 41, 174, 0.1);
+    color: #2529ae;
     margin-left: 5px;
     font-weight: 500;
 }
 
 .btn-edit:hover {
-    background-color: rgba(13, 110, 253, 0.2);
+    background-color: rgba(37, 41, 174, 0.2);
     transform: translateY(-2px);
     box-shadow: 0 3px 5px rgba(0,0,0,0.15);
 }
@@ -173,14 +173,14 @@
 }
 
 .btn-send {
-    background-color: #0d6efd;
+    background: linear-gradient(135deg, #2529ae 0%, #0d3d9f 100%);
     color: white;
     padding: 6px 15px;
     font-weight: 500;
 }
 
 .btn-send:hover:not(.disabled) {
-    background-color: #0b5ed7;
+    background: linear-gradient(135deg, #1f229c 0%, #0b328a 100%);
     transform: translateY(-2px);
     box-shadow: 0 3px 5px rgba(0,0,0,0.2);
 }
@@ -196,14 +196,14 @@
 }
 
 .btn-info {
-    background-color: #0dcaf0;
+    background: linear-gradient(135deg, #5a5ecc 0%, #3a4ab8 100%);
     color: white;
     padding: 6px 15px;
     font-weight: 500;
 }
 
 .btn-info:hover:not(.disabled) {
-    background-color: #0bb3d4;
+    background: linear-gradient(135deg, #4a4dbb 0%, #2d3ba7 100%);
     transform: translateY(-2px);
     box-shadow: 0 3px 5px rgba(0,0,0,0.2);
 }
@@ -278,7 +278,7 @@
     height: 50px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid #0d6efd;
+    border: 2px solid #2529ae;
 }
 
 /* Tag styles */
@@ -307,15 +307,15 @@
 }
 
 .tag-to {
-    background-color: #e3f2fd;
-    color: #1976d2;
-    border: 1px solid #bbdefb;
+    background: linear-gradient(135deg, rgba(37, 41, 174, 0.1) 0%, rgba(13, 61, 159, 0.1) 100%);
+    color: #2529ae;
+    border: 1px solid rgba(37, 41, 174, 0.3);
 }
 
 .tag-category {
-    background-color: #ede7f6;
-    color: #5e35b1;
-    border: 1px solid #d1c4e9;
+    background: linear-gradient(135deg, rgba(90, 94, 204, 0.1) 0%, rgba(58, 74, 184, 0.1) 100%);
+    color: #5a5ecc;
+    border: 1px solid rgba(90, 94, 204, 0.3);
 }
 
 .tag-weight {
@@ -325,13 +325,13 @@
 }
 
 .tag-price {
-    background-color: #fff8e1;
-    color: #f57f17;
-    border: 1px solid #ffecb3;
+    background: linear-gradient(135deg, rgba(37, 41, 174, 0.15) 0%, rgba(13, 61, 159, 0.15) 100%);
+    color: #0d3d9f;
+    border: 1px solid rgba(13, 61, 159, 0.3);
 }
 
 .request-badge {
-    background-color: #0d6efd;
+    background: linear-gradient(135deg, #2529ae 0%, #0d3d9f 100%);
     color: white;
     padding: 6px 12px;
     border-radius: 8px;
