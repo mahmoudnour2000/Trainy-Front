@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration production",
+    "postinstall": "npm run build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -50,6 +51,7 @@
     "@angular-devkit/build-angular": "^19.2.8",
     "@angular/cli": "^19.2.8",
     "@angular/compiler-cli": "^19.2.0",
+    "@netlify/angular-runtime": "^2.4.0",
     "@types/jasmine": "~5.1.0",
     "@types/leaflet": "^1.9.19",
     "jasmine-core": "~5.6.0",

@@ -1,9 +1,10 @@
 [build]
   command = "npm run build"
-  publish = "dist/trainy-app"
+  publish = "dist/trainy-front/browser"
 
 [[plugins]]
   package = "@netlify/angular-runtime"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "18.20.8"
+  NPM_VERSION = "10.8.2"
